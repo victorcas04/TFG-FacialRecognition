@@ -1,0 +1,61 @@
+
+### Información / Teoría
+
+Tensorflow - github.com (tensorflow)
+https://github.com/tensorflow/tensorflow/blob/master/README.md
+
+Deep Learning - http://blog.christianperone.com/
+http://blog.christianperone.com/2015/08/convolutional-neural-networks-and-feature-extraction-with-python/
+
+Image Recognition - tensorflow.org
+https://www.tensorflow.org/tutorials/image_recognition
+
+Face Detection - dev.to
+https://dev.to/burningion/deal-with-it-in-python-with-face-detection-chi
+
+Google Clou Vision - google.com
+https://cloud.google.com/vision/docs/?hl=es
+
+
+### Configuración
+
+Download Python - python.org
+https://www.python.org/downloads/
+
+Install pip (python installer) - stackoverflow.com
+https://stackoverflow.com/questions/38896424/tensorflow-not-found-in-pip
+https://stackoverflow.com/questions/4750806/how-do-i-install-pip-on-windows
+
+Install Packages - python.org
+https://packaging.python.org/tutorials/installing-packages/#requirements-for-installing-packages
+https://docs.python.org/3/library/distutils.html#module-distutils
+
+Solve Compatibility Issues - python.org
+https://pypi.python.org/pypi/six
+
+Download Anaconda - anaconda.org
+https://anaconda.org/anaconda/python
+
+Install Tensorflow - stackoverflow.com, tensorflow.org, github.com (tensorflow), youtube
+https://stackoverflow.com/questions/36998018/installing-tensorflow-on-pycharm-mac
+https://www.youtube.com/watch?v=83vR1Nz3dHA
+https://www.tensorflow.org/install/install_windows
+https://github.com/tensorflow/tensorflow
+
+
+### Repositorios
+
+Tensorflow
+https://github.com/tensorflow/tensorflow
+https://github.com/tensorflow/models/tree/master/research/slim/
+
+Google Clou Vision
+https://github.com/GoogleCloudPlatform/cloud-vision
+https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/vision/api/label
+
+Microsoft Cognitive Toolkit
+https://github.com/Microsoft/CNTK
+
+Face Recognition
+https://github.com/davidsandberg/facenet
+https://github.com/ageitgey/face_recognition
