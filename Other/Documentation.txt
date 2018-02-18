@@ -51,11 +51,13 @@ https://www.youtube.com/watch?v=SoDv0qhyysQ
 
 ### Ayuda
 
-Remove Folder from Git
+Github: Remove folder - stackoverflow.com
 https://stackoverflow.com/questions/6313126/how-to-remove-a-directory-from-git-repository
 
-Print Value with Tensorflow
+Tensorflow: Print Value, Variables - stackoverflow.com, learningtensorflow.com
 https://stackoverflow.com/questions/33633370/how-to-print-the-value-of-a-tensor-object-in-tensorflow
+https://learningtensorflow.com/lesson2/
+
 
 ### Repositorios
 
