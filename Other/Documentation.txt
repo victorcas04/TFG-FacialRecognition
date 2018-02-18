@@ -16,6 +16,9 @@ https://dev.to/burningion/deal-with-it-in-python-with-face-detection-chi
 Google Clou Vision - google.com
 https://cloud.google.com/vision/docs/?hl=es
 
+Sistema de Reconocimiento Facial - Universidad Nacional del Litoral. Germán Matías Scarel
+http://pdi-fich.wdfiles.com/local--files/investigacion/PF_Scarel_SistemaReconocimientoFacial.pdf
+
 
 ### Configuración
 
@@ -42,6 +45,17 @@ https://www.youtube.com/watch?v=83vR1Nz3dHA
 https://www.tensorflow.org/install/install_windows
 https://github.com/tensorflow/tensorflow
 
+Latex Tutorial
+https://www.youtube.com/watch?v=SoDv0qhyysQ
+
+
+### Ayuda
+
+Remove Folder from Git
+https://stackoverflow.com/questions/6313126/how-to-remove-a-directory-from-git-repository
+
+Print Value with Tensorflow
+https://stackoverflow.com/questions/33633370/how-to-print-the-value-of-a-tensor-object-in-tensorflow
 
 ### Repositorios
 
@@ -49,7 +63,7 @@ Tensorflow
 https://github.com/tensorflow/tensorflow
 https://github.com/tensorflow/models/tree/master/research/slim/
 
-Google Clou Vision
+Google Cloud Vision
 https://github.com/GoogleCloudPlatform/cloud-vision
 https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/vision/api/label
 
