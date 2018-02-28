@@ -1,20 +1,30 @@
 from src.ImageCaptureFromFile import ImageCaptureFromFileClass as iFFClass
 from src.TestingTensorflow import TestClass as tstClass
 
-name1 = "..\sources\FOTO_DNI_1.jpg"
-name2 = "..\sources\FOTO_DNI_2.jpg"
-default = "..\sources\default.png"
+dirPath = "..\sources\\"
+name1 = dirPath+"FOTO_DNI_1.jpg"
+name2 = dirPath+"FOTO_DNI_2.jpg"
+default = dirPath+"default.png"
 
+def firstSteps(run=True):
 
-def firstSteps(value=False):
-    if value.__eq__(False):
+    if run.__ne__(True):
         return
+
     tst = tstClass()
-    tst.testConstants()
-    tst.testVariables1()
-    tst.testVariables2()
-    tst.testVariables3()
-    tst.testVariables4()
+
+    if False:
+        tst.testConstants()
+        tst.testVariables1()
+        tst.testVariables2()
+        tst.testVariables3()
+        tst.testVariables4()
+
+    if False:
+        tst.testImages1()
+        tst.testImages2()
+    tst.testImages3()
+        #tst.testImages4()
 
 
 def loadI(name=default):
@@ -27,7 +37,10 @@ def loadI(name=default):
     return iFF
 
 
-def loadMultipleImages(names):
+def loadMultipleImages(names, run=True):
+
+    if run.__ne__(True):
+        return
 
     print("\n\tLoading Images...\n")
 
@@ -37,6 +50,8 @@ def loadMultipleImages(names):
 
 
 if __name__ == "__main__":
-    firstSteps(True)
+
+    firstSteps()
+
     names = [name1, name2, default]
-    #loadMultipleImages(names)
+    loadMultipleImages(names, False)
