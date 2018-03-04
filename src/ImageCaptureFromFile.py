@@ -19,10 +19,10 @@ class ImageCaptureFromFileClass(object):
         img.show()
         '''
 
-        # Read and open image using matplotlib
+        ### Read and open image using matplotlib
         image = mpimg.imread(self.name)
-        print("Size of image from '" + str(self.name) + "' file")
-        print(image.shape)              #This prints size of the image
+        ### This prints size of the image
+        print("Size of image from '" + str(self.name) + "' file: " + str(image.shape))
         plt.imshow(image)
         plt.show()
 

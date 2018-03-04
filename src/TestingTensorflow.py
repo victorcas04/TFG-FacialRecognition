@@ -24,10 +24,11 @@ class TestClass(object):
         a = tf.constant(10)
         b = tf.constant(32)
 
+        ### With: 'with tf.Session() as session' there is no need to use and close session like this
         sess = tf.Session()
         print(sess.run(hello))
         print(sess.run(a + b))
-        sess.close()            #With: 'with tf.Session() as session' there is no need to close session like this
+        sess.close()
 
     '''
     Tutorial from https://learningtensorflow.com/lesson2/
@@ -120,7 +121,8 @@ class TestClass(object):
         model = tf.global_variables_initializer()
 
         with tf.Session() as session:
-            imgToTraspose = tf.transpose(img, perm=[1, 0, 2])       #Change axes 0 and 1 of image
+            ### Change axes 0 and 1 of image
+            imgToTraspose = tf.transpose(img, perm=[1, 0, 2])
             session.run(model)
             imgTraspose = session.run(imgToTraspose)
 
@@ -131,14 +133,20 @@ class TestClass(object):
 
         numImages = 2
         images = []
-        titles = ["Imágen normal", "Imágen Invertida"]
+        titles = ["Original Image", "Inverse Image"]
         image = mpimg.imread(filename)
         imageVariable = tf.Variable(image, name='imageVariable')
         model = tf.global_variables_initializer()
         h, w, d = image.shape
 
         with tf.Session() as session:
-            imageToInverse = tf.reverse_sequence(imageVariable, [w] * h, 1, batch_dim=0)
+
+            ### There are two ways to inverse an image
+            # 1.-
+            #imageToInverse = tf.reverse_sequence(imageVariable, [w] * h, 1, batch_dim=0)
+            # 2.-
+            imageToInverse = tf.reverse_sequence(imageVariable, np.ones((h,)) * w, 1, batch_dim=0)
+
             session.run(model)
             imageInverse = session.run(imageToInverse)
             imageInverseVariable = tf.Variable(imageInverse, name='imageInverseVariable')
@@ -148,6 +156,7 @@ class TestClass(object):
 
         print("Shape normal image" + str(imageVariable.shape))
         print("Shape inverse image" + str(imageInverseVariable.shape))
+
         ''' Print images separately
         plt.imshow(image)
         plt.show()
@@ -166,7 +175,79 @@ class TestClass(object):
         window.set_size_inches(np.array(window.get_size_inches()) * numImages)
         plt.show()
 
+        def testImages4(self, filename=defaultImage):
+            numImages = 2
+            images = []
+            titles = ["Original Image", "Image Rotated 180º"]
+            image = mpimg.imread(filename)
+            imageVariable = tf.Variable(image, name='imageVariable')
+            model = tf.global_variables_initializer()
 
-    def testImages4(self, filename=defaultImage):
-        pass
+            h, w, d = image.shape
 
+            with tf.Session() as session:
+                ### There are two ways to rotate an image
+                # 1.-
+                # iTR = tf.reverse_sequence(imageVariable, [w] * h, 1, batch_dim=0)
+                # iTR2 = tf.transpose(iTR, perm=[1, 0, 2])
+                # iTR3 = tf.reverse_sequence(iTR2, [h] * w, 1, batch_dim=0)
+                # imageToRotate = tf.transpose(iTR3, perm=[1, 0, 2])
+                # 2.-
+                imageToRotate = tf.image.rot90(imageVariable, 2)
+
+                session.run(model)
+                imageRotate = session.run(imageToRotate)
+                imageRotateVariable = tf.Variable(imageRotate, name='imageRotateVariable')
+                images.append(image)
+                images.append(imageRotate)
+
+            print("Shape normal image" + str(imageVariable.shape))
+            print("Shape rotate image" + str(imageRotateVariable.shape))
+
+            window = plt.figure()
+            for c, i in enumerate(images):
+                subplot = window.add_subplot(1, numImages, c + 1)
+                plt.imshow(i)
+                subplot.set_title(titles[c])
+            window.set_size_inches(np.array(window.get_size_inches()) * numImages)
+            plt.show()
+
+    def testImages5(self, filename=defaultImage):
+        numImages = 2
+        images = []
+        titles = ["Original Image", "Mirror Image"]
+        image = mpimg.imread(filename)
+        imageVariable = tf.Variable(image, name='imageVariable')
+        model = tf.global_variables_initializer()
+
+        h, w, d = image.shape
+
+        with tf.Session() as session:
+            imageToInverse = tf.reverse_sequence(imageVariable, [w] * h, 1, batch_dim=0)
+
+            session.run(model)
+            imageInverse = session.run(imageToInverse)
+
+            originalImageHalf = tf.slice(imageVariable, [0, 0, 0], [h, int(w/2), d])
+            inverseImageHalf = tf.slice(imageInverse, [0, int(w/2), 0], [h, int(w/2), d])
+
+            imageToMirror = tf.concat([originalImageHalf, inverseImageHalf], 1)
+            imageMirror = session.run(imageToMirror)
+
+            imageMirrorVariable = tf.Variable(imageMirror, name='imageMirrorVariable')
+            images.append(image)
+            images.append(imageMirror)
+
+        print("Shape normal image" + str(imageVariable.shape))
+        print("Shape inverse image" + str(imageInverse.shape))
+        print("Shape normal half image" + str(originalImageHalf.shape))
+        print("Shape inverse half image" + str(inverseImageHalf.shape))
+        print("Shape mirror image" + str(imageMirrorVariable.shape))
+
+        window = plt.figure()
+        for c, i in enumerate(images):
+            subplot = window.add_subplot(1, numImages, c + 1)
+            plt.imshow(i)
+            subplot.set_title(titles[c])
+        window.set_size_inches(np.array(window.get_size_inches()) * numImages)
+        plt.show()

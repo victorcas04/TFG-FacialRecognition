@@ -23,8 +23,9 @@ def firstSteps(run=True):
     if False:
         tst.testImages1()
         tst.testImages2()
-    tst.testImages3()
-        #tst.testImages4()
+        tst.testImages3()
+        tst.testImages4()
+        tst.testImages5()
 
 
 def loadI(name=default):
