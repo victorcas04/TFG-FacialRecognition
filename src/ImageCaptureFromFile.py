@@ -22,7 +22,7 @@ class ImageCaptureFromFileClass(object):
         ### Read and open image using matplotlib
         image = mpimg.imread(self.name)
         ### This prints size of the image
-        print("Size of image from '" + str(self.name) + "' file: " + str(image.shape))
+        print("\nSize of image from '" + str(self.name) + "' file: " + str(image.shape) + "\n")
         plt.imshow(image)
         plt.show()
 

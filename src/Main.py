@@ -1,5 +1,5 @@
 from src.ImageCaptureFromFile import ImageCaptureFromFileClass as iFFClass
-from src.TestingTensorflow import TestClass as tstClass
+from src.Test.TestingTensorflow import TestClass as tstClass
 
 dirPath = "..\sources\\"
 name1 = dirPath+"FOTO_DNI_1.jpg"
@@ -13,20 +13,12 @@ def firstSteps(run=True):
 
     tst = tstClass()
 
-    if False:
-        tst.testConstants()
-        tst.testVariables1()
-        tst.testVariables2()
-        tst.testVariables3()
-        tst.testVariables4()
+    #
+    # tst.testVariables()
+    # tst.testImages()
+    #
 
-    if False:
-        tst.testImages1()
-        tst.testImages2()
-        tst.testImages3()
-        tst.testImages4()
-        tst.testImages5()
-
+    tst.testPlaceholders()
 
 def loadI(name=default):
 
