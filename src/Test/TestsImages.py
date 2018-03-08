@@ -3,12 +3,10 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+import src.Util as util
 
-dirPath = "..\sources\\"
-nameImage = "default.png"
-defaultImage = dirPath + nameImage
-nameImageSave = "DualOrchid.png"
-savePath = dirPath + nameImageSave
+defaultImage = util.getImageName()
+savePath = util.getImageName("DualOrchid.png")
 
 def testImages1(filename=defaultImage):
 

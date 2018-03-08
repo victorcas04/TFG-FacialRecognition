@@ -2,15 +2,16 @@
 import src.Test.TestsVariables as tstVariables
 import src.Test.TestsImages as tstImages
 import src.Test.TestsPlaceholders as tstPlaceholders
+import src.Util as util
 
 class TestClass(object):
 
-    dirPath = "..\sources\\"
-    nameImage = "MarshOrchid.jpg"
-    defaultImage = dirPath + nameImage
+    orchid = "MarshOrchid.jpg"
+    me = "FOTO_DNI_1.jpg"
+    defaultImage = util.getImageName(orchid)
 
     '''
-    Tutorials from https://www.tensorflow.org and 
+    Tutorials from https://www.tensorflow.org and https://learningtensorflow.com/
     
     '''
 
@@ -33,3 +34,30 @@ class TestClass(object):
         tstPlaceholders.testPlaceholders2(self.defaultImage)
         tstPlaceholders.testPlaceholders3(self.defaultImage)
         tstPlaceholders.testPlaceholders4(self.defaultImage)
+
+    def testActual(self):
+        print("\nTest Actual\n")
+
+        images = []
+        titles = []
+
+        originalImage = util.loadImage(self.defaultImage)
+
+        images.extend([originalImage])
+        titles.extend(["Imágen Original"])
+
+        normalizedImage = self.testNormalizeIllumination(originalImage)
+
+        images.extend([normalizedImage, normalizedImage, normalizedImage, normalizedImage])
+        titles.extend(["Imágen Normalizada"])
+
+        util.displayImages(images, titles)
+
+    def testNormalizeIllumination(self, imageToNormallize=defaultImage):
+        print("\nTest Normalize Illumination\n")
+        return imageToNormallize
+
+
+
+
+

@@ -1,13 +1,11 @@
 
 import tensorflow as tf
-import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+import src.Util as util
 
-dirPath = "..\sources\\"
-nameImage = "default.png"
-defaultImage = dirPath + nameImage
-nameImageSave = "SlicedOrchid.png"
-savePath = dirPath + nameImageSave
+defaultImage = util.getImageName("def")
+saveSlicedPath = util.getImageName("SlicedOrchid.png")
+saveGrayPath = util.getImageName("GrayOrchid.png")
 
 def testPlaceholders1():
 
@@ -34,7 +32,7 @@ def testPlaceholders2(filename=defaultImage):
 
     print("\nTest Placeholders 2\n")
 
-    image = mpimg.imread(filename)
+    image = util.loadImage(filename)
     h, w, d = image.shape
 
     #### 2D image with 3 colours
@@ -55,7 +53,7 @@ def testPlaceholders3(filename=defaultImage):
 
     print("\nTest Placeholders 3\n")
 
-    image = mpimg.imread(filename)
+    image = util.loadImage(filename)
     h, w, d = image.shape
 
     imagePlaceholder = tf.placeholder("uint8", [h, w, d])
@@ -85,10 +83,48 @@ def testPlaceholders3(filename=defaultImage):
     plt.imshow(fullCorners)
     plt.show()
 
-    print("\nSaving image to: " + str(savePath) + "\n")
-    mpimg.imsave(savePath, fullCorners)
+    util.saveImage(fullCorners, saveSlicedPath)
 
 
 def testPlaceholders4(filename=defaultImage):
+
     print("\nTest Placeholders 4\n")
-    pass
+
+    image = util.loadImage(filename)
+    h, w, d = image.shape
+    images = []
+    titles = []
+
+    imageSC1 = image[:, :, 0]
+    imageSC2 = image[:, :, 1]
+    imageSC3 = image[:, :, 2]
+    imageCC = imageSC1 + imageSC2 + imageSC3
+    #imagePlaceholder = tf.placeholder(tf.uint8, [h, w, None])
+    #imageGrayVariable = tf.image.rgb_to_grayscale(imagePlaceholder)
+
+    #sum = tf.summary.image("imageSummary", image)
+
+    with tf.Session() as session:
+        #imageGray = np.asarray(session.run(imageGrayVariable, feed_dict={imagePlaceholder: image})).squeeze()
+        #imageRGB = session.run(im, feed_dict={imagePlaceholder2: (image/255)})
+        #imageGray2Variable = tf.image.rgb_to_grayscale(imageRGB)
+        #imageGray2 = np.asarray(session.run(imageGray2Variable)).squeeze()
+        pass
+
+    images.extend((image, imageCC, imageSC1, imageSC2, imageSC3))
+    titles.extend(("Original Image", "Image with Colour Change", "Image with Single Colour1", "Image with Single Colour2", "Image with Single Colour3"))
+
+    print("Original image shape: " + str(image.shape))
+    print("Color changed image shape: " + str(imageCC.shape))
+    #print("Grey image shape: " + str(imageGrayVariable.shape))
+    #print("Grey 2 image shape: " + str(imageGray2Variable.shape))
+    print("Single colored image 1 shape: " + str(imageSC1.shape))
+    print("Single colored image 2 shape: " + str(imageSC2.shape))
+    print("Single colored image 3 shape: " + str(imageSC3.shape))
+
+    util.displayImages(images, titles)
+
+    '''
+    print("\nSaving image to: " + str(saveGrayPath) + "\n")
+    mpimg.imsave(saveGrayPath, imageGray)
+    '''
