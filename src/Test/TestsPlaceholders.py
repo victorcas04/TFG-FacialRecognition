@@ -1,7 +1,9 @@
 
 import tensorflow as tf
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
+from src.ImageCapture.ImageCaptureFromFile import ImageCaptureFromFileClass as imgFile
 import src.Util as util
+import cv2
 
 defaultImage = util.getImageName("def")
 saveSlicedPath = util.getImageName("SlicedOrchid.png")
@@ -32,7 +34,7 @@ def testPlaceholders2(filename=defaultImage):
 
     print("\nTest Placeholders 2\n")
 
-    image = util.loadImage(filename)
+    image = imgFile.loadImage(filename)
     h, w, d = image.shape
 
     #### 2D image with 3 colours
@@ -45,15 +47,17 @@ def testPlaceholders2(filename=defaultImage):
         print("Original image shape: " + str(image.shape))
         print("Image slice shape: " + str(sliceImage.shape))
 
-    plt.imshow(sliceImage)
-    plt.show()
+    #python3.6 plt.imshow(sliceImage)
+    #python3.6  plt.show()
+    cv2.imshow(sliceImage)
+    cv2.waitKey(0)
 
 
 def testPlaceholders3(filename=defaultImage):
 
     print("\nTest Placeholders 3\n")
 
-    image = util.loadImage(filename)
+    image = imgFile.loadImage(filename)
     h, w, d = image.shape
 
     imagePlaceholder = tf.placeholder("uint8", [h, w, d])
@@ -80,8 +84,10 @@ def testPlaceholders3(filename=defaultImage):
     print("Down right corner shape: " + str(downRightCornerVariable.shape))
     print("Four corners together shape: " + str(fullCornersVariable.shape))
 
-    plt.imshow(fullCorners)
-    plt.show()
+    #python3.6 plt.imshow(fullCorners)
+    #python3.6 plt.show()
+    cv2.imshow(fullCorners)
+    cv2.waitKey(0)
 
     util.saveImage(fullCorners, saveSlicedPath)
 
@@ -90,7 +96,7 @@ def testPlaceholders4(filename=defaultImage):
 
     print("\nTest Placeholders 4\n")
 
-    image = util.loadImage(filename)
+    image = imgFile.loadImage(filename)
     h, w, d = image.shape
     images = []
     titles = []

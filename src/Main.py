@@ -1,4 +1,4 @@
-from src.ImageCaptureFromFile import ImageCaptureFromFileClass as iFFClass
+#from src.ImageCapture.ImageCaptureFromFile import ImageCaptureFromFileClass as iFFClass
 from src.Test.TestingTensorflow import TestClass as tstClass
 import src.Util as util
 
@@ -20,7 +20,7 @@ def firstSteps(run=True):
     #
 
     tst.testActual()
-
+'''
 def loadI(name=imageDefault):
 
     iFF = iFFClass(name)
@@ -29,7 +29,7 @@ def loadI(name=imageDefault):
     print("Image loaded successfully from '" + str(name) + "'file")
 
     return iFF
-
+'''
 
 def loadMultipleImages(names, run=True):
 
@@ -39,7 +39,7 @@ def loadMultipleImages(names, run=True):
     print("\n\tLoading Images...\n")
 
     for n in names:
-        loadI(n)
+        #loadI(n)
         pass
 
 

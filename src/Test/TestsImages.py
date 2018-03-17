@@ -1,9 +1,11 @@
 
 import tensorflow as tf
 import numpy as np
-import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
+#import matplotlib.image as mpimg
+#import matplotlib.pyplot as plt
 import src.Util as util
+from src.ImageCapture.ImageCaptureFromFile import ImageCaptureFromFileClass as imgFile
+import cv2
 
 defaultImage = util.getImageName()
 savePath = util.getImageName("DualOrchid.png")
@@ -12,16 +14,20 @@ def testImages1(filename=defaultImage):
 
     print("\nTest Images 1\n")
 
-    image = mpimg.imread(filename)
+    # python3.6 image = mpimg.imread(filename)
+    image = cv2.imread(filename)
     print("\nShape of image '" + str(defaultImage) + "' file: " + str(image.shape) + "\n")
-    plt.imshow(image)
-    plt.show()
+    #python3.6 plt.imshow(image)
+    #python3.6 plt.show()
+    cv2.imshow('Image', image)
+    cv2.waitKey(0)
 
 def testImages2(filename=defaultImage):
 
     print("\nTest Images 2\n")
 
-    image = mpimg.imread(filename)
+    # python3.6 mpimg.imread(filename)
+    image = cv2.imread(filename)
     img = tf.Variable(image, name='img')
     model = tf.global_variables_initializer()
 
@@ -31,8 +37,10 @@ def testImages2(filename=defaultImage):
         session.run(model)
         imgTraspose = session.run(imgToTraspose)
 
-    plt.imshow(imgTraspose)
-    plt.show()
+    #python3.6 plt.imshow(imgTraspose)
+    #python3.6 plt.show()
+    cv2.imshow('Image', imgTraspose)
+    cv2.waitKey(0)
 
 def testImages3(filename=defaultImage):
 
@@ -41,7 +49,9 @@ def testImages3(filename=defaultImage):
     numImages = 2
     images = []
     titles = ["Original Image", "Inverse Image"]
-    image = mpimg.imread(filename)
+
+    # python3.6 mpimg.imread(filename)
+    image = cv2.imread(filename)
     imageVariable = tf.Variable(image, name='imageVariable')
     model = tf.global_variables_initializer()
     h, w, d = image.shape
@@ -65,15 +75,20 @@ def testImages3(filename=defaultImage):
     print("Shape inverse image" + str(imageInverseVariable.shape) + "\n")
 
     ''' Print images separately
+    # python3.6
     plt.imshow(image)
     plt.show()
-
     plt.imshow(imgInverse)
     plt.show()
     '''
+    '''
+    #python2.7
+    cv2.imshow('Image', imgTraspose)
+    cv2.waitKey(0)
+    '''
 
     ### Print images together and with titles
-
+    '''python3.6
     window = plt.figure()
     for c, i in enumerate(images):
         subplot = window.add_subplot(1, numImages, c+ 1)
@@ -81,6 +96,8 @@ def testImages3(filename=defaultImage):
         subplot.set_title(titles[c])
     window.set_size_inches(np.array(window.get_size_inches()) * numImages)
     plt.show()
+    '''
+    util.displayImages(images, titles)
 
 def testImages4(filename=defaultImage):
 
@@ -89,7 +106,8 @@ def testImages4(filename=defaultImage):
     numImages = 2
     images = []
     titles = ["Original Image", "Image Rotated 180º"]
-    image = mpimg.imread(filename)
+    # python3.6 mpimg.imread(filename)
+    image = cv2.imread(filename)
     imageVariable = tf.Variable(image, name='imageVariable')
     model = tf.global_variables_initializer()
 
@@ -113,7 +131,7 @@ def testImages4(filename=defaultImage):
 
     print("\nShape normal image" + str(imageVariable.shape))
     print("Shape rotate image" + str(imageRotateVariable.shape) + "\n")
-
+    '''python3.6
     window = plt.figure()
     for c, i in enumerate(images):
         subplot = window.add_subplot(1, numImages, c + 1)
@@ -121,7 +139,8 @@ def testImages4(filename=defaultImage):
         subplot.set_title(titles[c])
     window.set_size_inches(np.array(window.get_size_inches()) * numImages)
     plt.show()
-
+    '''
+    util.displayImages(images, titles)
 
 def testImages5(filename=defaultImage):
 
@@ -130,7 +149,8 @@ def testImages5(filename=defaultImage):
     numImages = 2
     images = []
     titles = ["Original Image", "Mirror Image"]
-    image = mpimg.imread(filename)
+    # python3.6 mpimg.imread(filename)
+    image = cv2.imread(filename)
     imageVariable = tf.Variable(image, name='imageVariable')
     model = tf.global_variables_initializer()
 
@@ -157,7 +177,7 @@ def testImages5(filename=defaultImage):
     print("Shape normal half image" + str(originalImageHalf.shape))
     print("Shape inverse half image" + str(inverseImageHalf.shape))
     print("Shape mirror image" + str(imageMirrorVariable.shape) + "\n")
-
+    '''python3.6
     window = plt.figure()
     for c, i in enumerate(images):
         subplot = window.add_subplot(1, numImages, c + 1)
@@ -165,6 +185,33 @@ def testImages5(filename=defaultImage):
         subplot.set_title(titles[c])
     window.set_size_inches(np.array(window.get_size_inches()) * numImages)
     plt.show()
-
+    '''
+    util.displayImages(images, titles)
     print("\nSaving image to: " + str(savePath) + "\n")
-    mpimg.imsave(savePath, imageMirror)
+    #python3.6 mpimg.imsave(savePath, imageMirror)
+    cv2.imwrite(savePath, imageMirror);
+
+def testAdjustBrightness(imageToAdjust=defaultImage):
+    print("\nTest Adjust Brightness\n")
+
+    images = []
+    titles = []
+
+    h, w, d = imageToAdjust.shape
+    ph = tf.placeholder(tf.uint8, [h, w, d])
+
+    originalImage = imgFile.loadImage(imageToAdjust)
+    images.extend([originalImage])
+    titles.extend(["Imágen Original"])
+
+    #normallizeImageOp = tf.image.per_image_standardization(ph)
+
+    adjustImageOp = tf.image.adjust_brightness(ph, 0.25)
+
+    with tf.Session() as session:
+        imageAdjusted = session.run(adjustImageOp, feed_dict={ph: imageToAdjust})
+
+    images.extend([imageAdjusted])
+    titles.extend(["Imágen con Brillo Ajustado"])
+
+    util.displayImages(images, titles)
