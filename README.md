@@ -1,7 +1,23 @@
-# TFG-FacialRecognition
+# Título:
+TFG-FacialRecognition
 
-## Autor: Víctor de Castro Hurtado
+# Universidad de Burgos
 
-### Description:
+# Autor: 
+Víctor de Castro Hurtado
 
-Repositorio de Github donde se alojará el TFG de reconocimiento facial basado en deep-learning.
+# Tutor: 
+César Represa Pérez
+
+# Índice:
+  - Introducción
+  - Instrucciones
+
+## Introducción:
+
+Repositorio de Github donde se aloja el TFG de reconocimiento facial basado en machine-learning.
+
+El TFG consiste en una aplicación que, dadas dos imágenes (una obtenida desde una cámara y la otra alojada localmente), sea capaz de distinguir si en ambas imágenes se encuentra la misma persona utilizando técnicas de machine-learning.
+
+## Instrucciones:
+
