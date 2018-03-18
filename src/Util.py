@@ -42,6 +42,7 @@ def displayImages(images=None, titles=None):
         cv2.waitKey(0)
         '''
 
+        '''
         img1 = images[0]
         resImg = img1
         h, w, d = img1.shape
@@ -49,11 +50,19 @@ def displayImages(images=None, titles=None):
             resImg = np.hstack((resImg,
                                 (cv2.resize(i, (w, h)) if (i is not None)
                                  else cv2.resize(loadDefaultImage(), (w, h)))))
+            ###resImg = np.hstack((resImg, i))
+            ###np.concatenate((img1, i), axis=1)
 
         resTit = '-'.join(titles)
 
         cv2.imshow(resTit, resImg)
         cv2.waitKey(0)
+        '''
+        c = 0
+        for i in images:
+            cv2.imshow((titles[c] if (c < len(titles)) else ("Default Title " + str(c))), i)
+            cv2.waitKey(0)
+            c+=1
 
         '''python3.6
         window = plt.figure()

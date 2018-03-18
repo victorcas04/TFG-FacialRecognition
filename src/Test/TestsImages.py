@@ -1,10 +1,9 @@
 
 import tensorflow as tf
 import numpy as np
-#import matplotlib.image as mpimg
-#import matplotlib.pyplot as plt
 import src.Util as util
-from src.ImageCapture.ImageCaptureFromFile import ImageCaptureFromFileClass as imgFile
+import src.ImageCapture.ImageCaptureFromCamera as imgCamera
+import src.ImageCapture.ImageCaptureFromFile as imgFile
 import cv2
 
 defaultImage = util.getImageName()
@@ -190,6 +189,24 @@ def testImages5(filename=defaultImage):
     print("\nSaving image to: " + str(savePath) + "\n")
     #python3.6 mpimg.imsave(savePath, imageMirror)
     cv2.imwrite(savePath, imageMirror);
+
+def testImages6(me, nShots = 2):
+    images = []
+
+    iF = imgFile.ImageCaptureFromFileClass(me)
+    imgFF = iF.loadImage()
+
+    iC = imgCamera.ImageCaptureFromCameraClass()
+    imgFC = iC.loadImage()
+
+    images.append(imgFF)
+    images.append(imgFC)
+
+    imgFCMul = iC.loadMultipleImages(nShots)
+    for i in imgFCMul:
+        images.append(i)
+
+    util.displayImages(images, ["Image from File", "Image from Camera"])
 
 def testAdjustBrightness(imageToAdjust=defaultImage):
     print("\nTest Adjust Brightness\n")

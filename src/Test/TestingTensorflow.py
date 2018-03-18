@@ -1,17 +1,10 @@
 
-import src.ImageCapture.ImageCaptureFromCamera as imgCamera
-import src.ImageCapture.ImageCaptureFromFile as imgFile
+
 import src.Test.TestsImages as tstImages
 import src.Test.TestsPlaceholders as tstPlaceholders
 import src.Test.TestsVariables as tstVariables
 import src.Util as util
 
-import cv2
-
-'''
-import imp
-print(imp.find_module("cv2"))
-'''
 class TestClass(object):
 
     orchid = util.getImageName("MarshOrchid.jpg")
@@ -36,6 +29,7 @@ class TestClass(object):
         tstImages.testImages3(self.default)
         tstImages.testImages4(self.default)
         tstImages.testImages5(self.default)
+        tstImages.testImages6(self.me, nShots=4)
 
     def testPlaceholders(self):
         tstPlaceholders.testPlaceholders1()
@@ -46,13 +40,5 @@ class TestClass(object):
     def testActual(self):
         print("\nTest Actual\n")
 
-        iF = imgFile.ImageCaptureFromFileClass(self.me)
-        imgFF = iF.loadImage()
-
-        iC = imgCamera.ImageCaptureFromCameraClass()
-        imgFC = iC.loadImage()
-
-        images = [imgFF, imgFC]
-
-        util.displayImages(images, ["Image from File", "Image from Camera"])
+        pass
 
