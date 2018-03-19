@@ -23,6 +23,12 @@ class TestClass(object):
         tstVariables.testVariables3()
         tstVariables.testVariables4()
 
+    def testPlaceholders(self):
+        tstPlaceholders.testPlaceholders1()
+        tstPlaceholders.testPlaceholders2(self.default)
+        tstPlaceholders.testPlaceholders3(self.default)
+        tstPlaceholders.testPlaceholders4(self.default)
+
     def testImages(self):
         tstImages.testImages1(self.default)
         tstImages.testImages2(self.default)
@@ -30,12 +36,7 @@ class TestClass(object):
         tstImages.testImages4(self.default)
         tstImages.testImages5(self.default)
         tstImages.testImages6(self.me, nShots=4)
-
-    def testPlaceholders(self):
-        tstPlaceholders.testPlaceholders1()
-        tstPlaceholders.testPlaceholders2(self.default)
-        tstPlaceholders.testPlaceholders3(self.default)
-        tstPlaceholders.testPlaceholders4(self.default)
+        tstImages.testThreshold(self.me)
 
     def testActual(self):
         print("\nTest Actual\n")

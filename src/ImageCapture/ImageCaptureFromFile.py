@@ -1,18 +1,17 @@
 
 from src.ImageCapture.ImageCaptureInterface import AbstractImageCaptureClass as Parent
-import src.Util as util
 #python3.6 import matplotlib.image as mpimg
 import cv2
 
 class ImageCaptureFromFileClass(Parent):
 
-    def __init__(self, name=util.getImageName()):
+    def __init__(self, name):
         self.name = name
 
     def loadImage(self):
-        Parent.image = self.captureImageFromFile(self.name)
+        Parent.image = cv2.imread(self.name)
         return Parent.image
 
-    def captureImageFromFile(self, filename):
-        #python3.6 return mpimg.imread(filename)
-        return cv2.imread(filename)
+    def loadGrayImage(self):
+        Parent.image = cv2.imread(self.name, 0)
+        return Parent.image

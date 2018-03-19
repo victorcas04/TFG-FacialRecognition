@@ -1,6 +1,5 @@
 
 from src.ImageCapture.ImageCaptureInterface import AbstractImageCaptureClass as Parent
-import src.Util as util
 
 #from PIL import Image
 #import os
@@ -33,16 +32,15 @@ class ImageCaptureFromCameraClass(Parent):
         '''
 
         ### Max image size possible
-        h = sys.maxsize
-        w = sys.maxsize
+        maxInt = sys.maxsize
 
         print("Starting Camera. Please Wait...")
 
         cam = cv2.VideoCapture(0)
-        cam.set(cv2.CAP_PROP_FPS, 60)
+        cam.set(cv2.CAP_PROP_FPS, maxInt)
         #cam.set(cv2.CAP_PROP_CONVERT_RGB, True)        ### By default
-        cam.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
-        cam.set(cv2.CAP_PROP_FRAME_WIDTH, w)
+        cam.set(cv2.CAP_PROP_FRAME_HEIGHT, maxInt)
+        cam.set(cv2.CAP_PROP_FRAME_WIDTH, maxInt)
         time.sleep(2)
 
         while cam.isOpened() and numberOfShots > 0:

@@ -5,7 +5,12 @@ import numpy as np
 import decimal, math
 import cv2
 
+import src.ImageCapture.ImageCaptureFromCamera as imgCamera
+import src.ImageCapture.ImageCaptureFromFile as imgFile
+
 maxImagesPerRow = 4
+thresholdNeighborhoodBlockSize = 45
+constantSubstractedFromWeight = 13
 
 def getPath():
     return "..\sources\\"
@@ -82,8 +87,48 @@ def displayImages(images=None, titles=None):
     else:               ### Si no hay ninguna imágen no se abre ninguna ventana
         print("No hay imágenes para cargar")
 
+def displaySameImageMultipleEffects(images, titles):
+    img1 = images[0]
+    resImg = img1
+    h, w, d = img1.shape
+    for i in images[1:]:
+
+        try:
+            h2, w2, d2 = i.shape
+        except:
+            i = cv2.cvtColor(i, cv2.COLOR_GRAY2BGR)
+
+        resImg = np.hstack((resImg, i))
+
+    resTit = '-'.join(titles)
+
+    cv2.imshow(resTit, resImg)
+    cv2.waitKey(0)
 
 def loadDefaultImage():
     print("Cargando imágen por defecto...")
     #python3.6 return mpimg.imread(getImageName())
     return cv2.imread(getImageName())
+
+def thresholdImageIllumination(image, blockSize=thresholdNeighborhoodBlockSize, cleanSize=constantSubstractedFromWeight):
+    return cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, blockSize, cleanSize)
+    cv2.adaptiveThreshold()
+
+def loadfileImageGray(imageName):
+    iF = imgFile.ImageCaptureFromFileClass(imageName)
+    imgFF = iF.loadGrayImage()
+    return imgFF
+
+def loadFileImage(imageName):
+    iF = imgFile.ImageCaptureFromFileClass(imageName)
+    imgFF = iF.loadImage()
+    return imgFF
+
+def loadCameraImage():
+    iC = imgCamera.ImageCaptureFromCameraClass()
+    imgFC = iC.loadImage()
+    return imgFC
+
+def imageToGrayscale(image):
+    return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+

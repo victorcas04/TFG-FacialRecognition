@@ -197,16 +197,22 @@ def testImages6(me, nShots = 2):
     imgFF = iF.loadImage()
 
     iC = imgCamera.ImageCaptureFromCameraClass()
-    imgFC = iC.loadImage()
+    #imgFC = iC.loadImage()
 
     images.append(imgFF)
-    images.append(imgFC)
+    #images.append(imgFC)
 
     imgFCMul = iC.loadMultipleImages(nShots)
     for i in imgFCMul:
         images.append(i)
 
-    util.displayImages(images, ["Image from File", "Image from Camera"])
+    util.displayImages(images, ["Image from File"])#, "Image from Camera"])
+
+def testThreshold(image=defaultImage):
+    image = util.loadFileImage(image)
+    imageGray = util.imageToGrayscale(image)
+    imagenIllumination = util.thresholdImageIllumination(imageGray)
+    util.displaySameImageMultipleEffects([image, imageGray, imagenIllumination], ['Original', 'Gray', 'Threshold'])
 
 def testAdjustBrightness(imageToAdjust=defaultImage):
     print("\nTest Adjust Brightness\n")
