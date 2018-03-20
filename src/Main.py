@@ -1,26 +1,25 @@
 from src.ImageCapture.ImageCaptureFromFile import ImageCaptureFromFileClass as iFFClass
 from src.Test.TestingTensorflow import TestClass as tstClass
 import src.Util as util
-import src.FaceObjectDetectorTutorial.tfrecord as rec
+#import src.FaceObjectDetectorTutorial.tfrecord as rec
 
-image1 = util.getImageName("FOTO_DNI_1.jpg")
-image2 = util.getImageName("FOTO_DNI_2.jpg")
-imageDefault = util.getImageName()
+imageDefault = util.getFileName()
+meDNI = util.getFileName("FOTO_DNI_1.jpg")
+meAscensor = util.getFileName("FOTO_ASCENSOR.jpg")
+meBorroso = util.getFileName("FOTO_BORROSA.jpg")
+meMalaIluminacion = util.getFileName("FOTO_ILUMINACION.jpg")
+grupo = util.getFileName("FOTO_GRUPO_1.jpg")
 
 def firstSteps(run=True):
-
     if run.__ne__(True):
         return
-
     tst = tstClass()
-
     #
     # tst.testVariables()
     # tst.testImages()
     # tst.testPlaceholders()
     #
-
-    tst.testActual()
+    tst.testActual(meDNI)
 
 def loadI(name=imageDefault):
 
@@ -49,7 +48,7 @@ def loadMultipleImages(names, run=True):
 if __name__ == "__main__":
     firstSteps(True)
 
-    names = [image1, image2]
+    names = [meDNI, meDNI]
     images = loadMultipleImages(names, False)
 
     if images.__ne__(None):

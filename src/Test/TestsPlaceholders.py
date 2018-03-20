@@ -5,9 +5,9 @@ from src.ImageCapture.ImageCaptureFromFile import ImageCaptureFromFileClass as i
 import src.Util as util
 import cv2
 
-defaultImage = util.getImageName("def")
-saveSlicedPath = util.getImageName("SlicedOrchid.png")
-saveGrayPath = util.getImageName("GrayOrchid.png")
+defaultImage = util.getFileName()
+saveSlicedPath = util.getFileName("SlicedOrchid.png")
+saveGrayPath = util.getFileName("GrayOrchid.png")
 
 def testPlaceholders1():
 

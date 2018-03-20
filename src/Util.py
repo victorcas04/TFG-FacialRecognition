@@ -4,7 +4,7 @@
 import numpy as np
 import decimal, math
 import cv2
-
+import wx
 import src.ImageCapture.ImageCaptureFromCamera as imgCamera
 import src.ImageCapture.ImageCaptureFromFile as imgFile
 
@@ -12,13 +12,19 @@ maxImagesPerRow = 4
 thresholdNeighborhoodBlockSize = 45
 constantSubstractedFromWeight = 13
 
-def getPath():
-    return "..\sources\\"
+def getDisplaySize():
+    app = wx.App(False)
+    w, h = wx.GetDisplaySize()
+    #print("Anchura de Patalla: " + str(w) + "\nAltura de Pantalla: " + str(h))
+    return h, w
 
-def getImageName(default="default.png"):
-    return getPath() + default
+def getFolderPath(folderName="sources"):
+    return "..\\" + folderName + "\\"
 
-def saveImage(image, path=getImageName("savedDefault.png")):
+def getFileName(defaultFile="default.png", folder=getFolderPath()):
+    return folder + defaultFile
+
+def saveImage(image, path=getFileName("savedDefault.png")):
     print("\nSaving image to: " + str(path) + "\n")
     #python3.6 mpimg.imsave(path, image)
     cv2.imwrite(path, image);
@@ -105,10 +111,42 @@ def displaySameImageMultipleEffects(images, titles):
     cv2.imshow(resTit, resImg)
     cv2.waitKey(0)
 
+def resizeImage(image):
+
+    h = image.shape[0]
+    w = image.shape[1]
+    hd = getDisplaySize()[0]
+    wd = getDisplaySize()[1]
+
+    if h <= hd and w <= wd:
+        imageResizedString = "Original Size: " + str(image.shape) + " - Under Limits"
+        return image, imageResizedString
+
+    if h > hd:
+        hh = hd
+        ww = w / (h/hd)
+        imageResized = cv2.resize(image, (int(ww), int(hh)))
+        imageResizedString = "Over Limits - Height" + "\n" + "Original Size: " + str(image.shape) + " - New Size: " + str(imageResized.shape)
+        return imageResized, imageResizedString
+
+    if w > wd:
+        ww = wd
+        hh = h / (w / wd)
+        imageResized = cv2.resize(image, (int(ww), int(hh)))
+        imageResizedString = "Over Limits - Width" + "\n" + "Original Size: " + str(image.shape) + " - New Size: " + str(imageResized.shape)
+        return imageResized, imageResizedString
+
+    imageResized = image
+
+    #cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+    #cv2.resizeWindow('image', getDisplaySize()[0], getDisplaySize()[1])
+
+    return imageResized
+
 def loadDefaultImage():
     print("Cargando imágen por defecto...")
     #python3.6 return mpimg.imread(getImageName())
-    return cv2.imread(getImageName())
+    return cv2.imread(getFileName())
 
 def thresholdImageIllumination(image, blockSize=thresholdNeighborhoodBlockSize, cleanSize=constantSubstractedFromWeight):
     return cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, blockSize, cleanSize)
@@ -131,4 +169,3 @@ def loadCameraImage():
 
 def imageToGrayscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-

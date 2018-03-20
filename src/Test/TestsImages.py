@@ -6,8 +6,8 @@ import src.ImageCapture.ImageCaptureFromCamera as imgCamera
 import src.ImageCapture.ImageCaptureFromFile as imgFile
 import cv2
 
-defaultImage = util.getImageName()
-savePath = util.getImageName("DualOrchid.png")
+defaultImage = util.getFileName()
+savePath = util.getFileName("DualOrchid.png")
 
 def testImages1(filename=defaultImage):
 
