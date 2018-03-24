@@ -1,13 +1,13 @@
 # Título:
-###TFG-FacialRecognition
+### TFG-FacialRecognition
 
-# Universidad de Burgos
+## Universidad de Burgos
 
 # Autor: 
-#####Víctor de Castro Hurtado
+### Víctor de Castro Hurtado
 
 # Tutor: 
-César Represa Pérez
+##### César Represa Pérez
 
 # Índice:
   - Introducción
