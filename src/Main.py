@@ -3,12 +3,13 @@ from src.Test.TestingTensorflow import TestClass as tstClass
 import src.Util as util
 #import src.FaceObjectDetectorTutorial.tfrecord as rec
 
-imageDefault = util.getFileName()
-meDNI = util.getFileName("FOTO_DNI_1.jpg")
-meAscensor = util.getFileName("FOTO_ASCENSOR.jpg")
-meBorroso = util.getFileName("FOTO_BORROSA.jpg")
-meMalaIluminacion = util.getFileName("FOTO_ILUMINACION.jpg")
-grupo = util.getFileName("FOTO_GRUPO_1.jpg")
+meDNI = "FOTO_DNI_1.jpg"
+meAscensor = "FOTO_ASCENSOR.jpg"
+meBorroso = "FOTO_BORROSA.jpg"
+meMalaIluminacion = "FOTO_ILUMINACION.jpg"
+meUbu = "FOTO_UBUVIRTUAL_ME.jpg"
+CesarUbu = "FOTO_UBUVIRTUAL_CESAR.png"
+grupo = "FOTO_GRUPO_1.jpg"
 
 def firstSteps(run=True):
     if run.__ne__(True):
@@ -16,12 +17,12 @@ def firstSteps(run=True):
     tst = tstClass()
     #
     # tst.testVariables()
-    # tst.testImages()
+    # tst.testImages(meDNI)
     # tst.testPlaceholders()
     #
-    tst.testActual(meDNI)
+    tst.testActual(util.getFileName(meBorroso))
 
-def loadI(name=imageDefault):
+def loadI(name=util.getFileName()):
 
     iFF = iFFClass(name)
     iFF.captureImageFromFile()
@@ -44,12 +45,13 @@ def loadMultipleImages(names, run=True):
 
     return images
 
-
 if __name__ == "__main__":
-    firstSteps(True)
+    firstSteps(False)
 
-    names = [meDNI, meDNI]
+    names = [util.getFileName(meDNI), util.getFileName(meDNI)]
     images = loadMultipleImages(names, False)
+
+    util.mainMenu()
 
     if images.__ne__(None):
         for i in images:

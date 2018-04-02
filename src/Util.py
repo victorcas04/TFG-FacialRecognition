@@ -3,8 +3,8 @@
 #python3.6 import matplotlib.pyplot as plt
 import numpy as np
 import decimal, math
-import cv2
-import wx
+from pathlib import Path
+import cv2, wx, sys, time, math
 import src.ImageCapture.ImageCaptureFromCamera as imgCamera
 import src.ImageCapture.ImageCaptureFromFile as imgFile
 
@@ -12,16 +12,27 @@ maxImagesPerRow = 4
 thresholdNeighborhoodBlockSize = 45
 constantSubstractedFromWeight = 13
 
+def checkIfFile(name):
+    return Path(name).is_file()
+
+def getScan():
+    ri = input()
+    #ri = raw_input()
+    return ri
+
 def getDisplaySize():
     app = wx.App(False)
     w, h = wx.GetDisplaySize()
     #print("Anchura de Patalla: " + str(w) + "\nAltura de Pantalla: " + str(h))
     return h, w
 
-def getFolderPath(folderName="sources"):
+def getXmlFolderPath(folderName="sources\\xml"):
     return "..\\" + folderName + "\\"
 
-def getFileName(defaultFile="default.png", folder=getFolderPath()):
+def getImagesFolderPath(folderName="sources\\images"):
+    return "..\\" + folderName + "\\"
+
+def getFileName(defaultFile="default.png", folder=getImagesFolderPath()):
     return folder + defaultFile
 
 def saveImage(image, path=getFileName("savedDefault.png")):
@@ -113,33 +124,45 @@ def displaySameImageMultipleEffects(images, titles):
 
 def resizeImage(image):
 
-    h = image.shape[0]
-    w = image.shape[1]
+    ### NOTE: in cv2.resize() we must specify new dimensions with inverse order ((w, h) instead of (h, w))
+
+    imageResized = image
+    imageResizedString = ""
+
     hd = getDisplaySize()[0]
     wd = getDisplaySize()[1]
 
-    if h <= hd and w <= wd:
-        imageResizedString = "Original Size: " + str(image.shape) + " - Under Limits"
-        return image, imageResizedString
+    while True:
+        preImageResized = imageResized
+        h = imageResized.shape[0]
+        w = imageResized.shape[1]
 
-    if h > hd:
-        hh = hd
-        ww = w / (h/hd)
-        imageResized = cv2.resize(image, (int(ww), int(hh)))
-        imageResizedString = "Over Limits - Height" + "\n" + "Original Size: " + str(image.shape) + " - New Size: " + str(imageResized.shape)
-        return imageResized, imageResizedString
+        if h <= hd and w <= wd:
+            if h <= (hd/2) and w <= (wd/2):
+                imageResized = cv2.resize(image, (int(2*w), int(2*h)))
+                imageResizedString = imageResizedString + "\nImage Too Small" + "\n" + "Original Size: " + str(
+                    preImageResized.shape) + " - New Size: " + str(imageResized.shape)
+                continue
 
-    if w > wd:
-        ww = wd
-        hh = h / (w / wd)
-        imageResized = cv2.resize(image, (int(ww), int(hh)))
-        imageResizedString = "Over Limits - Width" + "\n" + "Original Size: " + str(image.shape) + " - New Size: " + str(imageResized.shape)
-        return imageResized, imageResizedString
+            imageResizedString = imageResizedString + "\nSize: " + str(imageResized.shape) + " - Under Limits"
+            return imageResized, imageResizedString
 
-    imageResized = image
+        if h > hd:
+            hh = hd
+            ww = w / (h/hd)
+            imageResized = cv2.resize(image, (int(ww), int(hh)))
+            imageResizedString = imageResizedString + "\nOver Limits - Height" + "\n" + "Original Size: " + str(
+                preImageResized.shape) + " - New Size: " + str(imageResized.shape)
 
-    #cv2.namedWindow('image', cv2.WINDOW_NORMAL)
-    #cv2.resizeWindow('image', getDisplaySize()[0], getDisplaySize()[1])
+        if w > wd:
+            ww = wd
+            hh = h / (w / wd)
+            imageResized = cv2.resize(image, (int(ww), int(hh)))
+            imageResizedString = imageResizedString + "\nOver Limits - Width" + "\n" + "Original Size: " + str(
+                preImageResized.shape) + " - New Size: " + str(imageResized.shape)
+
+        #cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+        #cv2.resizeWindow('image', getDisplaySize()[0], getDisplaySize()[1])
 
     return imageResized
 
@@ -169,3 +192,164 @@ def loadCameraImage():
 
 def imageToGrayscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+def getCascadeXmlFile():
+    # File from: https://github.com/opencv/opencv/blob/master/data/haarcascades/
+    # Repository with files for research and academic purposes
+    cascadeXmlFile = "haarcascade_frontalface_default.xml"
+    # cascadeXmlFile = "haarcascade_profileface.xml"
+    return cascadeXmlFile
+
+def faceInBoxVideo():
+
+    maxInt = sys.maxsize
+    xml = getFileName(getCascadeXmlFile(), getXmlFolderPath())
+
+    print("Loading " + xml + " file...")
+    face_cascade = cv2.CascadeClassifier(xml)
+
+    print("Inicializando cámara...")
+    cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FPS, maxInt)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, maxInt)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, maxInt)
+    time.sleep(2)
+
+    print("Mostrando imágen en tiempo real...")
+
+    while True:
+
+        sampleNum = 0
+        ret, img = cap.read()
+        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+
+        rectangleThickness = int((img.shape[0] + img.shape[1]) / (100 * 2 * math.pi))
+        rectangleColor = (255, 0, 0)
+
+        for (x, y, w, h) in faces:
+            sampleNum = sampleNum + 1
+            cv2.rectangle(img, (x, y), (x + w, y + h), rectangleColor, rectangleThickness)
+            #cv2.waitKey(1)
+
+        #imageResized, imageResizedString = resizeImage(img)
+        #cv2.imshow(" - " + str(sampleNum) + " - person(s) recognized.", imageResized)
+        cv2.imshow("Facial Location.", img)
+
+        k = cv2.waitKey(1)
+        
+        ### Press [I] for info.
+        if k == ord('i'):
+            print(" - " + str(sampleNum) + " - person(s) recognized.")
+            #print(imageResizedString)
+
+        ### Press [ESCAPE] to exit.
+        #if k == 27:
+        #    break
+
+        ### Press [Q] to exit.
+        if k == ord('q'):
+            break
+
+        ### Press [P] to pause camera reading.
+        ### Press [SPACE] to resume camera reading.
+        if k == ord('p'):
+            while cv2.waitKey(0) != ord(' '):
+                print("Press [SPACE] to resume camera reading.")
+
+    # TODO
+    # Image capture from camera now without interruptions (key press).
+    # Add some features while displaying image on real-time.
+    # Adjust rectangle for faces (thickness, color, etc).
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+def faceInBoxImage(photoName):
+
+    img = cv2.imread(photoName)
+    xml = getFileName(getCascadeXmlFile(), getXmlFolderPath())
+
+    print("Loading " + xml + " file...")
+    face_cascade = cv2.CascadeClassifier(xml)
+
+    print("Checking " + photoName + " size...")
+    imageResizedOriginal, imageResizedOriginalString = resizeImage(img)
+
+    rectangleThickness = int((imageResizedOriginal.shape[0] + imageResizedOriginal.shape[1]) / (100 * 2 * math.pi))
+    rectangleColor = (255, 0, 0)
+
+    print("Mostrando imágen original...")
+    while True:
+        cv2.imshow("Original Image", imageResizedOriginal)
+        ### Press [ESCAPE] to exit.
+        #if cv2.waitKey(0) == 27:  # ord(' '):
+        #    break
+
+        ### Press [Q] to exit.
+        if cv2.waitKey(0) == ord('q'):
+            break
+
+    cv2.destroyAllWindows()
+
+    sampleNum = 0
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+
+    for (x, y, w, h) in faces:
+        sampleNum = sampleNum + 1
+        cv2.rectangle(img, (x, y), (x + w, y + h), rectangleColor, rectangleThickness)
+    imageResized, imageResizedString = resizeImage(img)
+
+    print("Mostrando imágen reconocida...")
+
+    while True:
+
+        cv2.imshow(" - " + str(sampleNum) + " - person(s) recognized.", imageResized)
+
+        k = cv2.waitKey(0)
+
+        ### Press [I] for info.
+        if k == ord('i'):
+            print(" - " + str(sampleNum) + " - person(s) recognized.")
+            print(imageResizedString)
+
+        ### Press [ESCAPE] to exit.
+        #if k == 27:  # ord(' '):
+        #    break
+
+        ### Press [Q] to exit.
+        if k == ord('q'):
+            break
+
+    cv2.destroyAllWindows()
+
+def mainMenu():
+    exit = False
+    while True:
+        print("\n¿Desea utilizar el sistema a partir de un archivo o desde la cámara del dispositivo?")
+        print(" - F - Desde archivo.\n - C - Desde cámara.\n - Q - Salir.\n")
+        mainScanner = getScan()
+        if mainScanner.__eq__("F") or mainScanner.__eq__("f"):
+            print("\nIntroduce el nombre del fichero con extensión:\n(el fichero debe encontrarse en la carpeta sources/images):\n")
+            nameScanned = getScan()
+            while not checkIfFile(getFileName(nameScanned)):
+                print("\nNombre de fichero inexistente.\nIntroduce un nombre válido o [Q] para salir.\n")
+                nameScanned = getScan()
+                if nameScanned.__eq__("Q") or nameScanned.__eq__("q"):
+                    exit = True
+                    break
+            if not exit:
+                print("")
+                faceInBoxImage(getFileName(nameScanned))
+                break
+        elif mainScanner.__eq__("C") or mainScanner.__eq__("c"):
+            print("")
+            faceInBoxVideo()
+            break
+        elif mainScanner.__eq__("Q") or mainScanner.__eq__("q"):
+            break
+        else:
+            print("\nComando no reconocido.")
+
