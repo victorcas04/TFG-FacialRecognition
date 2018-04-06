@@ -19,8 +19,9 @@ def firstSteps(run=True):
     # tst.testVariables()
     # tst.testImages(meDNI)
     # tst.testPlaceholders()
+    # tst.testFaceLocation(util.getFileName(meDNI))
     #
-    tst.testActual(util.getFileName(meBorroso))
+    tst.testActual()
 
 def loadI(name=util.getFileName()):
 
@@ -46,14 +47,20 @@ def loadMultipleImages(names, run=True):
     return images
 
 if __name__ == "__main__":
-    firstSteps(False)
+    firstSteps(True)
 
+    # TODO - facialComparison() method must return image found and percentage (float/double)
+
+    '''
     names = [util.getFileName(meDNI), util.getFileName(meDNI)]
     images = loadMultipleImages(names, False)
+    '''
 
-    util.mainMenu()
+    #util.mainMenu()
 
+    '''
     if images.__ne__(None):
         for i in images:
             #rec.main(i)
             pass
+    '''

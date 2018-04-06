@@ -7,6 +7,7 @@ from pathlib import Path
 import cv2, wx, sys, time, math
 import src.ImageCapture.ImageCaptureFromCamera as imgCamera
 import src.ImageCapture.ImageCaptureFromFile as imgFile
+from src.GUI.GUI import GUIClass as GUI
 
 maxImagesPerRow = 4
 thresholdNeighborhoodBlockSize = 45
@@ -200,8 +201,19 @@ def getCascadeXmlFile():
     # cascadeXmlFile = "haarcascade_profileface.xml"
     return cascadeXmlFile
 
+def printMenuFaceInBox(fromCamera=True):
+
+    print("\nPress [I] for info.")
+    print("Press [Q] to exit.")
+    if fromCamera:
+        print("Press [P] to pause camera reading.")
+        print("Press [SPACE] to resume camera reading (if paused only).")
+        print("Press [C] to take the actual frame and exit.\n")
+
+
 def faceInBoxVideo():
 
+    imageToReturn = None
     maxInt = sys.maxsize
     xml = getFileName(getCascadeXmlFile(), getXmlFolderPath())
 
@@ -216,6 +228,8 @@ def faceInBoxVideo():
     time.sleep(2)
 
     print("Mostrando imágen en tiempo real...")
+
+    printMenuFaceInBox()
 
     while True:
 
@@ -240,7 +254,8 @@ def faceInBoxVideo():
         
         ### Press [I] for info.
         if k == ord('i'):
-            print(" - " + str(sampleNum) + " - person(s) recognized.")
+            print("\n - " + str(sampleNum) + " - person(s) recognized.")
+            printMenuFaceInBox()
             #print(imageResizedString)
 
         ### Press [ESCAPE] to exit.
@@ -257,14 +272,14 @@ def faceInBoxVideo():
             while cv2.waitKey(0) != ord(' '):
                 print("Press [SPACE] to resume camera reading.")
 
-    # TODO
-    # Image capture from camera now without interruptions (key press).
-    # Add some features while displaying image on real-time.
-    # Adjust rectangle for faces (thickness, color, etc).
+        ### Press [C] to take the actual frame and exit.
+        if k == ord('c'):
+            imageToReturn = img
+            break
 
     cap.release()
     cv2.destroyAllWindows()
-
+    return imageToReturn
 
 def faceInBoxImage(photoName):
 
@@ -312,8 +327,9 @@ def faceInBoxImage(photoName):
 
         ### Press [I] for info.
         if k == ord('i'):
-            print(" - " + str(sampleNum) + " - person(s) recognized.")
+            print("\n - " + str(sampleNum) + " - person(s) recognized.")
             print(imageResizedString)
+            printMenuFaceInBox(False)
 
         ### Press [ESCAPE] to exit.
         #if k == 27:  # ord(' '):
@@ -352,4 +368,29 @@ def mainMenu():
             break
         else:
             print("\nComando no reconocido.")
+
+### Pass Image type objects, not Strings or others
+def createInterfaceWindow(photoFromCamera=None, photoFromDatabase=None, percentage=0.0):
+
+    ### Facial comparison
+    print("Comparando imágen con las de la base de datos...")
+
+    percentage = 100 * percentage
+    percentageString = str(percentage) + "%"
+    print("\nMostrando resultado con un " + percentageString + " de coincidencia.\n")
+
+    gui = GUI()
+
+    # gui.addLabel("Imágen Original")
+    # gui.addImage(photoFromCamera)
+    # gui.addLabel("Imágen Encontrada", "right")
+    # gui.addImage(photoFromDatabase, "right")
+    gui.panelTest(photoFromCamera, "Original Image", "left")
+    gui.panelTest(photoFromDatabase, "Founded Image", "right")
+    # https://www.pyimagesearch.com/2016/05/23/opencv-with-tkinter/
+    # gui.addLabel(porcentaje coincidencia)
+
+    gui.addPercentageLabel(percentageString)
+
+    gui.displayWindow()
 

@@ -38,10 +38,15 @@ class TestClass(object):
         tstImages.testImages6(util.getFileName(photo), nShots=4)
         tstImages.testThreshold(util.getFileName(photo))
 
-    def testActual(self, photoName):
+    def testFaceLocation(self, photoName):
+        util.faceInBoxImage(photoName)
+        util.faceInBoxVideo()
+
+    def testActual(self):
         print("\nTest Actual\n")
 
-        #util.faceInBoxImage(photoName)
-        util.faceInBoxVideo()
+        photoFromCamera = util.faceInBoxVideo()
+        photoFromDatabase = cv2.imread(util.getFileName("FOTO_DNI_1.jpg"))
+        util.createInterfaceWindow(photoFromCamera, photoFromDatabase)
 
         pass
