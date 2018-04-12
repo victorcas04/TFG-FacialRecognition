@@ -1,6 +1,7 @@
 from src.ImageCapture.ImageCaptureFromFile import ImageCaptureFromFileClass as iFFClass
 from src.Test.TestingTensorflow import TestClass as tstClass
 import src.Util as util
+import src.TrainMachine.trainer as train
 #import src.FaceObjectDetectorTutorial.tfrecord as rec
 
 meDNI = "FOTO_DNI_1.jpg"
@@ -47,9 +48,24 @@ def loadMultipleImages(names, run=True):
     return images
 
 if __name__ == "__main__":
-    firstSteps(True)
 
-    # TODO - facialComparison() method must return image found and percentage (float/double)
+    print("\n\nTFG - Facial Recognition - Víctor de Castro Hurtado\n\n")
+
+    firstSteps(False)
+
+    util.askTrain()
+
+    gui = util.createInterfaceWindow()
+
+    photoFromCamera = util.faceInBoxVideo()
+    #photoFromDatabase = util.loadImageByName(util.getFileName(meDNI))
+    #photoFromDatabase = util.loadImageByGUI(gui)
+
+    #i, p = util.compare(photoFromCamera, photoFromDatabase)
+    i, p, n = util.compare(photoFromCamera)
+
+    gui.setTitle(n, p)
+    util.displayInterfaceWindow(gui, photoFromCamera=photoFromCamera, photoFromDatabase=i, percentage=p)
 
     '''
     names = [util.getFileName(meDNI), util.getFileName(meDNI)]

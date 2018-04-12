@@ -4,10 +4,14 @@
 import numpy as np
 import decimal, math
 from pathlib import Path
-import cv2, wx, sys, time, math
+import cv2, wx, sys, time, math, os
 import src.ImageCapture.ImageCaptureFromCamera as imgCamera
 import src.ImageCapture.ImageCaptureFromFile as imgFile
-from src.GUI.GUI import GUIClass as GUI
+#from src.GUI.GUI import GUIClass as GUI
+import src.GUI.GUI as GUI
+import src.TrainMachine.CompareImages as imgCompare
+import src.TrainMachine.trainer as trainer
+#import dlib
 
 maxImagesPerRow = 4
 thresholdNeighborhoodBlockSize = 45
@@ -81,6 +85,8 @@ def displayImages(images=None, titles=None):
         cv2.imshow(resTit, resImg)
         cv2.waitKey(0)
         '''
+        if titles is None:
+            titles = []
         c = 0
         for i in images:
             cv2.imshow((titles[c] if (c < len(titles)) else ("Default Title " + str(c))), i)
@@ -167,10 +173,12 @@ def resizeImage(image):
 
     return imageResized
 
-def loadDefaultImage():
-    print("Cargando imágen por defecto...")
+def loadImageByName(fullName=getFileName()):
     #python3.6 return mpimg.imread(getImageName())
-    return cv2.imread(getFileName())
+    return cv2.imread(fullName)
+
+def loadImageByGUI(gui):
+    return loadImageByName(gui.selectFile())
 
 def thresholdImageIllumination(image, blockSize=thresholdNeighborhoodBlockSize, cleanSize=constantSubstractedFromWeight):
     return cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, blockSize, cleanSize)
@@ -369,17 +377,14 @@ def mainMenu():
         else:
             print("\nComando no reconocido.")
 
+def createInterfaceWindow():
+    return GUI.GUIClass()
+
 ### Pass Image type objects, not Strings or others
-def createInterfaceWindow(photoFromCamera=None, photoFromDatabase=None, percentage=0.0):
+def displayInterfaceWindow(gui, photoFromCamera=None, photoFromDatabase=None, percentage=0.0):
 
-    ### Facial comparison
-    print("Comparando imágen con las de la base de datos...")
-
-    percentage = 100 * percentage
     percentageString = str(percentage) + "%"
     print("\nMostrando resultado con un " + percentageString + " de coincidencia.\n")
-
-    gui = GUI()
 
     # gui.addLabel("Imágen Original")
     # gui.addImage(photoFromCamera)
@@ -391,6 +396,47 @@ def createInterfaceWindow(photoFromCamera=None, photoFromDatabase=None, percenta
     # gui.addLabel(porcentaje coincidencia)
 
     gui.addPercentageLabel(percentageString)
-
     gui.displayWindow()
 
+def compare(img, img2=None):
+    xml = cv2.CascadeClassifier(getFileName(getCascadeXmlFile(),getXmlFolderPath()))
+    reco = cv2.face.LBPHFaceRecognizer_create()
+    gray = imageToGrayscale(img)
+    compareClass = imgCompare.CompareImagesClass(img, xml, reco, gray)
+    fN = None
+    if img2 is None:
+        print("Comparando imágen con las de la base de datos...")
+        id = compareClass.compareAll()
+        if id is not -1:
+            #img2 = loadImageByName(getFileName(str(id) + ".jpg", folder="..\\dataset\\"))
+            fN = getFileName(str(id) + ".jpg", folder="./dataset/")
+            print("\nComplete name from database= " + str(fN))
+            img2 = loadImageByName(fN)
+            compareClass.setImageCompared(img2)
+        else:
+            print("\nNo se ha podido reconocer ninguna cara...")
+            img2 = img
+            fN ="NoSuchFile"
+    else:
+        print("Comparando imágen con la imágen proporcionada...")
+        compareClass.compareSingle(img2)
+
+    p = compareClass.getPercentage()
+
+    return img2, p, fN
+
+def train():
+    trainer.train()
+
+def askTrain():
+    print("¿Quieres entrenar la red antes? ( S / N )")
+    while True:
+        s = getScan()
+        if s == "S":
+            print("Entrenando red...")
+            train()
+            break
+        elif s == "N":
+            break
+        else:
+            print("No se reconoce el comando. Utiliza [S] o [N].")

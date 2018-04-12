@@ -1,5 +1,6 @@
 
 import tkinter as tk
+from tkinter import filedialog as fd
 from PIL import Image
 from PIL import ImageTk
 import cv2
@@ -10,14 +11,21 @@ class GUIClass(object):
     panelL = None
     panelR = None
     panelB = None
+    nameFile = None
+    percentage = None
 
     def __init__(self):
         self.window = self.createWindow()
 
     def createWindow(self):
         windowObject = tk.Tk()
-        windowObject.title("Image Detection")
+        windowObject.title("Image Detection - Default Title")
         return windowObject
+
+    def setTitle(self, nF, p):
+        self.nameFile = nF
+        self.percentage = p
+        self.window.title(str(p) + " % coincidencia con imágen " + str(nF))
 
     def panelTest(self, image=None, label="Default Label", side="left"):
 
@@ -90,4 +98,16 @@ class GUIClass(object):
     def displayWindow(self):
         # Using mainloop() to show image
         self.window.mainloop()
+
+    def selectFile(self):
+
+        afw = tk.Toplevel(self.window)
+
+        #z = fd.askopenfilename()
+        afw.filename = fd.askopenfilename(initialdir="/", title="Select file",
+                                                     filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png*"), ("all files", "*.*")))
+        print ("Archivo leído: " + str(afw.filename))
+        z = afw.filename
+        afw.destroy()
+        return z
 

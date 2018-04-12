@@ -45,8 +45,6 @@ class TestClass(object):
     def testActual(self):
         print("\nTest Actual\n")
 
-        photoFromCamera = util.faceInBoxVideo()
-        photoFromDatabase = cv2.imread(util.getFileName("FOTO_DNI_1.jpg"))
-        util.createInterfaceWindow(photoFromCamera, photoFromDatabase)
+
 
         pass
