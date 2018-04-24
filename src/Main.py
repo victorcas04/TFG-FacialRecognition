@@ -3,6 +3,7 @@ from src.Test.TestingTensorflow import TestClass as tstClass
 import src.Util as util
 import src.TrainMachine.trainer as train
 #import src.FaceObjectDetectorTutorial.tfrecord as rec
+import cv2
 
 meDNI = "FOTO_DNI_1.jpg"
 meAscensor = "FOTO_ASCENSOR.jpg"
@@ -11,6 +12,9 @@ meMalaIluminacion = "FOTO_ILUMINACION.jpg"
 meUbu = "FOTO_UBUVIRTUAL_ME.jpg"
 CesarUbu = "FOTO_UBUVIRTUAL_CESAR.png"
 grupo = "FOTO_GRUPO_1.jpg"
+
+pathDatasetFullImages = "dataset"
+pathDatasetFacesImages = "facesDataset"
 
 def firstSteps(run=True):
     if run.__ne__(True):
@@ -53,19 +57,61 @@ if __name__ == "__main__":
 
     firstSteps(False)
 
-    util.askTrain()
+    #util.createCutFacesFromDatabase()
+    pathh = pathDatasetFacesImages
+
+    #util.askTrain(pathh)
+    util.train(pathh)
+
+    #util.recognizeRealTime()
+
+    #print("Exit")
+    #util.getScan()
 
     gui = util.createInterfaceWindow()
+    #h, w = util.getDisplaySize()
+    gui.fixedSize(900, 1600)
 
-    photoFromCamera = util.faceInBoxVideo()
-    #photoFromDatabase = util.loadImageByName(util.getFileName(meDNI))
-    #photoFromDatabase = util.loadImageByGUI(gui)
+    photoOriginal = util.faceInBoxVideo()
+    #photoOriginal = util.loadImageByName(util.getFileName(meDNI))
+    #photoOriginal = util.loadImageByGUI(gui)
 
-    #i, p = util.compare(photoFromCamera, photoFromDatabase)
-    i, p, n = util.compare(photoFromCamera)
+    #i, p = util.compare(photoFromCamera, photoFromDatabase, pathDatasetFullImages)
+
+    i, p, n, id = util.compare(photoOriginal, path=pathh)
+    if False:
+        n = "./facesDataset/face_cas.jpg"
+        i = util.loadImageByName(n)
+        p = 71.38
+        id = 1
+
+
+    ### util.createCutFacesFromDatabase()
+    #util.displayImages([util.cutFaceFromImage(photoOriginal), util.cutFaceFromImage(i)], ["original_face", "database_face"])
+
+    if p < 60:
+        i = util.loadFileImage(util.getFileName())
 
     gui.setTitle(n, p)
-    util.displayInterfaceWindow(gui, photoFromCamera=photoFromCamera, photoFromDatabase=i, percentage=p)
+
+    '''
+    print("\n¿Desea mostrar el resultado a partir de las imágenes originales o exclusivamente las caras detectadas?")
+    print(" - C - Imágen Recortada.\n - O - Imágen Original.\n")
+    s = util.getScan()
+    '''
+    if pathh.__eq__(pathDatasetFacesImages):#s.__eq__("C") or s.__eq__("c"):
+        #util.displayInterfaceWindow(gui, photoFromCamera=util.cutFaceFromImage(photoOriginal), photoFromDatabase=util.cutFaceFromImage(i), percentage=p)
+        pOri = util.cutFaceFromImage(photoOriginal)
+        pDet = util.cutFaceFromImage(i)
+    else:
+        #util.displayInterfaceWindow(gui, photoFromCamera=photoOriginal, photoFromDatabase=i, percentage=p)
+        name = "dataset\\" + util.loadDictIdLabels().get(id) + ".jpg"
+        i = util.loadImageByName(name)
+        pOri = photoOriginal
+        pDet = i
+        #util.displayInterfaceWindow(gui, photoFromCamera=photoOriginal, photoFromDatabase=i, percentage=p)
+
+    util.displayInterfaceWindow(gui, photoFromCamera=util.resizeFaceImage(pOri), photoFromDatabase=util.resizeFaceImage(pDet), percentage=p)
 
     '''
     names = [util.getFileName(meDNI), util.getFileName(meDNI)]

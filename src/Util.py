@@ -2,15 +2,17 @@
 #python3.6 import matplotlib.image as mpimg
 #python3.6 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib
 import decimal, math
 from pathlib import Path
-import cv2, wx, sys, time, math, os
+import cv2, wx, sys, time, math, os, ast
 import src.ImageCapture.ImageCaptureFromCamera as imgCamera
 import src.ImageCapture.ImageCaptureFromFile as imgFile
 #from src.GUI.GUI import GUIClass as GUI
 import src.GUI.GUI as GUI
 import src.TrainMachine.CompareImages as imgCompare
 import src.TrainMachine.trainer as trainer
+from PIL import Image
 #import dlib
 
 maxImagesPerRow = 4
@@ -110,6 +112,7 @@ def displayImages(images=None, titles=None):
     '''
     else:               ### Si no hay ninguna imágen no se abre ninguna ventana
         print("No hay imágenes para cargar")
+    cv2.destroyAllWindows()
 
 def displaySameImageMultipleEffects(images, titles):
     img1 = images[0]
@@ -209,6 +212,9 @@ def getCascadeXmlFile():
     # cascadeXmlFile = "haarcascade_profileface.xml"
     return cascadeXmlFile
 
+def getLoadedXml():
+    return cv2.CascadeClassifier(getFileName(getCascadeXmlFile(), getXmlFolderPath()))
+
 def printMenuFaceInBox(fromCamera=True):
 
     print("\nPress [I] for info.")
@@ -223,10 +229,9 @@ def faceInBoxVideo():
 
     imageToReturn = None
     maxInt = sys.maxsize
-    xml = getFileName(getCascadeXmlFile(), getXmlFolderPath())
 
-    print("Loading " + xml + " file...")
-    face_cascade = cv2.CascadeClassifier(xml)
+    print("Loading " + getCascadeXmlFile() + " file...")
+    face_cascade = getLoadedXml()
 
     print("Inicializando cámara...")
     cap = cv2.VideoCapture(0)
@@ -243,6 +248,7 @@ def faceInBoxVideo():
 
         sampleNum = 0
         ret, img = cap.read()
+        img = cv2.flip(img, 1)
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
@@ -292,10 +298,9 @@ def faceInBoxVideo():
 def faceInBoxImage(photoName):
 
     img = cv2.imread(photoName)
-    xml = getFileName(getCascadeXmlFile(), getXmlFolderPath())
 
-    print("Loading " + xml + " file...")
-    face_cascade = cv2.CascadeClassifier(xml)
+    print("Loading " + getCascadeXmlFile() + " file...")
+    face_cascade = getLoadedXml()
 
     print("Checking " + photoName + " size...")
     imageResizedOriginal, imageResizedOriginalString = resizeImage(img)
@@ -380,6 +385,16 @@ def mainMenu():
 def createInterfaceWindow():
     return GUI.GUIClass()
 
+def resizeFaceImage(image, aspect_ratio=4):
+    h, w = getDisplaySize()
+    #return image.resize((250, 250), Image.ANTIALIAS)
+    #return image.resize(int(h/2), int(w/3))
+    prop = w/image.shape[1]
+    newSize = (int((prop*image.shape[0])/aspect_ratio), int((prop*image.shape[1])/aspect_ratio))
+    newImage = cv2.resize(image, (newSize[1], newSize[0]))
+    return newImage
+    #return np.reshape(ImageTk.PhotoImage(image), (int(h/2), int(w/3)))
+
 ### Pass Image type objects, not Strings or others
 def displayInterfaceWindow(gui, photoFromCamera=None, photoFromDatabase=None, percentage=0.0):
 
@@ -390,53 +405,167 @@ def displayInterfaceWindow(gui, photoFromCamera=None, photoFromDatabase=None, pe
     # gui.addImage(photoFromCamera)
     # gui.addLabel("Imágen Encontrada", "right")
     # gui.addImage(photoFromDatabase, "right")
-    gui.panelTest(photoFromCamera, "Original Image", "left")
-    gui.panelTest(photoFromDatabase, "Founded Image", "right")
+
+    '''
+    cv2.imshow("ori: ", photoFromCamera)
+    cv2.waitKey(0)
+    res = resizeFaceImage(photoFromCamera)
+    cv2.imshow("res: ", res)
+    cv2.waitKey(0)
+    '''
+    gui.createTop_BottomPanel(photoFromCamera, photoFromDatabase, getDisplaySize(), percentage)
+    ###gui.createPanel(photoFromCamera, "Original Image", "left", getDisplaySize())
+    ###gui.createPanel(photoFromDatabase, "Founded Image", "right", getDisplaySize())
+
     # https://www.pyimagesearch.com/2016/05/23/opencv-with-tkinter/
     # gui.addLabel(porcentaje coincidencia)
 
-    gui.addPercentageLabel(percentageString)
+    #gui.addPercentageLabel(percentageString)
+
+    ###gui.addPercentageBar(getDisplaySize(), percentage)
     gui.displayWindow()
 
-def compare(img, img2=None):
-    xml = cv2.CascadeClassifier(getFileName(getCascadeXmlFile(),getXmlFolderPath()))
+def loadDictIdLabels2():
+
+    try:
+        f = open('./TrainMachine/recognizer/dictionary_ID_labels.txt', 'r')
+    except:
+        print("Red no entrenada. Ejecute de nuevo tras entrenar la red.")
+        return None
+
+    s = f.read()
+    #print("Diccionario de IDs y Nombres: " + str(ast.literal_eval(s)))
+    return s
+
+def loadDictIdLabels():
+    d = {}
+    with open("./TrainMachine/recognizer/dictionary_ID_labels.txt") as f:
+        for line in f:
+            (key, val) = line.split()
+            d[int(key)] = val
+    return d
+
+def compare(img, img2=None, path="dataset"):
+    xml = getLoadedXml()
     reco = cv2.face.LBPHFaceRecognizer_create()
     gray = imageToGrayscale(img)
+
     compareClass = imgCompare.CompareImagesClass(img, xml, reco, gray)
+
     fN = None
+    dictIDlabels = loadDictIdLabels()
+    label = "NSF"
+
     if img2 is None:
         print("Comparando imágen con las de la base de datos...")
         id = compareClass.compareAll()
-        if id is not -1:
+        if id > -1:
+            label = dictIDlabels.get(id)
+        print("ID: " + str(id) + " - Label: " + str(label))
+        if label is not "NSF":
             #img2 = loadImageByName(getFileName(str(id) + ".jpg", folder="..\\dataset\\"))
-            fN = getFileName(str(id) + ".jpg", folder="./dataset/")
+            fN = getFileName(str(label) + ".jpg", folder="./"+path+"/")
             print("\nComplete name from database= " + str(fN))
             img2 = loadImageByName(fN)
             compareClass.setImageCompared(img2)
         else:
             print("\nNo se ha podido reconocer ninguna cara...")
-            img2 = img
-            fN ="NoSuchFile"
+            img2 = loadFileImage(getFileName())
     else:
         print("Comparando imágen con la imágen proporcionada...")
         compareClass.compareSingle(img2)
 
     p = compareClass.getPercentage()
 
-    return img2, p, fN
+    return img2, p, fN, id
 
-def train():
-    trainer.train()
+def train(path):
+    trainer.train(path, getLoadedXml())
+    #trainer.trainDifferentYML(path, getLoadedXml())
 
-def askTrain():
+def askTrain(path):
     print("¿Quieres entrenar la red antes? ( S / N )")
     while True:
         s = getScan()
-        if s == "S":
+        if s.__eq__("S") or s.__eq__("s"):
             print("Entrenando red...")
-            train()
+            train(path)
             break
-        elif s == "N":
+        elif s.__eq__("N") or s.__eq__("n"):
             break
         else:
             print("No se reconoce el comando. Utiliza [S] o [N].")
+
+def cutFaceFromImage(image):
+
+    face_cascade = getLoadedXml()
+
+    #imageResizedOriginal, imageResizedOriginalString = resizeImage(image)
+
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    #rectangleThickness = int((imageResizedOriginal.shape[0] + imageResizedOriginal.shape[1]) / (100 * 2 * math.pi))
+    #rectangleColor = (255, 0, 0)
+
+    crop_img = image
+
+    if len(faces) > 0:
+        x, y, w, h = faces[0]
+        #face = cv2.rectangle(image, (x, y), (x + w, y + h), rectangleColor, rectangleThickness)
+        crop_img = image[y:y + h, x:x + w]
+        #cv2.imshow("cropped", crop_img)
+        #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+    return crop_img
+
+def createCutFacesFromDatabase():
+    if not os.path.exists('./facesDataset'):
+        os.makedirs('./facesDataset')
+    images = os.listdir('dataset')
+
+    for i in images:
+        cutFace = cutFaceFromImage(loadImageByName('dataset/' + i))
+        cv2.imwrite('./facesDataset/face_'+i, cutFace)
+
+def recognizeRealTime():
+    maxInt = sys.maxsize
+
+    recognizer = cv2.face.LBPHFaceRecognizer_create()
+    recognizer.read('TrainMachine/recognizer/trainedData.yml')
+
+    faceCascade = getLoadedXml()
+
+    cam = cv2.VideoCapture(0)
+
+    cam.set(cv2.CAP_PROP_FPS, maxInt)
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, maxInt)
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH, maxInt)
+    time.sleep(2)
+
+    #font = cv2.cv.InitFont(cv2.cv.CV_FONT_HERSHEY_SIMPLEX, 1, 1, 0, 1, 1)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+
+    while True:
+        ret, im = cam.read()
+        gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+        faces = faceCascade.detectMultiScale(gray, 1.2, 5)
+
+        if len(faces) > 0:
+            x, y, w, h = faces[0]
+
+            cv2.rectangle(im, (x - 50, y - 50), (x + w + 50, y + h + 50), (225, 0, 0), 2)
+
+            cv2.imshow("a", im)
+            cv2.waitKey(0)
+
+            Id, conf = recognizer.predict(gray[y:y + h, x:x + w])
+            cv2.PutText(cv2.cv.fromarray(im), str(Id), (x, y + h), font, 255)
+            #cv2.putText(img, "Cat", (x, y - 10), font, 0.55, (0, 255, 0), 1)
+
+        cv2.imshow('im', im)
+        if cv2.waitKey(10) & 0xFF == ord('q'):
+            break
+
+    cam.release()
+    cv2.destroyAllWindows()
+
