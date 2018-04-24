@@ -1,0 +1,7 @@
+0 face_alexandra_dadario
+1 face_cas
+2 face_eva
+3 face_john_cena
+4 face_katheryn_winnick
+5 face_madds_mikkelsen
+6 face_natalie_dormer
