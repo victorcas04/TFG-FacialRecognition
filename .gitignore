@@ -102,8 +102,5 @@ ENV/
 
 # my ignores
 .idea/
-ClassDiagram/
-FlowCharts/
-sources/
+Other/
 *.iml
-*.xml
