@@ -33,5 +33,7 @@ class CompareImagesClass(object):
 
         id, conf = recognizer.predict(gray[y:y + h, x:x + w])
 
+        conf = 100-conf
+
         percentage = float("{0:.2f}".format(conf))
         return id, percentage

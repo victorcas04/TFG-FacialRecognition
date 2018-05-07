@@ -34,7 +34,6 @@ class GUIClass(object):
         return windowObject
 
     def setTitle(self, name, p):
-        self.name = name
         self.percentage = p
         if name is not None:
             self.title = str(p) + " % de coincidencia con " + str(name)

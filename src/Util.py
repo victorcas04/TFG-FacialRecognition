@@ -1,7 +1,7 @@
 
 import cv2, wx, sys, time, math, os
-import src.TrainMachine.CompareImages as imgCompare
-import src.TrainMachine.trainer as trainer
+import TrainMachine.CompareImages as imgCompare
+import TrainMachine.trainer as trainer
 
 datasetPath = '../sources/dataset'
 facesDatasetPath = '../sources/facesDataset'
@@ -61,7 +61,7 @@ def printMenuFaceInBox(fromCamera=True):
         print("Pulsa [C] para capturar el frame actual y cerrar la cámara.\n")
 
 
-def faceInBoxVideo():
+def faceInBoxVideo(indexCamera):
 
     imageToReturn = None
     maxInt = sys.maxsize
@@ -70,10 +70,17 @@ def faceInBoxVideo():
     face_cascade = getLoadedXml()
 
     print("Inicializando cámara...")
-    cap = cv2.VideoCapture(0)
+
+    cap = cv2.VideoCapture(indexCamera)
+
+    if not cap.isOpened():
+        print("No se ha podido iniciar la cámara.")
+        return loadImage()
+
     cap.set(cv2.CAP_PROP_FPS, maxInt)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, maxInt)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, maxInt)
+
     # Esperamos dos segundos para que la cámara termine de inicializarse y no tomar datos basura
     time.sleep(2)
 
@@ -82,9 +89,9 @@ def faceInBoxVideo():
     printMenuFaceInBox()
 
     while True:
-
         numFaces = 0
         ret, img = cap.read()
+
         img = cv2.flip(img, 1)
         gray = imageToGrayscale(img)
         faces = getFacesMultiScale(gray, face_cascade)
@@ -98,14 +105,15 @@ def faceInBoxVideo():
 
         cv2.imshow("Imagen en tiempo real", img)
         k = cv2.waitKey(1)
-        
+
         ### Press [I] for info.
         if k == ord('i'):
-            print("\n - " + str(numFaces) + " - person(s) recognized.")
+            print("\nSe han encontrado " + str(numFaces) + " caras en la imágen.")
             printMenuFaceInBox()
 
         ### Press [Q] to exit.
         if k == ord('q'):
+            imageToReturn = loadImage()
             break
 
         ### Press [P] to pause camera reading.
@@ -154,9 +162,9 @@ def compare(img, path=facesDatasetPath):
 
     compareClass = imgCompare.CompareImagesClass(xml, reco)
     dictIDlabels = loadDictIdLabels()
-    label = "NSF"   # No Such File
+    label = None   # NSF: No Such File
 
-    print("Comparando imágen con las de la base de datos...")
+    print("\nComparando imágen con las de la base de datos...")
 
     gray = imageToGrayscale(img)
     id, p = compareClass.compareAll(gray)
@@ -166,7 +174,7 @@ def compare(img, path=facesDatasetPath):
         label = imgsOr[id].split(".")[0]
     print("id= " + str(id) + "   ---   etiqueta= " + str(label) + "   ---   coincidencia= " + str(p))
 
-    if label is not "NSF":
+    if label is not None:   # NSF
         imgRet = loadImage(getFileName(str(dictIDlabels.get(id)) + ".jpg", folder=path))
     else:
         print("\nNo se ha podido reconocer ninguna cara.")
@@ -202,17 +210,19 @@ def cutFaceFromImage(image):
     gray = imageToGrayscale(image)
     faces = getFacesMultiScale(gray, face_cascade)
 
-    crop_img = None
+    cutted = False
+    crop_img = image
 
     if len(faces) == 1:
         x, y, w, h = faces[0]
         crop_img = image[y:y + h, x:x + w]
+        cutted = True
     elif len(faces) > 1:
         print("WARNING: Imágen con demasiados rostros.")
     else:
         print("WARNING: No se han detectado rostros.")
 
-    return crop_img
+    return cutted, crop_img
 
 def createCutFacesFromDatabase():
 
@@ -229,6 +239,6 @@ def createCutFacesFromDatabase():
 
     images = os.listdir(datasetPath)
     for i in images:
-        cutFace = cutFaceFromImage(loadImage(getFileName(i, datasetPath)))
-        if cutFace is not None:
+        cutted, cutFace = cutFaceFromImage(loadImage(getFileName(i, datasetPath)))
+        if cutted is True:
             cv2.imwrite(getFileName('face_' + i, folder), cutFace)

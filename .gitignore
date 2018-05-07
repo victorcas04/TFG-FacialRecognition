@@ -103,4 +103,5 @@ ENV/
 # my ignores
 .idea/
 Other/
+PruebasFicherosBasura/
 *.iml
