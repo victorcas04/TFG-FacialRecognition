@@ -10,6 +10,7 @@ xmlFile = 'haarcascade_frontalface_default.xml'
 recognizerFolderPath = 'TrainMachine/recognizer'
 ymlFile = 'trainedData.yml'
 recognizerDict = 'dictionary_ID_labels.txt'
+recognizerInfo = 'info.txt'
 
 def getScan():
     ri = input()
@@ -18,7 +19,7 @@ def getScan():
 def getDisplaySize():
     app = wx.App(False)
     w, h = wx.GetDisplaySize()
-    return w, h
+    return h, w
 
 def getFileName(defaultFile="default.png", folder="../sources"):
     return folder + '/' + defaultFile
@@ -133,9 +134,9 @@ def faceInBoxVideo(indexCamera):
 
 def resizeFaceImage(image, aspect_ratio=2):
     h, w = getDisplaySize()
-    prop = w/image.shape[1]
-    newSize = (int((prop*image.shape[0])/aspect_ratio), int((prop*image.shape[1])/aspect_ratio))
-    newImage = cv2.resize(image, (newSize[1], newSize[0]))
+    prop = h/image.shape[1]
+    newSize = (int((prop*image.shape[1])/aspect_ratio), int((prop*image.shape[0])/aspect_ratio))
+    newImage = cv2.resize(image, (newSize[0], newSize[1]))
     return newImage
 
 def displayInterfaceWindow(gui, photoFromCamera=None, photoFromDatabase=None, percentage=0.0):
@@ -143,7 +144,7 @@ def displayInterfaceWindow(gui, photoFromCamera=None, photoFromDatabase=None, pe
     percentageString = str(percentage) + "%"
     print("\nMostrando resultado con un " + percentageString + " de coincidencia.\n")
 
-    gui.createTop_BottomPanel(photoFromCamera, photoFromDatabase, getDisplaySize(), percentage)
+    gui.createTop_BottomPanel(photoFromCamera, photoFromDatabase, percentage)
     gui.displayWindow()
 
 # Podríamos guardar el diccionario en una variable desde trainer.py, pero de este forma nos aseguramos tener el
@@ -152,9 +153,27 @@ def loadDictIdLabels():
     d = {}
     with open(recognizerFolderPath + '/' + recognizerDict) as f:
         for line in f:
-            (k, v) = line.split()
-            d[int(k)] = v
+            p = line.split()
+            d[int(p[0])] = p[1]
     return d
+
+def loadInfo(id):
+    i = 0
+    name = "Imágen por defecto"; age = ""; birth_place = ""; job = ""
+    if id > -1:
+        with open(recognizerFolderPath + '/' + recognizerInfo) as f:
+            for line in f:
+                if i < id:
+                    i+=1
+                else:
+                    # Ejemplo de lo que nos encontramos en este fichero
+                    # Alexandra Daddario, 32, Nueva York, Actriz
+                    # IMPORTANTE: la línea cno la información debe estar en la misma posición (respecto al resto) que la imágen correspondiente
+                    p = line.split(',')
+                    name = p[0]; age = p[1]; birth_place = p[2]; job = p[3]
+                    break
+    info = {"name": name, "age": age, "birth_place": birth_place, "job": job}
+    return info
 
 def compare(img, path=facesDatasetPath):
     xml = getLoadedXml()
@@ -172,6 +191,7 @@ def compare(img, path=facesDatasetPath):
     if id > -1:
         imgsOr = os.listdir(datasetPath)
         label = imgsOr[id].split(".")[0]
+
     print("id= " + str(id) + "   ---   etiqueta= " + str(label) + "   ---   coincidencia= " + str(p))
 
     if label is not None:   # NSF
@@ -180,7 +200,7 @@ def compare(img, path=facesDatasetPath):
         print("\nNo se ha podido reconocer ninguna cara.")
         imgRet = loadImage(getFileName())
 
-    return imgRet, p, label
+    return imgRet, p, label, loadInfo(id)
 
 def train(path):
     return trainer.train(path)
@@ -192,7 +212,7 @@ def askTrain(path):
     print("¿Se han añadido nuevas imágenes o quieres reentrenar la red de nuevo? ( S / N )")
     c = getScan()
 
-    if not c.__eq__("N") and not c.__eq__("n"):
+    if c.__eq__("S") or c.__eq__("s"):
         print("\nCreando imágenes de reconocimiento a partir de la base de datos...")
         print("Entrenando red...\n")
 

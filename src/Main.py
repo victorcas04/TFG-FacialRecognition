@@ -5,11 +5,10 @@ import wx
 
 pathDatasetFullImages = "../sources/dataset"
 pathDatasetFacesImages = "../sources/facesDataset"
-imageByCamera = True
 #  [0] para la webcam integrada en el portatil
 #  [1] para la cámara externa
 # [-1] para menú
-camera = 1
+camera = 0
 
 if __name__ == "__main__":
 
@@ -18,14 +17,14 @@ if __name__ == "__main__":
     # Dependiendo de las imágenes que vayamos a usar usamos un path u otro
     pathh = pathDatasetFacesImages
 
-    util.askTrain(pathh)
+    #util.askTrain(pathh)
 
     guiMain = gui.getInstance()
-    app = wx.App(False)
-    w, h = wx.GetDisplaySize()
+    h, w = util.getDisplaySize()
     guiMain.fixedSize(h, w)
 
-    if imageByCamera:
+    print("\n¿Quieres utilizar una imágen capturada con la cámara [C] o desde fichero [F]?")
+    if util.getScan().__eq__("C"):
         # Sacamos la imágen que queremos identificar desde la cámara
         photoOriginal = util.faceInBoxVideo(camera)
     else:
@@ -33,10 +32,13 @@ if __name__ == "__main__":
         # C:\Users\victo\Desktop\DEVELOPMENT\projects\PycharmProjects\TFG-FacialRecognition\TFG-FacialRecognition\sources\facesDataset
         photoOriginal = util.loadImageByGUI(guiMain)
 
-    # Imágen resultado / Porcentaje comparación / Nombre imágen resultado
-    i, p, n = util.compare(photoOriginal, path=pathh)
+    # Uncomment for test purposes
+    # photoOriginal=util.loadImage(util.getFileName("face_cas.jpg", "../sources/facesDataset"))
 
-    guiMain.setTitle(n, p)
+    # Imágen resultado / Porcentaje comparación / Nombre imágen resultado
+    i, p, n, inf = util.compare(photoOriginal, path=pathh)
+
+    guiMain.initialize(n, p, inf)
 
     # Si nuestra mejor coincidencia no supera el umbral especificado, mostramos una imágen por defecto con un mensaje indicándonoslo.
     # Hay imágenes que al compararlas quedna números negativos al no encontrar resultados o resultados muy malos, por eso ponemos el umbral tan bajo.
