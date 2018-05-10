@@ -1,4 +1,6 @@
 
+# encoding: utf-8
+
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image
@@ -13,18 +15,18 @@ class GUIClass(object):
     textSize = 22
     textSizeProgressBar = 18
 
+    def __init__(self):
+        if GUIClass.__instance != None:
+            raise Exception("Esta clase es un Singleton. Accede a ella a traves del getInstance()")
+        else:
+            GUIClass.__instance = self
+            self.window = self.createWindow()
+
     @staticmethod
     def getInstance():
         if GUIClass.__instance == None:
             GUIClass()
         return GUIClass.__instance
-
-    def __init__(self):
-        if GUIClass.__instance != None:
-            raise Exception("This class is a singleton!")
-        else:
-            GUIClass.__instance = self
-            self.window = self.createWindow()
 
     def fixedSize(self, hDisplay, wDisplay):
         self.width = wDisplay-int(wDisplay/10)
@@ -35,7 +37,7 @@ class GUIClass(object):
 
     def createWindow(self):
         windowObject = tk.Tk()
-        windowObject.title("Image Detection - Default Title")
+        windowObject.title("GUI - Titulo por defecto")
         return windowObject
 
     def getInfo(self, param):
@@ -53,7 +55,7 @@ class GUIClass(object):
 
     def addPercentageLabel(self, percentage="0%"):
 
-        percentageText = "Imágenes con un " + percentage + " de coincidencia"
+        percentageText = "Imagenes con un " + percentage + " de coincidencia"
 
         panel = self.panelB
         if panel is None:
@@ -62,6 +64,7 @@ class GUIClass(object):
         else:
             panel.configure(text=percentageText)
 
+    # TODO - solo una ventana
     def createPopUpInfo(self):
 
         popup = tk.Toplevel(self.window)
@@ -69,11 +72,11 @@ class GUIClass(object):
 
         popup.rowconfigure(0, weight=1); popup.rowconfigure(1, weight=1); popup.rowconfigure(2, weight=1); popup.rowconfigure(3, weight=1); popup.rowconfigure(4, weight=1)
 
-        popup.wm_title("Más información acerca de " + str(self.namePhoto))
+        popup.wm_title("Mas informacion acerca de " + str(self.namePhoto))
         nameL = tk.Label(popup, text="Nombre: " + self.getInfo("name"), font=(self.textFont, self.textSize))
         ageL = tk.Label(popup, text="Edad: " + self.getInfo("age"), font=(self.textFont, self.textSize))
         bpL = tk.Label(popup, text="Lugar de nacimiento: " + self.getInfo("birth_place"), font=(self.textFont, self.textSize))
-        jobL = tk.Label(popup, text="Ocupación: " + self.getInfo("job"), font=(self.textFont, self.textSize))
+        jobL = tk.Label(popup, text="Ocupacion: " + self.getInfo("job"), font=(self.textFont, self.textSize))
 
         backButton = tk.Button(popup, text="Atras", command=popup.destroy)
         backButton.config(font=(self.textFont, self.textSizeProgressBar))
@@ -95,7 +98,7 @@ class GUIClass(object):
         imgCFromArray = Image.fromarray(imgCRecolor)
         imgC = ImageTk.PhotoImage(imgCFromArray)
 
-        myLabelC = tk.Label(myFrame, compound=tk.BOTTOM, image=imgC, text="Camera Image")
+        myLabelC = tk.Label(myFrame, compound=tk.BOTTOM, image=imgC, text="Imagen Original")
         myLabelC.grid(row=0, column = 0, sticky=tk.W)
         myLabelC.image = imgC
         myLabelC.config(font=(self.textFont, self.textSize))
@@ -113,7 +116,7 @@ class GUIClass(object):
         s.theme_use("default")
         s.configure("TProgressbar", thickness=self.height/10)
 
-        buttonInfoLabel = tk.Button(myFrame, text="Más Información...", command=self.createPopUpInfo)
+        buttonInfoLabel = tk.Button(myFrame, text="Mas Informacion...", command=self.createPopUpInfo)
         buttonInfoLabel.config(font=(self.textFont, self.textSizeProgressBar))
         buttonInfoLabel.grid(row=1, columnspan=2, pady=(self.height/30, 0))
 
@@ -134,7 +137,7 @@ class GUIClass(object):
 
     def selectFile(self):
 
-        print("Selecciona una imágen.")
+        print("Selecciona una imagen...")
 
         afw = tk.Toplevel(self.window)
         afw.filename = fd.askopenfilename(initialdir="/", title="Select file",

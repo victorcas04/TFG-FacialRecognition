@@ -1,7 +1,8 @@
 
+# encoding: utf-8
+
 import Util as util
 from GUI import GUIClass as gui
-import wx
 
 pathDatasetFullImages = "../sources/dataset"
 pathDatasetFacesImages = "../sources/facesDataset"
@@ -17,7 +18,7 @@ if __name__ == "__main__":
     # Dependiendo de las imágenes que vayamos a usar usamos un path u otro
     pathh = pathDatasetFacesImages
 
-    #util.askTrain(pathh)
+    util.askTrain(pathh)
 
     guiMain = gui.getInstance()
     h, w = util.getDisplaySize()

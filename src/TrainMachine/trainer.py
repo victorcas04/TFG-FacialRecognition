@@ -1,4 +1,6 @@
 
+# encoding: utf-8
+
 ### http://www.python36.com/face-recognition-using-opencv-part-2/
 
 import os, cv2

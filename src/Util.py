@@ -1,4 +1,6 @@
 
+# encoding: utf-8
+
 import cv2, wx, sys, time, math, os
 import TrainMachine.CompareImages as imgCompare
 import TrainMachine.trainer as trainer
@@ -25,11 +27,11 @@ def getFileName(defaultFile="default.png", folder="../sources"):
     return folder + '/' + defaultFile
 
 def saveImage(image, path=getFileName("savedDefault.png")):
-    print("\nGuardando imágen en: " + str(path) + "\n")
+    print("\nGuardando imagen en: " + str(path) + "\n")
     cv2.imwrite(path, image);
 
 def loadImage(fullName=getFileName()):
-    print("Cargando imágen " + str(fullName))
+    print("Cargando imagen " + str(fullName))
     return cv2.imread(fullName)
 
 def loadImageByGUI(gui):
@@ -54,12 +56,12 @@ def getFacesMultiScale(gray, faceCascade):
 def printMenuFaceInBox(fromCamera=True):
 
     print("\nOPCIONES:\n")
-    print("Pulsa [I] para información general.")
+    print("Pulsa [I] para informacion general.")
     print("Pulsa [Q] para salir.")
     if fromCamera:
-        print("Pulsa [P] para pausar la cámara.")
-        print("Pulsa [SPACE] para reanudar la cámara (sólo si estaba pausada).")
-        print("Pulsa [C] para capturar el frame actual y cerrar la cámara.\n")
+        print("Pulsa [P] para pausar la camara.")
+        print("Pulsa [SPACE] para reanudar la camara (solo si estaba pausada).")
+        print("Pulsa [C] para capturar el frame actual y cerrar la camara.\n")
 
 
 def faceInBoxVideo(indexCamera):
@@ -70,12 +72,12 @@ def faceInBoxVideo(indexCamera):
     print("Cargando fichero " + xmlFolderPath + '/' + xmlFile + "...")
     face_cascade = getLoadedXml()
 
-    print("Inicializando cámara...")
+    print("Inicializando camara...")
 
     cap = cv2.VideoCapture(indexCamera)
 
     if not cap.isOpened():
-        print("No se ha podido iniciar la cámara.")
+        print("No se ha podido iniciar la camara.")
         return loadImage()
 
     cap.set(cv2.CAP_PROP_FPS, maxInt)
@@ -85,7 +87,7 @@ def faceInBoxVideo(indexCamera):
     # Esperamos dos segundos para que la cámara termine de inicializarse y no tomar datos basura
     time.sleep(2)
 
-    print("Mostrando imágen en tiempo real...")
+    print("Mostrando imagen en tiempo real...")
 
     printMenuFaceInBox()
 
@@ -109,7 +111,7 @@ def faceInBoxVideo(indexCamera):
 
         ### Press [I] for info.
         if k == ord('i'):
-            print("\nSe han encontrado " + str(numFaces) + " caras en la imágen.")
+            print("\nSe han encontrado " + str(numFaces) + " caras en la imagen.")
             printMenuFaceInBox()
 
         ### Press [Q] to exit.
@@ -159,7 +161,7 @@ def loadDictIdLabels():
 
 def loadInfo(id):
     i = 0
-    name = "Imágen por defecto"; age = ""; birth_place = ""; job = ""
+    name = "Imagen por defecto"; age = ""; birth_place = ""; job = ""
     if id > -1:
         with open(recognizerFolderPath + '/' + recognizerInfo) as f:
             for line in f:
@@ -183,7 +185,7 @@ def compare(img, path=facesDatasetPath):
     dictIDlabels = loadDictIdLabels()
     label = None   # NSF: No Such File
 
-    print("\nComparando imágen con las de la base de datos...")
+    print("\nComparando imagen con las de la base de datos...")
 
     gray = imageToGrayscale(img)
     id, p = compareClass.compareAll(gray)
@@ -209,11 +211,11 @@ def askTrain(path):
 
     trained = False
 
-    print("¿Se han añadido nuevas imágenes o quieres reentrenar la red de nuevo? ( S / N )")
+    print("Si hay nuevas imagenes o quieres entrenar la red de nuevo pulsa [S]")
     c = getScan()
 
     if c.__eq__("S") or c.__eq__("s"):
-        print("\nCreando imágenes de reconocimiento a partir de la base de datos...")
+        print("\nCreando imagenes de reconocimiento a partir de la base de datos...")
         print("Entrenando red...\n")
 
         createCutFacesFromDatabase()
@@ -222,7 +224,7 @@ def askTrain(path):
         if not trained:
             print("WARNING: No se ha podido entrenar la red.")
 
-    print("\n" + ("Se utilizará el fichero " + ymlFile + " creado.") if trained else ("\nSe utilizará el fichero " + ymlFile + " existente."))
+    print("\n" + ("Se utilizara el fichero " + ymlFile + " creado.") if trained else ("\nSe utilizara el fichero " + ymlFile + " existente."))
 
 def cutFaceFromImage(image):
 
@@ -238,7 +240,7 @@ def cutFaceFromImage(image):
         crop_img = image[y:y + h, x:x + w]
         cutted = True
     elif len(faces) > 1:
-        print("WARNING: Imágen con demasiados rostros.")
+        print("WARNING: Imagen con demasiados rostros.")
     else:
         print("WARNING: No se han detectado rostros.")
 
