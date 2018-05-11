@@ -1,21 +1,27 @@
 
 # encoding: utf-8
 
-import cv2, wx, sys, time, math, os
+import cv2, sys, time, math, os, wx
 import TrainMachine.CompareImages as imgCompare
 import TrainMachine.trainer as trainer
 
-datasetPath = '../sources/dataset'
-facesDatasetPath = '../sources/facesDataset'
-xmlFolderPath = '../sources/xml'
+fromExecutable=imgCompare.CompareImagesClass.fromExecutable
+delimiter = imgCompare.CompareImagesClass.delimiter
+
+datasetPath = fromExecutable+'..'+delimiter+'sources'+delimiter+'dataset'
+facesDatasetPath = fromExecutable+'..'+delimiter+'sources'+delimiter+'facesDataset'
+xmlFolderPath = fromExecutable+'..'+delimiter+'sources'+delimiter+'xml'
 xmlFile = 'haarcascade_frontalface_default.xml'
-recognizerFolderPath = 'TrainMachine/recognizer'
+recognizerFolderPath = fromExecutable+'TrainMachine'+delimiter+'recognizer'
 ymlFile = 'trainedData.yml'
 recognizerDict = 'dictionary_ID_labels.txt'
 recognizerInfo = 'info.txt'
 
 def getScan():
-    ri = input()
+    if fromExecutable.__eq__('..'+delimiter):
+        ri = raw_input()
+    else:
+        ri = input()
     return ri
 
 def getDisplaySize():
@@ -23,8 +29,8 @@ def getDisplaySize():
     w, h = wx.GetDisplaySize()
     return h, w
 
-def getFileName(defaultFile="default.png", folder="../sources"):
-    return folder + '/' + defaultFile
+def getFileName(defaultFile="default.png", folder="..\\sources"):
+    return fromExecutable + folder + '\\' + defaultFile
 
 def saveImage(image, path=getFileName("savedDefault.png")):
     print("\nGuardando imagen en: " + str(path) + "\n")
@@ -42,6 +48,7 @@ def imageToGrayscale(image):
 
 def getLoadedXml():
     return cv2.CascadeClassifier(getFileName(xmlFile, xmlFolderPath))
+
 
 def getLoadedYml():
     recognizer = cv2.face.LBPHFaceRecognizer_create()
@@ -69,7 +76,7 @@ def faceInBoxVideo(indexCamera):
     imageToReturn = None
     maxInt = sys.maxsize
 
-    print("Cargando fichero " + xmlFolderPath + '/' + xmlFile + "...")
+    print("Cargando fichero " + xmlFolderPath + '\\' + xmlFile + "...")
     face_cascade = getLoadedXml()
 
     print("Inicializando camara...")
@@ -153,7 +160,7 @@ def displayInterfaceWindow(gui, photoFromCamera=None, photoFromDatabase=None, pe
 #   diccionario guardado en caso de no re-entrenar la red en cada ejecución.
 def loadDictIdLabels():
     d = {}
-    with open(recognizerFolderPath + '/' + recognizerDict) as f:
+    with open(recognizerFolderPath + '\\' + recognizerDict) as f:
         for line in f:
             p = line.split()
             d[int(p[0])] = p[1]
@@ -161,9 +168,9 @@ def loadDictIdLabels():
 
 def loadInfo(id):
     i = 0
-    name = "Imagen por defecto"; age = ""; birth_place = ""; job = ""
+    name = "Imagen por defecto"; age = " - "; birth_place = " - "; job = " - "
     if id > -1:
-        with open(recognizerFolderPath + '/' + recognizerInfo) as f:
+        with open(recognizerFolderPath + '\\' + recognizerInfo) as f:
             for line in f:
                 if i < id:
                     i+=1

@@ -7,7 +7,11 @@ import os, cv2
 import numpy as np
 from PIL import Image
 
-recognizerPath = 'TrainMachine/recognizer'
+delimiter = '\\'
+#fromExecutable='..'+delimiter
+fromExecutable = ""
+
+recognizerPath = fromExecutable+'TrainMachine'+delimiter+'recognizer'
 recognizerFile = 'trainedData.yml'
 dictFile = 'dictionary_ID_labels.txt'
 
@@ -37,9 +41,9 @@ def train(path):
 
     if len(ID_labels) >= 2:
         recognizer.train(faces, np.fromiter(ID_labels.keys(), dtype=int))
-        recognizer.write(recognizerPath + '/' + recognizerFile)
+        recognizer.write(recognizerPath + delimiter + recognizerFile)
 
-        with open(recognizerPath + '/' + dictFile, 'w') as f:
+        with open(recognizerPath + delimiter + dictFile, 'w') as f:
             for k in ID_labels.keys():
                 s = str(k) + " " + ID_labels.get(k) + "\n"
                 f.write(s)

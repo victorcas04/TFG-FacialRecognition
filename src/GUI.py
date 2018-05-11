@@ -64,11 +64,13 @@ class GUIClass(object):
         else:
             panel.configure(text=percentageText)
 
-    # TODO - solo una ventana
     def createPopUpInfo(self):
 
         popup = tk.Toplevel(self.window)
         popup.resizable(width=False, height=False)
+
+        # Nos permite evitar usar la ventana principal mientras esté esta abierta
+        popup.grab_set()
 
         popup.rowconfigure(0, weight=1); popup.rowconfigure(1, weight=1); popup.rowconfigure(2, weight=1); popup.rowconfigure(3, weight=1); popup.rowconfigure(4, weight=1)
 

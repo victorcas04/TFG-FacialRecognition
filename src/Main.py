@@ -4,8 +4,11 @@
 import Util as util
 from GUI import GUIClass as gui
 
-pathDatasetFullImages = "../sources/dataset"
-pathDatasetFacesImages = "../sources/facesDataset"
+fromExecutable=util.fromExecutable
+delimiter = util.delimiter
+
+pathDatasetFullImages = fromExecutable+'..'+delimiter+'sources'+delimiter+'dataset'
+pathDatasetFacesImages = fromExecutable+'..'+delimiter+'sources'+delimiter+'facesDataset'
 #  [0] para la webcam integrada en el portatil
 #  [1] para la cámara externa
 # [-1] para menú
@@ -13,19 +16,21 @@ camera = 0
 
 if __name__ == "__main__":
 
-    print("\n\nTFG - Facial Recognition - Víctor de Castro Hurtado\n\n")
+    print("\n\nTFG - Facial Recognition - Victor de Castro Hurtado\n\n")
 
     # Dependiendo de las imágenes que vayamos a usar usamos un path u otro
     pathh = pathDatasetFacesImages
 
     util.askTrain(pathh)
 
+    print("\nQuieres utilizar una imagen capturada con la camara [C] o desde fichero [F]?")
+    c = util.getScan()
+
     guiMain = gui.getInstance()
     h, w = util.getDisplaySize()
     guiMain.fixedSize(h, w)
 
-    print("\n¿Quieres utilizar una imágen capturada con la cámara [C] o desde fichero [F]?")
-    if util.getScan().__eq__("C"):
+    if c.__eq__("C") or c.__eq__("c"):
         # Sacamos la imágen que queremos identificar desde la cámara
         photoOriginal = util.faceInBoxVideo(camera)
     else:
@@ -34,7 +39,7 @@ if __name__ == "__main__":
         photoOriginal = util.loadImageByGUI(guiMain)
 
     # Uncomment for test purposes
-    # photoOriginal=util.loadImage(util.getFileName("face_cas.jpg", "../sources/facesDataset"))
+    # photoOriginal=util.loadImage(util.getFileName("face_cas.jpg", pathDatasetFacesImages))
 
     # Imágen resultado / Porcentaje comparación / Nombre imágen resultado
     i, p, n, inf = util.compare(photoOriginal, path=pathh)

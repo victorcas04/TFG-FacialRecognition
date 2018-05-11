@@ -5,7 +5,11 @@
 
 class CompareImagesClass(object):
 
-    recognizerPath = 'TrainMachine/recognizer'
+    delimiter = '\\'
+    #fromExecutable='..'+delimiter
+    fromExecutable = ""
+
+    recognizerPath = fromExecutable+'TrainMachine'+delimiter+'recognizer'
     recognizerFile = 'trainedData.yml'
 
     def __init__(self, xml, reco):
@@ -14,7 +18,7 @@ class CompareImagesClass(object):
 
     def compareAll(self, gray):
 
-        fname = self.recognizerPath + '/' + self.recognizerFile
+        fname = self.recognizerPath + self.delimiter + self.recognizerFile
         face_cascade = self.xml
         recognizer = self.reco
 
