@@ -1,4 +1,0 @@
-Las redes neurales convulacionales se basan en las versiones biológicas de los perceptrones multicapa (MLP en inglés), y consisten en varias capas o 'layers', en cada una de las cuales existen una serie de nodos con información. Estos nodos se conectan con cada uno de los nodos de la capa siguiente, quedando todos los nodos interconectados entre una capa y otra.
-
-TODO:
-Comparar machine-learning con visión por computación.
