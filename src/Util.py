@@ -1,24 +1,22 @@
 
 # encoding: utf-8
 
+from __future__ import division
 import cv2, sys, time, math, os, wx
-import TrainMachine.CompareImages as imgCompare
-import TrainMachine.trainer as trainer
 
-fromExecutable=imgCompare.CompareImagesClass.fromExecutable
-delimiter = imgCompare.CompareImagesClass.delimiter
-
-datasetPath = fromExecutable+'..'+delimiter+'sources'+delimiter+'dataset'
-facesDatasetPath = fromExecutable+'..'+delimiter+'sources'+delimiter+'facesDataset'
-xmlFolderPath = fromExecutable+'..'+delimiter+'sources'+delimiter+'xml'
+fromExecutable = False
+delimiter = '\\'
+datasetPath = '..'+delimiter+'sources'+delimiter+'dataset'
+facesDatasetPath = '..'+delimiter+'sources'+delimiter+'facesDataset'
+xmlFolderPath = '..'+delimiter+'sources'+delimiter+'xml'
 xmlFile = 'haarcascade_frontalface_default.xml'
-recognizerFolderPath = fromExecutable+'TrainMachine'+delimiter+'recognizer'
+recognizerFolderPath = ".." + delimiter + 'sources' + delimiter + 'recognizer'
 ymlFile = 'trainedData.yml'
 recognizerDict = 'dictionary_ID_labels.txt'
 recognizerInfo = 'info.txt'
 
 def getScan():
-    if fromExecutable.__eq__('..'+delimiter):
+    if fromExecutable:
         ri = raw_input()
     else:
         ri = input()
@@ -30,7 +28,7 @@ def getDisplaySize():
     return h, w
 
 def getFileName(defaultFile="default.png", folder="..\\sources"):
-    return fromExecutable + folder + '\\' + defaultFile
+    return folder + delimiter + defaultFile
 
 def saveImage(image, path=getFileName("savedDefault.png")):
     print("\nGuardando imagen en: " + str(path) + "\n")
@@ -46,19 +44,22 @@ def loadImageByGUI(gui):
 def imageToGrayscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+def imageToThreshold(image):
+    imgB = cv2.medianBlur(imageToGrayscale(image), 5)
+    th = cv2.adaptiveThreshold(imgB, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    return th
+
 def getLoadedXml():
     return cv2.CascadeClassifier(getFileName(xmlFile, xmlFolderPath))
 
+def getReco():
+    return cv2.face.LBPHFaceRecognizer_create()
 
-def getLoadedYml():
-    recognizer = cv2.face.LBPHFaceRecognizer_create()
-    try:
-        recognizer.read(getFileName(ymlFile, recognizerFolderPath))
-    except:
-        print("Red no entrenada. Ejecute de nuevo tras entrenar la red.")
+def getLoadedYml(recognizer = getReco()):
+    recognizer.read(getFileName(ymlFile, recognizerFolderPath))
 
 def getFacesMultiScale(gray, faceCascade):
-    return faceCascade.detectMultiScale(gray, 1.2, 5, minSize=(int(gray.shape[0]/10), int(gray.shape[1]/10)))
+    return faceCascade.detectMultiScale(gray, 1.2, 5, minSize=(gray.shape[0]//10, gray.shape[1]//10))
 
 def printMenuFaceInBox(fromCamera=True):
 
@@ -70,13 +71,15 @@ def printMenuFaceInBox(fromCamera=True):
         print("Pulsa [SPACE] para reanudar la camara (solo si estaba pausada).")
         print("Pulsa [C] para capturar el frame actual y cerrar la camara.\n")
 
+def faceInBoxVideo(indexCamera=-1):
 
-def faceInBoxVideo(indexCamera):
+    # Muestra informacion sobre la version de cv
+    #print(cv2.getBuildInformation())
 
     imageToReturn = None
     maxInt = sys.maxsize
 
-    print("Cargando fichero " + xmlFolderPath + '\\' + xmlFile + "...")
+    print("Cargando fichero " + xmlFolderPath + delimiter + xmlFile + "...")
     face_cascade = getLoadedXml()
 
     print("Inicializando camara...")
@@ -106,14 +109,14 @@ def faceInBoxVideo(indexCamera):
         gray = imageToGrayscale(img)
         faces = getFacesMultiScale(gray, face_cascade)
 
-        rectangleThickness = int((img.shape[0] + img.shape[1]) / (100 * 2 * math.pi))   # 20-30
+        rectangleThickness = int((img.shape[0] + img.shape[1]) / (100 * 2 * math.pi))  # 20-30
         rectangleColor = (255, 0, 0)
 
         for (x, y, w, h) in faces:
             numFaces = numFaces + 1
             cv2.rectangle(img, (x, y), (x + w, y + h), rectangleColor, rectangleThickness)
 
-        cv2.imshow("Imagen en tiempo real", img)
+        cv2.imshow('Imagen en tiempo real', img)
         k = cv2.waitKey(1)
 
         ### Press [I] for info.
@@ -141,6 +144,7 @@ def faceInBoxVideo(indexCamera):
     cv2.destroyAllWindows()
     return imageToReturn
 
+
 def resizeFaceImage(image, aspect_ratio=2):
     h, w = getDisplaySize()
     prop = h/image.shape[1]
@@ -160,7 +164,7 @@ def displayInterfaceWindow(gui, photoFromCamera=None, photoFromDatabase=None, pe
 #   diccionario guardado en caso de no re-entrenar la red en cada ejecución.
 def loadDictIdLabels():
     d = {}
-    with open(recognizerFolderPath + '\\' + recognizerDict) as f:
+    with open(recognizerFolderPath + delimiter + recognizerDict) as f:
         for line in f:
             p = line.split()
             d[int(p[0])] = p[1]
@@ -185,17 +189,16 @@ def loadInfo(id):
     return info
 
 def compare(img, path=facesDatasetPath):
-    xml = getLoadedXml()
-    reco = cv2.face.LBPHFaceRecognizer_create()
 
-    compareClass = imgCompare.CompareImagesClass(xml, reco)
     dictIDlabels = loadDictIdLabels()
     label = None   # NSF: No Such File
 
     print("\nComparando imagen con las de la base de datos...")
 
     gray = imageToGrayscale(img)
-    id, p = compareClass.compareAll(gray)
+
+    import CompareImages as imgCompare
+    id, p = imgCompare.compareAll(gray)
 
     if id > -1:
         imgsOr = os.listdir(datasetPath)
@@ -211,10 +214,7 @@ def compare(img, path=facesDatasetPath):
 
     return imgRet, p, label, loadInfo(id)
 
-def train(path):
-    return trainer.train(path)
-
-def askTrain(path):
+def askTrain():
 
     trained = False
 
@@ -225,13 +225,14 @@ def askTrain(path):
         print("\nCreando imagenes de reconocimiento a partir de la base de datos...")
         print("Entrenando red...\n")
 
-        createCutFacesFromDatabase()
-        trained = train(path)
+        import trainer
+        trained = trainer.train()
 
         if not trained:
             print("WARNING: No se ha podido entrenar la red.")
 
     print("\n" + ("Se utilizara el fichero " + ymlFile + " creado.") if trained else ("\nSe utilizara el fichero " + ymlFile + " existente."))
+
 
 def cutFaceFromImage(image):
 
@@ -250,15 +251,10 @@ def cutFaceFromImage(image):
         print("WARNING: Imagen con demasiados rostros.")
     else:
         print("WARNING: No se han detectado rostros.")
-
     return cutted, crop_img
 
 def createCutFacesFromDatabase():
-
     folder = facesDatasetPath
-
-    if not os.path.exists(folder):
-        os.makedirs(folder)
 
     imagesToDelete = os.listdir(folder)
     for the_file in imagesToDelete:

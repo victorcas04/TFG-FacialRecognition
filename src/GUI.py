@@ -1,10 +1,10 @@
 
 # encoding: utf-8
 
+from __future__ import division
 import tkinter as tk
 from tkinter import ttk
-from PIL import Image
-from PIL import ImageTk
+from PIL import Image, ImageTk
 import cv2
 from tkinter import filedialog as fd
 
@@ -29,8 +29,8 @@ class GUIClass(object):
         return GUIClass.__instance
 
     def fixedSize(self, hDisplay, wDisplay):
-        self.width = wDisplay-int(wDisplay/10)
-        self.height = hDisplay-int(hDisplay/10)
+        self.width = wDisplay-wDisplay//10
+        self.height = hDisplay-hDisplay//10
         self.window.resizable(width=False, height=False)
         self.window.minsize(width=self.width, height=self.height)
         self.window.maxsize(width=self.width, height=self.height)

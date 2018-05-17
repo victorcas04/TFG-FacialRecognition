@@ -1,24 +1,21 @@
 
 # encoding: utf-8
 
-### http://www.python36.com/face-recognition-using-opencv-part-2/
-
-import os, cv2
+import os
 import numpy as np
 from PIL import Image
+import Util as util
 
-delimiter = '\\'
-#fromExecutable='..'+delimiter
-fromExecutable = ""
+delimiter = util.delimiter
+recognizerPath = util.recognizerFolderPath
+recognizerFile = util.ymlFile
+dictFile = util.recognizerDict
+pathImages = util.facesDatasetPath
 
-recognizerPath = fromExecutable+'TrainMachine'+delimiter+'recognizer'
-recognizerFile = 'trainedData.yml'
-dictFile = 'dictionary_ID_labels.txt'
-
-def train(path):
+def train():
 
     trained = False
-    recognizer = cv2.face.LBPHFaceRecognizer_create()
+    recognizer = util.getReco()
 
     if not os.path.exists(recognizerPath):
         os.makedirs(recognizerPath)
@@ -37,7 +34,11 @@ def train(path):
             id+=1
         return ID_labels, faces
 
-    ID_labels, faces = getImagesWithID(path)
+    if not os.path.exists(pathImages):
+        os.makedirs(pathImages)
+    util.createCutFacesFromDatabase()
+
+    ID_labels, faces = getImagesWithID(pathImages)
 
     if len(ID_labels) >= 2:
         recognizer.train(faces, np.fromiter(ID_labels.keys(), dtype=int))
@@ -53,4 +54,3 @@ def train(path):
         print("Se necesitan al menos dos(2) muestras para poder entrenar la red.")
 
     return trained
-
