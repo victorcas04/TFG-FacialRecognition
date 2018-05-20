@@ -12,6 +12,7 @@
 # Índice:
   - Descripción
   - Introducción
+  - Requisitos
   - Instrucciones
 
 ## Descripción:
@@ -26,7 +27,9 @@ El TFG consiste en una aplicación que, dadas dos **imágenes**, una obtenida en
 A la hora de comparar ambas imágenes, si la persona que se pone delante de la cámara no estaba registrada en la base de datos, aparecerá **la persona** que esté registrada **que más se parezca**. En caso de que no se supere un **umbral de coincidencia** con ninguna de las personas registradas, mostrará una imágen por defecto avisando de que no se ha podido obtener ningún resultado satisfactorio.
 En cualquier caso, junto con la imágen que se obtenga como resultado, se mostrará una **'barra de progreso'**, que indica el porcentage de acierto que ha obtenido al encontrar dicho resultado. Además, se muestra un botón que nos permite crear otra ventana extra con **información de la persona obtenida como resultado** (nombre, edad, lugar de nacimiento y profesión).
 
-##### Python version 2.7
+## Requisitos:
+
+Es necesario tener instalado python 2.7 y diferentes librerías: cv2 (machine-learning orientado a imágenes), tKinter (interfaz), numpy (utilidad), Pillow (operaciones con imágenes).
 
 ## Instrucciones:
 
