@@ -102,6 +102,9 @@ ENV/
 
 # my ignores
 .idea/
-Other/
-sources/
+sources/dataset/
+sources/facesDataset/
+sources/xml/
+dictionary_ID_labels.txt
+trainedData.yml
 *.iml

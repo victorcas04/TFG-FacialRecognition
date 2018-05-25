@@ -1,0 +1,21 @@
+Alexandra Daddario, 32, New York, Actress
+Victor de Castro, 23, Burgos, Student
+Chris Pratt, 38, Minnesota, Actor
+Dwayne (The Rock) Johnson, 46, California, Actor
+Elizabeth Olsen, 29, Los Angeles, Actress
+Gabe Newell (Gaben), 55, Washington, Developer and business man
+Gal Gadot, 33, Petaj Tikva, Actress
+John Cena, 41, Massachusetts, Actor
+Katheryn Winnick, 40, Toronto, Actress
+Madds Mikkelsen, 52, Osterbro, Actor
+Natalie Dormer, 36, Reading, Actress
+Robert Downey Jr., 53, New York, Actor
+Shohreh Aghdashloo, 65, Teheran, Actress
+Stanley Lieber (Stan lee), 95, Nueva York, Writer
+Will Smith, 49, Filadelfia, Actor
+Default name, Default age, Default birthplace, Default occupation
+Default name, Default age, Default birthplace, Default occupation
+Default name, Default age, Default birthplace, Default occupation
+Default name, Default age, Default birthplace, Default occupation
+Default name, Default age, Default birthplace, Default occupation
+Default name, Default age, Default birthplace, Default occupation
