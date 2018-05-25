@@ -2,9 +2,9 @@
 # encoding: utf-8
 
 from __future__ import division
-import cv2, sys, time, math, os, wx
+import cv2, os, wx
 
-fromExecutable = False
+fromExecutable = True
 delimiter = '\\'
 datasetPath = '..'+delimiter+'sources'+delimiter+'dataset'
 facesDatasetPath = '..'+delimiter+'sources'+delimiter+'facesDataset'
@@ -31,11 +31,11 @@ def getFileName(defaultFile="default.png", folder="..\\sources"):
     return folder + delimiter + defaultFile
 
 def saveImage(image, path=getFileName("savedDefault.png")):
-    print("\nGuardando imagen en: " + str(path) + "\n")
+    print("\nSaving image in: " + str(path) + "...\n")
     cv2.imwrite(path, image);
 
 def loadImage(fullName=getFileName()):
-    print("Cargando imagen " + str(fullName))
+    print("Loading image" + str(fullName) + "...")
     return cv2.imread(fullName)
 
 def loadImageByGUI(gui):
@@ -63,87 +63,13 @@ def getFacesMultiScale(gray, faceCascade):
 
 def printMenuFaceInBox(fromCamera=True):
 
-    print("\nOPCIONES:\n")
-    print("Pulsa [I] para informacion general.")
-    print("Pulsa [Q] para salir.")
+    print("\nOPTIONS:\n")
+    print("Press [I] to display general information.")
+    print("Press [Q] to quit.")
     if fromCamera:
-        print("Pulsa [P] para pausar la camara.")
-        print("Pulsa [SPACE] para reanudar la camara (solo si estaba pausada).")
-        print("Pulsa [C] para capturar el frame actual y cerrar la camara.\n")
-
-def faceInBoxVideo(indexCamera=-1):
-
-    # Muestra informacion sobre la version de cv
-    #print(cv2.getBuildInformation())
-
-    imageToReturn = None
-    maxInt = sys.maxsize
-
-    print("Cargando fichero " + xmlFolderPath + delimiter + xmlFile + "...")
-    face_cascade = getLoadedXml()
-
-    print("Inicializando camara...")
-
-    cap = cv2.VideoCapture(indexCamera)
-
-    if not cap.isOpened():
-        print("No se ha podido iniciar la camara.")
-        return loadImage()
-
-    cap.set(cv2.CAP_PROP_FPS, maxInt)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, maxInt)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, maxInt)
-
-    # Esperamos dos segundos para que la cámara termine de inicializarse y no tomar datos basura
-    time.sleep(2)
-
-    print("Mostrando imagen en tiempo real...")
-
-    printMenuFaceInBox()
-
-    while True:
-        numFaces = 0
-        ret, img = cap.read()
-
-        img = cv2.flip(img, 1)
-        gray = imageToGrayscale(img)
-        faces = getFacesMultiScale(gray, face_cascade)
-
-        rectangleThickness = int((img.shape[0] + img.shape[1]) / (100 * 2 * math.pi))  # 20-30
-        rectangleColor = (255, 0, 0)
-
-        for (x, y, w, h) in faces:
-            numFaces = numFaces + 1
-            cv2.rectangle(img, (x, y), (x + w, y + h), rectangleColor, rectangleThickness)
-
-        cv2.imshow('Imagen en tiempo real', img)
-        k = cv2.waitKey(1)
-
-        ### Press [I] for info.
-        if k == ord('i'):
-            print("\nSe han encontrado " + str(numFaces) + " caras en la imagen.")
-            printMenuFaceInBox()
-
-        ### Press [Q] to exit.
-        if k == ord('q'):
-            imageToReturn = loadImage()
-            break
-
-        ### Press [P] to pause camera reading.
-        ### Press [SPACE] to resume camera reading.
-        if k == ord('p'):
-            while cv2.waitKey(0) != ord(' '):
-                print("Press [SPACE] to resume camera reading.")
-
-        ### Press [C] to take the actual frame and exit.
-        if numFaces == 1 and k == ord('c'):
-            imageToReturn = img
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()
-    return imageToReturn
-
+        print("Press [P] to pause the camera.")
+        print("Press [SPACE] to resume the camera (only if it was paused).")
+        print("Press [C] to capture the actual frame and close the camera.\n")
 
 def resizeFaceImage(image, aspect_ratio=2):
     h, w = getDisplaySize()
@@ -155,7 +81,7 @@ def resizeFaceImage(image, aspect_ratio=2):
 def displayInterfaceWindow(gui, photoFromCamera=None, photoFromDatabase=None, percentage=0.0):
 
     percentageString = str(percentage) + "%"
-    print("\nMostrando resultado con un " + percentageString + " de coincidencia.\n")
+    print("\nDisplaying result with a " + percentageString + " of coincidence.\n")
 
     gui.createTop_BottomPanel(photoFromCamera, photoFromDatabase, percentage)
     gui.displayWindow()
@@ -172,7 +98,7 @@ def loadDictIdLabels():
 
 def loadInfo(id):
     i = 0
-    name = "Imagen por defecto"; age = " - "; birth_place = " - "; job = " - "
+    name = " - "; age = " - "; birth_place = " - "; job = " - "
     if id > -1:
         with open(recognizerFolderPath + '\\' + recognizerInfo) as f:
             for line in f:
@@ -193,7 +119,7 @@ def compare(img, path=facesDatasetPath):
     dictIDlabels = loadDictIdLabels()
     label = None   # NSF: No Such File
 
-    print("\nComparando imagen con las de la base de datos...")
+    print("\nComparing image...")
 
     gray = imageToGrayscale(img)
 
@@ -204,35 +130,50 @@ def compare(img, path=facesDatasetPath):
         imgsOr = os.listdir(datasetPath)
         label = imgsOr[id].split(".")[0]
 
-    print("id= " + str(id) + "   ---   etiqueta= " + str(label) + "   ---   coincidencia= " + str(p))
+    print("id= " + str(id) + "   ---   label= " + str(label) + "   ---   coincidence= " + str(p))
 
     if label is not None:   # NSF
         imgRet = loadImage(getFileName(str(dictIDlabels.get(id)) + ".jpg", folder=path))
     else:
-        print("\nNo se ha podido reconocer ninguna cara.")
+        print("\nNo faces could be recognized.")
         imgRet = loadImage(getFileName())
 
     return imgRet, p, label, loadInfo(id)
+
+def train():
+    import trainer
+    trained = trainer.train()
+
+    if not trained:
+        print("WARNING: Network couldn's be trained.")
+
+    return trained
+
+def askNewImage():
+    print("If you want to add a new image to the database press [S]")
+    c = getScan()
+    captured = False
+
+    if c.__eq__("S") or c.__eq__("s"):
+        import Camera as camera
+        captured = camera.captureImage()
+
+    return captured
 
 def askTrain():
 
     trained = False
 
-    print("Si hay nuevas imagenes o quieres entrenar la red de nuevo pulsa [S]")
+    print("If you want to train the network again press [S]")
     c = getScan()
 
     if c.__eq__("S") or c.__eq__("s"):
-        print("\nCreando imagenes de reconocimiento a partir de la base de datos...")
-        print("Entrenando red...\n")
+        print("\nCreating face-focused images from original-database images...")
+        print("Training network...\n")
 
-        import trainer
-        trained = trainer.train()
+        trained = train()
 
-        if not trained:
-            print("WARNING: No se ha podido entrenar la red.")
-
-    print("\n" + ("Se utilizara el fichero " + ymlFile + " creado.") if trained else ("\nSe utilizara el fichero " + ymlFile + " existente."))
-
+    print("\n" + ("The file " + ymlFile + " just created will be used.") if trained else ("\nThe file " + ymlFile + " existing from before will be used."))
 
 def cutFaceFromImage(image):
 
@@ -248,9 +189,9 @@ def cutFaceFromImage(image):
         crop_img = image[y:y + h, x:x + w]
         cutted = True
     elif len(faces) > 1:
-        print("WARNING: Imagen con demasiados rostros.")
+        print("WARNING: Image with too many faces.")
     else:
-        print("WARNING: No se han detectado rostros.")
+        print("WARNING: Image with no faces.")
     return cutted, crop_img
 
 def createCutFacesFromDatabase():

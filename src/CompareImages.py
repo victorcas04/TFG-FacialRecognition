@@ -11,13 +11,13 @@ def compareAll(gray):
     try:
         util.getLoadedYml(recognizer)
     except:
-        print("Red no entrenada. Ejecute de nuevo tras entrenar la red.")
+        print("The network isn't trained. Execute again after train the network.")
         return -1, 0
 
     faces = face_cascade.detectMultiScale(gray)
 
     if len(faces) < 1:
-        print("No se han detectado caras...")
+        print("No faces detected...")
         return -1, 0
 
     # Asumiendo sólo 1 cara por imágen

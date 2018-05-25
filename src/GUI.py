@@ -37,7 +37,7 @@ class GUIClass(object):
 
     def createWindow(self):
         windowObject = tk.Tk()
-        windowObject.title("GUI - Titulo por defecto")
+        windowObject.title("GUI - Default title")
         return windowObject
 
     def getInfo(self, param):
@@ -48,14 +48,14 @@ class GUIClass(object):
         self.namePhoto = namePhoto
         self.info = inf
         if namePhoto is not None:
-            self.title = str(p) + " % de coincidencia con " + str(namePhoto)
+            self.title = str(p) + " % of coincidence with image: " + str(namePhoto) + ".jpg"
         else:
-            self.title = "No se han encontrado coincidencias en la base de datos."
+            self.title = "No coincidences were found in the database."
         self.window.title(self.title)
 
     def addPercentageLabel(self, percentage="0%"):
 
-        percentageText = "Imagenes con un " + percentage + " de coincidencia"
+        percentageText = "Images with a " + percentage + " of coincidence"
 
         panel = self.panelB
         if panel is None:
@@ -72,18 +72,26 @@ class GUIClass(object):
         # Nos permite evitar usar la ventana principal mientras esté esta abierta
         popup.grab_set()
 
-        popup.rowconfigure(0, weight=1); popup.rowconfigure(1, weight=1); popup.rowconfigure(2, weight=1); popup.rowconfigure(3, weight=1); popup.rowconfigure(4, weight=1)
+        popup.rowconfigure(0, weight=1)
+        popup.rowconfigure(1, weight=1)
+        popup.rowconfigure(2, weight=1)
+        popup.rowconfigure(3, weight=1)
+        popup.rowconfigure(4, weight=1)
 
-        popup.wm_title("Mas informacion acerca de " + str(self.namePhoto))
-        nameL = tk.Label(popup, text="Nombre: " + self.getInfo("name"), font=(self.textFont, self.textSize))
-        ageL = tk.Label(popup, text="Edad: " + self.getInfo("age"), font=(self.textFont, self.textSize))
-        bpL = tk.Label(popup, text="Lugar de nacimiento: " + self.getInfo("birth_place"), font=(self.textFont, self.textSize))
-        jobL = tk.Label(popup, text="Ocupacion: " + self.getInfo("job"), font=(self.textFont, self.textSize))
+        popup.wm_title("More information about" + str(self.namePhoto))
+        nameL = tk.Label(popup, text="Name: \t\t" + self.getInfo("name"), font=(self.textFont, self.textSize))
+        ageL = tk.Label(popup, text="Age: \t\t" + self.getInfo("age"), font=(self.textFont, self.textSize))
+        bpL = tk.Label(popup, text="Birthplace: \t" + self.getInfo("birth_place"), font=(self.textFont, self.textSize))
+        jobL = tk.Label(popup, text="Occupation: \t" + self.getInfo("job"), font=(self.textFont, self.textSize))
 
-        backButton = tk.Button(popup, text="Atras", command=popup.destroy)
+        backButton = tk.Button(popup, text="Back", command=popup.destroy)
         backButton.config(font=(self.textFont, self.textSizeProgressBar))
 
-        nameL.grid(row=0); ageL.grid(row=1); bpL.grid(row=2); jobL.grid(row=3); backButton.grid(row=4, pady=(0, 30))
+        nameL.grid(row=0, sticky="w")
+        ageL.grid(row=1, sticky="w")
+        bpL.grid(row=2, sticky="w")
+        jobL.grid(row=3, sticky="w")
+        backButton.grid(row=4, pady=(0, 30))
 
         popup.mainloop()
 
@@ -100,7 +108,7 @@ class GUIClass(object):
         imgCFromArray = Image.fromarray(imgCRecolor)
         imgC = ImageTk.PhotoImage(imgCFromArray)
 
-        myLabelC = tk.Label(myFrame, compound=tk.BOTTOM, image=imgC, text="Imagen Original")
+        myLabelC = tk.Label(myFrame, compound=tk.BOTTOM, image=imgC, text="Original image")
         myLabelC.grid(row=0, column = 0, sticky=tk.W)
         myLabelC.image = imgC
         myLabelC.config(font=(self.textFont, self.textSize))
@@ -118,7 +126,7 @@ class GUIClass(object):
         s.theme_use("default")
         s.configure("TProgressbar", thickness=self.height/10)
 
-        buttonInfoLabel = tk.Button(myFrame, text="Mas Informacion...", command=self.createPopUpInfo)
+        buttonInfoLabel = tk.Button(myFrame, text="More information...", command=self.createPopUpInfo)
         buttonInfoLabel.config(font=(self.textFont, self.textSizeProgressBar))
         buttonInfoLabel.grid(row=1, columnspan=2, pady=(self.height/30, 0))
 
@@ -139,7 +147,7 @@ class GUIClass(object):
 
     def selectFile(self):
 
-        print("Selecciona una imagen...")
+        print("Select an image...")
 
         afw = tk.Toplevel(self.window)
         afw.filename = fd.askopenfilename(initialdir="/", title="Select file",

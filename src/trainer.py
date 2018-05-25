@@ -51,6 +51,6 @@ def train():
 
         trained = True
     else:
-        print("Se necesitan al menos dos(2) muestras para poder entrenar la red.")
+        print("Two (2) or more samples are needed to train the network.")
 
     return trained
