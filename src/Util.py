@@ -135,7 +135,7 @@ def compare(img, path=facesDatasetPath):
     if label is not None:   # NSF
         imgRet = loadImage(getFileName(str(dictIDlabels.get(id)) + ".jpg", folder=path))
     else:
-        print("\nNo faces could be recognized.")
+        print("\nWARNING: No faces could be recognized.")
         imgRet = loadImage(getFileName())
 
     return imgRet, p, label, loadInfo(id)
@@ -150,11 +150,11 @@ def train():
     return trained
 
 def askNewImage():
-    print("If you want to add a new image to the database press [S]")
+    print("If you want to add a new image to the database press [Y]")
     c = getScan()
     captured = False
 
-    if c.__eq__("S") or c.__eq__("s"):
+    if c.__eq__("Y") or c.__eq__("y"):
         import Camera as camera
         captured = camera.captureImage()
 
@@ -164,16 +164,18 @@ def askTrain():
 
     trained = False
 
-    print("If you want to train the network again press [S]")
+    print("If you want to train the network again press [Y]")
     c = getScan()
 
-    if c.__eq__("S") or c.__eq__("s"):
+    if c.__eq__("Y") or c.__eq__("y"):
         print("\nCreating face-focused images from original-database images...")
         print("Training network...\n")
 
         trained = train()
 
-    print("\n" + ("The file " + ymlFile + " just created will be used.") if trained else ("\nThe file " + ymlFile + " existing from before will be used."))
+    print("\nThe file " + ymlFile + ((" just created will be used.") if trained else (" existing from before will be used.")))
+    print("Loading file " + xmlFolderPath + delimiter + xmlFile + "...")
+    getLoadedXml()
 
 def cutFaceFromImage(image):
 

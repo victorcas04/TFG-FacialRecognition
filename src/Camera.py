@@ -64,7 +64,6 @@ def faceInBoxVideo(indexCamera=-1):
 
     imageToReturn = None
 
-    print("Loading file " + util.xmlFolderPath + delimiter + util.xmlFile + "...")
     face_cascade = util.getLoadedXml()
 
     cap = initializeCamera(indexCamera)
@@ -95,7 +94,7 @@ def faceInBoxVideo(indexCamera=-1):
 
         ### Press [I] for info.
         if k == ord('i'):
-            print("\n" + str(numFaces) + "faces were found in the image.")
+            print("\n[" + str(numFaces) + "] faces were found in the image.")
             util.printMenuFaceInBox()
 
         ### Press [Q] to exit.
