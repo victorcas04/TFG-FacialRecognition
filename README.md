@@ -38,26 +38,36 @@ Esto nos abrirá una consola de comandos donde nos irán saliendo mensajes infor
 
 Las principales fases por las que pasa nuestro programa son:
 
-##### 1-. Entrenar red.
-        - Al principio nos preguntará si queremos entrenar la red o no.
+##### 1.- Añadir nuevas imágenes.
+        - Nos preguntará si queremos añadir una imágen nueva a la base de datos.
+        - En caso de responder [Y] (yes), se inicializará la cámara por defecto del equipo.
+        
+        - NOTA: La cámara por defecto es la webcam en caso de tener integrada, externa en caso contrario. En caso de tener ambas cámaras instaladas, se utilizará la integrada.
+        
+        - Podremos tomar una imágen pulsando [C] o salir sin tomar ninguna pulsando [Q].
+        
+##### 2.- Entrenar red.
+        - A continuación, si hemos guardado una imágen nueva en la base de datos en el apartado 1, pasaremos directamente al punto en que se entrena la red, en caso conrtario nos preguntará si queremos entrenarla o no.
         - En caso de decir que NO, se utilizarán los recursos almacenados del último entrenamiento.
         - En caso de decir que SI, se crearán las imágenes en el formato adecuado y se entrenará la red, utilizando los recursos recién creados.
 
-        - IMPORTANTE: si se añaden imágenes a la base de datos, entrenar la red para evitar problemas sobre identificaciones erróneas.
+        - IMPORTANTE: si se añaden imágenes previas a la ejecución del programa a la base de datos (antes del punto 1), entrenar la red para evitar problemas sobre identificaciones erróneas.
 
-##### 2.- Carga de recursos e inicialización.
+##### 3.- Carga de recursos e inicialización.
         - Se cargan los recursos necesarios: trainerData.yml y haarcascade_frontalface_default.xml
-        - A continuación, se le pregunta al usuario cómo desea obtener la imágen que va a contrastar con la base de datos: desde fichero o desde la cámara.
+        - A continuación, se le pregunta al usuario cómo desea obtener la imágen que va a contrastar con la base de datos: desde fichero (punto 4.1) o desde la cámara (punto 4.2).
 
-##### 3.1.- Obtener imágen desde fichero.
+##### 4.1.- Obtener imágen desde fichero.
         - Si se selecciona esta opción, se abrirá una pequeña interfaz en la que el usuario puede buscar la imágen que quiera en el sistema. 
         - Una vez que se encuentra la imágen, basta con dar doble click sobre ella o seleccionarla y pulsar aceptar.
-        - Se puede filtrar el tipo de ficheros que se pueden ver para facilitar la búsqueda.
+        
+        - NOTA: Se puede filtrar el tipo de ficheros que se pueden ver para facilitar la búsqueda (restringido a ".png" y ".jpg").
 
-        - NOTA: por defecto, la interfaz se abre en la ruta: "C:\".
-
-##### 3.2.- Obtener captura.
+##### 4.2.- Obtener captura.
         - Al seleccionar esta opción, si hay más de una cámara instalada nos dejará elegir qué cámara utilizar. En caso contrario utilizará la cámara por defecto.
+        
+        - NOTA: La cámara por defecto es la webcam en caso de tener integrada, externa en caso contrario.
+        
         - Con la cámara seleccionada se inicializan los parámetros para la captura de imágenes por defecto (fps, tamaño de la imágen, etc).
 
         - NOTA: en caso de no poder inicializar la cámara con estos parámetros, mostrará un mensaje avisándonos y pasará a la fase 5 con una imágen por defecto.
@@ -73,26 +83,24 @@ Las principales fases por las que pasa nuestro programa son:
 
           - NOTA: no se puede tomar una captura a no ser que haya exáctamente una persona delante de la cámara.
             Se toma esta decisión para evitar problemas a la hora tanto de entrenar la red como de mostrar coincidencias con la base de datos.
-
           - NOTA: si se pulsa [Q] se pasará a la fase 5 con una imágen por defecto.
 
-##### 4.- Comparar imágenes.
-        - Con la imágen obtenida de la fase 3.1 o 3.2, se analiza dicha imágen y se comparan los resultados con los obtenidos de entrenar las imágenes almacenadas en la base de datos (fichero 'trainerData.yml' de la fase 2).
+##### 5.- Comparar imágenes.
+        - Con la imágen obtenida de la fase 4, se analiza dicha imágen y se comparan los resultados con los obtenidos de entrenar las imágenes almacenadas en la base de datos (fichero 'trainerData.yml' de la fase 3).
         - Se obtiene una **ID**, una **ETIQUETA** (nombre de la imágen) y un **PORCENTAGE** de coincidencia entre ambas imágenes (la mayor coincidencia de la base de datos).
         - Se carga la imágen de la base de datos con la **etiqueta** del apartado anterior y la información relacionada con la **id** obtenida del fichero 'info.txt'.
 
-##### 5.- Mostrar resultado.
+##### 6.- Mostrar resultado.
         - Se muestra una ventana con ambas imágenes, la obtenida de la captura/fichero y la de máxima coincidencia de la base de datos.
 
         - NOTA: las imágenes se recortan para mostrar sólo el rostro, de esta manera se evitan los tamaños de imágenes excesivamente grandes/pequeños.
 
         - Se muestra además el porcentage de coincidencia que hayan tenido, y una barra de progreso que indica dicho porcentage junto con el nombre de la imágen de la base de datos.
 
-        - NOTA: el nombre que se muestra sobre la imágen de la derecha es el de la persona a la que corresponda dicha fotografía, mientras que el nombre que se muestra sobre la barra de progreso es el correspondiente al nombre del fichero de dicha foto. Se muestran ambos nombres en caso de que el usuario necesite acceder a esa foto manualmente.
+        - NOTA: el nombre que se muestra sobre la imágen de la derecha es el de la persona a la que corresponda dicha fotografía (extraído del fichero 'info.txt'), mientras que el nombre que se muestra sobre la barra de progreso es el correspondiente al nombre del fichero de dicha foto. Se muestran ambos nombres en caso de que el usuario necesite acceder a esa foto manualmente.
 
-        - Además, se crea un botón 'Info.', que al pulsarle crea una pequeña ventana extra con información sobre la imágen resultado. Esta información se puede editar en el fichero 'info.txt' mencionado en la fase 4.
+        - Además, se crea un botón 'Info.', que al pulsarle crea una pequeña ventana extra con información sobre la imágen resultado. Esta información se puede editar en el fichero 'info.txt' mencionado en la fase 5.
 
         - IMPORTANTE: si se añade una imágen a la base de datos, es necesario añadir una línea en el fichero 'info.txt' con al información de la persona que acabamos de introducir en la base de datos. Esta línea deberá ir en la posición exacta en la que se encuentre la imágen en relación al resto. Por ejemplo, si añadimos una imágen a la que nombramos 'aaa.jpg' será la primera en la base de datos, por lo que deberemos añadir una línea al principio del fichero 'info.txt'. Si añadimos una imágen que se llame 'zzz.jpg' a la base de datos será la última, por lo que necesitaremos añadir una línea al final del fichero 'info.txt'.
-        En caso de no realizar este paso, cuando se muestren los resultados, se hara con la información de otra persona.
-
+        En caso de no realizar este paso, cuando se muestren los resultados, se hará con la información de otra persona.
         - NOTA: esta parte de introducir información sobre cada persona en un fichero en la posición exacta es muy tedioso y peligroso, por ello se está estudiando la posibilidad de crear una base de datos real para almacenar esta información, de manera que cada imágen tenga vinculada su información de manera automática.
