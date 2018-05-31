@@ -43,12 +43,12 @@ Esto nos abrirá una consola de comandos donde nos irán saliendo mensajes infor
 Las principales fases por las que pasa nuestro programa son:
 
 ##### 1.- Añadir nuevas imágenes.
-				 - Nos preguntará si queremos añadir una imágen nueva a la base de datos.
-    			 - En caso de responder [Y] (yes), se inicializará la cámara por defecto del equipo.
+- Nos preguntará si queremos añadir una imágen nueva a la base de datos.
+- En caso de responder [Y] (yes), se inicializará la cámara por defecto del equipo.
         
 - NOTA: La cámara por defecto es la webcam en caso de tener integrada, externa en caso contrario. En caso de tener ambas cámaras instaladas, se utilizará la integrada.
         
-    			- Podremos tomar una imágen pulsando [C] o salir sin tomar ninguna pulsando [Q].
+- Podremos tomar una imágen pulsando [C] o salir sin tomar ninguna pulsando [Q].
         
 ##### 2.- Entrenar red.
     			 - A continuación, si hemos guardado una imágen nueva en la base de datos en el apartado 1, pasaremos directamente al punto en que se entrena la red, en caso conrtario nos preguntará si queremos entrenarla o no.
