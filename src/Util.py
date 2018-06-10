@@ -55,9 +55,6 @@ def getLoadedXml():
 def getReco():
     return cv2.face.LBPHFaceRecognizer_create()
 
-def getLoadedYml(recognizer = getReco()):
-    recognizer.read(getFileName(ymlFile, recognizerFolderPath))
-
 def getFacesMultiScale(gray, faceCascade):
     return faceCascade.detectMultiScale(gray, 1.2, 5, minSize=(gray.shape[0]//10, gray.shape[1]//10))
 

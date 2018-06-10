@@ -17,7 +17,7 @@ class GUIClass(object):
 
     def __init__(self):
         if GUIClass.__instance != None:
-            raise Exception("Esta clase es un Singleton. Accede a ella a traves del getInstance()")
+            raise Exception("This is a Singleton class. Access it through getInstance()")
         else:
             GUIClass.__instance = self
             self.window = self.createWindow()
@@ -78,7 +78,7 @@ class GUIClass(object):
         popup.rowconfigure(3, weight=1)
         popup.rowconfigure(4, weight=1)
 
-        popup.wm_title("More information about" + str(self.namePhoto))
+        popup.wm_title("More information about image " + str(self.namePhoto) + ".jpg")
         nameL = tk.Label(popup, text="Name: \t\t" + self.getInfo("name"), font=(self.textFont, self.textSize))
         ageL = tk.Label(popup, text="Age: \t\t" + self.getInfo("age"), font=(self.textFont, self.textSize))
         bpL = tk.Label(popup, text="Birthplace: \t" + self.getInfo("birth_place"), font=(self.textFont, self.textSize))
@@ -97,7 +97,7 @@ class GUIClass(object):
 
     def createTop_BottomPanel(self, photoFromCamera, photoFromDatabase, p):
 
-        myFrame = tk.Frame(self.window)     # bd=1, , relief="sunken"
+        myFrame = tk.Frame(self.window) 
         myFrame.pack(fill=tk.Y, pady=self.height/30)
         myFrame.rowconfigure(0, weight=4)
         myFrame.rowconfigure(1, weight=2)

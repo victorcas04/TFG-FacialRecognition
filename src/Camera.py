@@ -30,7 +30,7 @@ def initializeCamera(indexCamera):
 def captureImage():
     #print("Introduce tu nombre:")
     #name = util.getScan()
-    name = "zzzzz"
+    name = "imagen_de_prueba"
 
     cap = initializeCamera(0)
 
