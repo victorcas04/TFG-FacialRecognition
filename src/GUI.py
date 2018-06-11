@@ -4,6 +4,7 @@
 from __future__ import division
 import tkinter as tk
 from tkinter import ttk
+import Util as util
 from PIL import Image, ImageTk
 import cv2
 from tkinter import filedialog as fd
@@ -48,7 +49,7 @@ class GUIClass(object):
         self.namePhoto = namePhoto
         self.info = inf
         if namePhoto is not None:
-            self.title = str(p) + " % of coincidence with image: " + str(namePhoto) + ".jpg"
+            self.title = str(p) + " % of coincidence with image: " + str(namePhoto) + util.extensionJPG
         else:
             self.title = "No coincidences were found in the database."
         self.window.title(self.title)
@@ -78,7 +79,7 @@ class GUIClass(object):
         popup.rowconfigure(3, weight=1)
         popup.rowconfigure(4, weight=1)
 
-        popup.wm_title("More information about image " + str(self.namePhoto) + ".jpg")
+        popup.wm_title("More information about image " + str(self.namePhoto) + util.extensionJPG)
         nameL = tk.Label(popup, text="Name: \t\t" + self.getInfo("name"), font=(self.textFont, self.textSize))
         ageL = tk.Label(popup, text="Age: \t\t" + self.getInfo("age"), font=(self.textFont, self.textSize))
         bpL = tk.Label(popup, text="Birthplace: \t" + self.getInfo("birth_place"), font=(self.textFont, self.textSize))
@@ -152,7 +153,7 @@ class GUIClass(object):
         afw = tk.Toplevel(self.window)
         afw.filename = fd.askopenfilename(initialdir="/", title="Select file",
                                           filetypes=(
-                                          ("jpeg files", "*.jpg"), ("png files", "*.png*"), ("all files", "*.*")))
+                                          ("jpeg files", '*'+util.extensionJPG), ("png files", '*'+util.extensionPNG), ("all files", "*.*")))
         z = afw.filename
         afw.destroy()
         return z

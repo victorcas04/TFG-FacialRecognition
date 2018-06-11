@@ -15,14 +15,14 @@ def compareAll(gray):
     try:
         getLoadedYml(recognizer)
     except:
-        print("The network isn't trained. Execute again after train the network.")
+        print("ERROR: Cannot compare: The network isn't trained.\nExecute again after train the network.")
         return -1, 0
 
     #faces = face_cascade.detectMultiScale(gray)
     faces = util.getFacesMultiScale(gray, face_cascade)
 
     if len(faces) < 1:
-        print("No faces detected...")
+        print("ERROR: Cannot compare: no faces detected.")
         return -1, 0
 
     # Asumiendo sólo 1 cara por imágen

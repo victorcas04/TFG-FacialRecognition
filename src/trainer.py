@@ -32,13 +32,13 @@ def train():
             faces.append(faceNp)
             ID_labels[id] = label
             id+=1
-        return ID_labels, faces
+        return ID_labels, faces, id
 
     if not os.path.exists(pathImages):
         os.makedirs(pathImages)
     util.createCutFacesFromDatabase()
 
-    ID_labels, faces = getImagesWithID(pathImages)
+    ID_labels, faces, numImages = getImagesWithID(pathImages)
 
     if len(ID_labels) >= 2:
         recognizer.train(faces, np.fromiter(ID_labels.keys(), dtype=int))
@@ -53,4 +53,4 @@ def train():
     else:
         print("Two (2) or more samples are needed to train the network.")
 
-    return trained
+    return trained, numImages

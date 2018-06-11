@@ -14,6 +14,8 @@ recognizerFolderPath = ".." + delimiter + 'sources' + delimiter + 'recognizer'
 ymlFile = 'trainedData.yml'
 recognizerDict = 'dictionary_ID_labels.txt'
 recognizerInfo = 'info.txt'
+extensionJPG = '.jpg'
+extensionPNG = '.png'
 
 def getScan():
     if fromExecutable:
@@ -35,11 +37,12 @@ def saveImage(image, path=getFileName("savedDefault.png")):
     cv2.imwrite(path, image);
 
 def loadImage(fullName=getFileName()):
-    print("Loading image" + str(fullName) + "...")
+    print("Loading image " + str(fullName) + "...")
     return cv2.imread(fullName)
 
 def loadImageByGUI(gui):
-    return loadImage(gui.selectFile())
+    imageToReturn = gui.selectFile()
+    return loadImage(imageToReturn) if (imageToReturn.endswith(extensionJPG) or imageToReturn.endswith(extensionPNG)) else loadImage()
 
 def imageToGrayscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -127,22 +130,30 @@ def compare(img, path=facesDatasetPath):
         imgsOr = os.listdir(datasetPath)
         label = imgsOr[id].split(".")[0]
 
-    print("id= " + str(id) + "   ---   label= " + str(label) + "   ---   coincidence= " + str(p))
+    print("Information about comparison: id= " + str(id) + "   ---   label= " + str(label) + "   ---   coincidence= " + str(p))
 
     if label is not None:   # NSF
-        imgRet = loadImage(getFileName(str(dictIDlabels.get(id)) + ".jpg", folder=path))
+        imgRet = loadImage(getFileName(str(dictIDlabels.get(id)) + extensionJPG, folder=path))
     else:
-        print("\nWARNING: No faces could be recognized.")
         imgRet = loadImage(getFileName())
 
     return imgRet, p, label, loadInfo(id)
 
 def train():
     import trainer
-    trained = trainer.train()
+
+    import time
+    tic = time.time()
+    
+    trained, numImages = trainer.train()
+    
+    toc = time.time()
+
+    if numImages >= 2:
+        print("\nTraining time with " + str(numImages) + " images: " + str(round(toc-tic, 2)) + " seconds.")
 
     if not trained:
-        print("WARNING: Network couldn's be trained.")
+        print("WARNING: Network couldn't be trained.")
 
     return trained
 
