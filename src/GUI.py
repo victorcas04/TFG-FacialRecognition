@@ -6,7 +6,7 @@ import tkinter as tk
 from tkinter import ttk
 import Util as util
 from PIL import Image, ImageTk
-import cv2
+import cv2, wx
 from tkinter import filedialog as fd
 
 class GUIClass(object):
@@ -29,12 +29,33 @@ class GUIClass(object):
             GUIClass()
         return GUIClass.__instance
 
-    def fixedSize(self, hDisplay, wDisplay):
+    def getDisplaySize(self):
+        app = wx.App(False)
+        w, h = wx.GetDisplaySize()
+        return h, w
+
+    def fixedSize(self):
+        hDisplay, wDisplay = self.getDisplaySize()
         self.width = wDisplay-wDisplay//10
         self.height = hDisplay-hDisplay//10
         self.window.resizable(width=False, height=False)
         self.window.minsize(width=self.width, height=self.height)
         self.window.maxsize(width=self.width, height=self.height)
+
+    def displayInterfaceWindow(self, originalPhoto=util.loadImage(), photoFromDatabase=util.loadImage(), percentage=0.0):
+
+        def resizeFaceImage(image, aspect_ratio=2):
+            h, w = self.getDisplaySize()
+            prop = h / image.shape[1]
+            newSize = (int((prop * image.shape[1]) / aspect_ratio), int((prop * image.shape[0]) / aspect_ratio))
+            newImage = cv2.resize(image, (newSize[0], newSize[1]))
+            return newImage
+
+        percentageString = str(percentage) + "%"
+        print("\nDisplaying result with a " + percentageString + " of coincidence.\n")
+
+        self.createTop_BottomPanel(resizeFaceImage(originalPhoto), resizeFaceImage(photoFromDatabase), percentage)
+        self.displayWindow()
 
     def createWindow(self):
         windowObject = tk.Tk()
@@ -140,16 +161,12 @@ class GUIClass(object):
         progress["value"] = p
         progress["maximum"] = 100
 
-
     def displayWindow(self):
         # Using mainloop() to show image
         self.window.mainloop()
 
-
     def selectFile(self):
-
         print("Select an image...")
-
         afw = tk.Toplevel(self.window)
         afw.filename = fd.askopenfilename(initialdir="/", title="Select file",
                                           filetypes=(
@@ -157,3 +174,9 @@ class GUIClass(object):
         z = afw.filename
         afw.destroy()
         return z
+
+    def loadImageByGUI(self):
+        imageToReturn = self.selectFile()
+        return util.loadImage(imageToReturn) if (
+                    imageToReturn.endswith(util.extensionJPG) or imageToReturn.endswith(util.extensionPNG)) \
+            else util.loadImage()

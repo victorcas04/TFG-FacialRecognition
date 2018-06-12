@@ -2,9 +2,8 @@
 # encoding: utf-8
 
 from __future__ import division
-import cv2, os, wx
+import cv2, os, six
 
-fromExecutable = True
 delimiter = '\\'
 datasetPath = '..'+delimiter+'sources'+delimiter+'dataset'
 facesDatasetPath = '..'+delimiter+'sources'+delimiter+'facesDataset'
@@ -16,33 +15,17 @@ recognizerDict = 'dictionary_ID_labels.txt'
 recognizerInfo = 'info.txt'
 extensionJPG = '.jpg'
 extensionPNG = '.png'
+fileDelimiter = ', '
 
 def getScan():
-    if fromExecutable:
-        ri = raw_input()
-    else:
-        ri = input()
-    return ri
-
-def getDisplaySize():
-    app = wx.App(False)
-    w, h = wx.GetDisplaySize()
-    return h, w
+    return six.moves.input()
 
 def getFileName(defaultFile="default.png", folder="..\\sources"):
     return folder + delimiter + defaultFile
 
-def saveImage(image, path=getFileName("savedDefault.png")):
-    print("\nSaving image in: " + str(path) + "...\n")
-    cv2.imwrite(path, image);
-
 def loadImage(fullName=getFileName()):
     print("Loading image " + str(fullName) + "...")
     return cv2.imread(fullName)
-
-def loadImageByGUI(gui):
-    imageToReturn = gui.selectFile()
-    return loadImage(imageToReturn) if (imageToReturn.endswith(extensionJPG) or imageToReturn.endswith(extensionPNG)) else loadImage()
 
 def imageToGrayscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -58,33 +41,8 @@ def getLoadedXml():
 def getReco():
     return cv2.face.LBPHFaceRecognizer_create()
 
-def getFacesMultiScale(gray, faceCascade):
-    return faceCascade.detectMultiScale(gray, 1.2, 5, minSize=(gray.shape[0]//10, gray.shape[1]//10))
-
-def printMenuFaceInBox(fromCamera=True):
-
-    print("\nOPTIONS:\n")
-    print("Press [I] to display general information.")
-    print("Press [Q] to quit.")
-    if fromCamera:
-        print("Press [P] to pause the camera.")
-        print("Press [SPACE] to resume the camera (only if it was paused).")
-        print("Press [C] to capture the actual frame and close the camera.\n")
-
-def resizeFaceImage(image, aspect_ratio=2):
-    h, w = getDisplaySize()
-    prop = h/image.shape[1]
-    newSize = (int((prop*image.shape[1])/aspect_ratio), int((prop*image.shape[0])/aspect_ratio))
-    newImage = cv2.resize(image, (newSize[0], newSize[1]))
-    return newImage
-
-def displayInterfaceWindow(gui, photoFromCamera=None, photoFromDatabase=None, percentage=0.0):
-
-    percentageString = str(percentage) + "%"
-    print("\nDisplaying result with a " + percentageString + " of coincidence.\n")
-
-    gui.createTop_BottomPanel(photoFromCamera, photoFromDatabase, percentage)
-    gui.displayWindow()
+def getFacesMultiScale(gray):
+    return getLoadedXml().detectMultiScale(gray, 1.2, 5, minSize=(gray.shape[0]//10, gray.shape[1]//10))
 
 # Podríamos guardar el diccionario en una variable desde trainer.py, pero de este forma nos aseguramos tener el
 #   diccionario guardado en caso de no re-entrenar la red en cada ejecución.
@@ -96,6 +54,25 @@ def loadDictIdLabels():
             d[int(p[0])] = p[1]
     return d
 
+def loadInfo(nameImage=None):
+    name = " - "; age = " - "; birth_place = " - "; job = " - "
+    if nameImage is not None:
+        with open(recognizerFolderPath + delimiter + recognizerInfo) as f:
+            for line in f:
+                    # Ejemplo de lo que nos encontramos en este fichero
+                    # alexandra_daddario, Alexandra Daddario, 32, Nueva York, Actriz
+                    p = line.split(fileDelimiter)
+                    
+                    # Para quitar la primera parte del nombre (face_) y quedarnos con el resto
+                    #print(p[0].split("face_",1)[1])
+
+                    if p[0].__eq__(nameImage):
+                        name = p[1]; age = p[2]; birth_place = p[3]; job = p[4]
+                        break
+    info = {"name": name, "age": age, "birth_place": birth_place, "job": job}
+    return info
+
+'''
 def loadInfo(id):
     i = 0
     name = " - "; age = " - "; birth_place = " - "; job = " - "
@@ -113,7 +90,7 @@ def loadInfo(id):
                     break
     info = {"name": name, "age": age, "birth_place": birth_place, "job": job}
     return info
-
+'''
 def compare(img, path=facesDatasetPath):
 
     dictIDlabels = loadDictIdLabels()
@@ -137,25 +114,36 @@ def compare(img, path=facesDatasetPath):
     else:
         imgRet = loadImage(getFileName())
 
-    return imgRet, p, label, loadInfo(id)
+    return imgRet, p, label, loadInfo(label)
+    #return imgRet, p, label, loadInfo(id)
 
-def train():
-    import trainer
+def askInfoNewImage():
+    print("\nIntroduce the name of the new file (to save on database):\nIf no name is provided, \'new_image_name\' will be used.")
+    nFile = getScan()
+    if not nFile:
+        nFile="new_image_name"
+    print("\nIntroduce the name of the person who appears on that image:\nIf no name is provided, \'Default Name\' will be used.")
+    name = getScan()
+    if not name:
+        name="Default Name"
+    print("\nIntroduce the age of that person:\nIf no age is provided, \'Default Age\' will be used.")
+    age = getScan()
+    if not age:
+        age="Default Age"
+    print("\nIntroduce the city name where he/she was born:\nIf no city name is provided, \'Default City\' will be used.")
+    birthplace = getScan()
+    if not birthplace:
+        birthplace="Default City"
+    print("\nIntroduce the actual profession of that person:\nIf no occupation is provided, \'Default Job\' will be used.")
+    job = getScan()
+    if not job:
+        job="Default Job"
 
-    import time
-    tic = time.time()
-    
-    trained, numImages = trainer.train()
-    
-    toc = time.time()
+    return nFile, name, age, birthplace, job
 
-    if numImages >= 2:
-        print("\nTraining time with " + str(numImages) + " images: " + str(round(toc-tic, 2)) + " seconds.")
-
-    if not trained:
-        print("WARNING: Network couldn't be trained.")
-
-    return trained
+def writeInfoNewImage(stringInfo):
+    with open(recognizerFolderPath + delimiter + recognizerInfo, "a") as f:
+        f.write(stringInfo)
 
 def askNewImage():
     print("If you want to add a new image to the database press [Y]")
@@ -164,12 +152,28 @@ def askNewImage():
 
     if c.__eq__("Y") or c.__eq__("y"):
         import Camera as camera
-        captured = camera.captureImage()
+        captured = camera.captureImage()[0]
 
-    return captured
+    if captured:
+        return train()
+    else:
+        return askTrain()
+
+def train():
+    import trainer
+    import time
+    tic = time.time()
+    trained, numImages = trainer.train()
+    toc = time.time()
+
+    if numImages >= 2:
+        print("\nTraining time with " + str(numImages) + " images: " + str(round(toc-tic, 2)) + " seconds.")
+
+    if not trained:
+        print("WARNING: Network couldn't be trained.")
+    return trained
 
 def askTrain():
-
     trained = False
 
     print("If you want to train the network again press [Y]")
@@ -184,12 +188,12 @@ def askTrain():
     print("\nThe file " + ymlFile + ((" just created will be used.") if trained else (" existing from before will be used.")))
     print("Loading file " + xmlFolderPath + delimiter + xmlFile + "...")
     getLoadedXml()
+    return trained
 
 def cutFaceFromImage(image):
 
-    face_cascade = getLoadedXml()
     gray = imageToGrayscale(image)
-    faces = getFacesMultiScale(gray, face_cascade)
+    faces = getFacesMultiScale(gray)
 
     cutted = False
     crop_img = image

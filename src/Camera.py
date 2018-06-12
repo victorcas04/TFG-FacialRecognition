@@ -5,7 +5,6 @@ import sys, time, math, cv2
 import Util as util
 
 delimiter = util.delimiter
-folderDataset = ".."+delimiter+"sources"+delimiter+"dataset"+delimiter
 maxInt = sys.maxsize
 
 def initializeCamera(indexCamera):
@@ -27,52 +26,34 @@ def initializeCamera(indexCamera):
     time.sleep(2)
     return cap
 
-def captureImage():
-    #print("Introduce tu nombre:")
-    #name = util.getScan()
-    name = "imagen_de_prueba"
 
-    cap = initializeCamera(0)
+def saveImage(image, path):
+    print("\nSaving image in: " + str(path) + "...\n")
+    cv2.imwrite(path, image);
 
-    print("Displaying image in real-time...")
-    print("Press [C] to save the image.\nPress [Q] to quit without saving ant new image.")
+def printMenuFaceInBox(fromCamera=True):
 
-    enBucle=True
-    while enBucle:
-        ret, img = cap.read()
-        img = cv2.flip(img, 1)
-        cv2.imshow("real_time_image", img)
-        k=cv2.waitKey(1)
-        if k == ord('c'):
-            util.saveImage(img, folderDataset + name+".jpg")
-            captured=True
-            enBucle=False
-        elif k == ord('q'):
-            print("Exiting...")
-            captured = False
-            enBucle=False
+    print("\nOPTIONS:\n")
+    print("Press [I] to display general information.")
+    print("Press [Q] to quit.")
+    if fromCamera:
+        print("Press [P] to pause the camera.")
+        print("Press [SPACE] to resume the camera (only if it was paused).")
+        print("Press [C] to capture the actual frame and close the camera.\n")
 
-    cap.release()
-    cv2.destroyAllWindows()
-    return captured
-
-
-def faceInBoxVideo(indexCamera=-1):
+def captureImage(indexCamera=0, captureToCompare=False):
 
     # Muestra informacion sobre la version de cv
     # print(cv2.getBuildInformation())
 
     imageToReturn = None
 
-    face_cascade = util.getLoadedXml()
-
     cap = initializeCamera(indexCamera)
     if cap is None:
         return util.loadImage()
 
     print("Displaying image in real-time...")
-
-    util.printMenuFaceInBox()
+    printMenuFaceInBox()
 
     while True:
         numFaces = 0
@@ -80,7 +61,7 @@ def faceInBoxVideo(indexCamera=-1):
 
         img = cv2.flip(img, 1)
         gray = util.imageToGrayscale(img)
-        faces = util.getFacesMultiScale(gray, face_cascade)
+        faces = util.getFacesMultiScale(gray)
 
         rectangleThickness = int((img.shape[0] + img.shape[1]) / (100 * 2 * math.pi))  # 20-30
         rectangleColor = (255, 0, 0)
@@ -94,12 +75,11 @@ def faceInBoxVideo(indexCamera=-1):
 
         ### Press [I] for info.
         if k == ord('i'):
-            print("\n[" + str(numFaces) + "] faces were found in the image.")
-            util.printMenuFaceInBox()
+            print("\n[" + str(numFaces) + "] faces were found in the image.\nThere must be exactly one (1) person to be able to capture the image.")
+            printMenuFaceInBox()
 
         ### Press [Q] to exit.
         if k == ord('q'):
-            imageToReturn = util.loadImage()
             break
 
         ### Press [P] to pause camera reading.
@@ -116,4 +96,17 @@ def faceInBoxVideo(indexCamera=-1):
 
     cap.release()
     cv2.destroyAllWindows()
-    return imageToReturn
+
+    if imageToReturn is not None and captureToCompare is False:
+    	iName, name, age, bPlace, job = util.askInfoNewImage()
+    	util.writeInfoNewImage( '\n'+iName+util.fileDelimiter+name+util.fileDelimiter+age+util.fileDelimiter+bPlace +util.fileDelimiter+job)
+    	util.saveImage(img, util.datasetPath + util.delimiter + iName + util.extensionJPG)
+    	return True, None
+
+    captured = True
+
+    if imageToReturn is None:
+    	captured = False
+    	imageToReturn = util.loadImage()
+
+    return captured, imageToReturn

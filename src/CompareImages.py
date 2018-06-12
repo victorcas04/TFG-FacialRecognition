@@ -2,14 +2,12 @@
 # encoding: utf-8
 
 import Util as util
-import cv2
 
 def getLoadedYml(recognizer = util.getReco()):
     recognizer.read(util.getFileName(util.ymlFile,util. recognizerFolderPath))
 
 def compareAll(gray):
 
-    face_cascade = util.getLoadedXml()
     recognizer = util.getReco()
 
     try:
@@ -18,8 +16,7 @@ def compareAll(gray):
         print("ERROR: Cannot compare: The network isn't trained.\nExecute again after train the network.")
         return -1, 0
 
-    #faces = face_cascade.detectMultiScale(gray)
-    faces = util.getFacesMultiScale(gray, face_cascade)
+    faces = util.getFacesMultiScale(gray)
 
     if len(faces) < 1:
         print("ERROR: Cannot compare: no faces detected.")
