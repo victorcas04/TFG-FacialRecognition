@@ -1,27 +1,41 @@
 
 # encoding: utf-8
 
-import os
+import os, cv2
 import numpy as np
 from PIL import Image
 import Util as util
+import Files as files
+import TextInterface as txtIf
 
-delimiter = util.delimiter
-recognizerPath = util.recognizerFolderPath
-recognizerFile = util.ymlFile
-dictFile = util.recognizerDict
-pathImages = util.facesDatasetPath
+recognizerPath = files.recognizerFolderPath
+pathImages = files.facesDatasetPath
+
+def createCutFacesFromDatabase():
+    folder = files.facesDatasetPath
+
+    imagesToDelete = files.filesOnDir(folder)
+    for the_file in imagesToDelete:
+        file_path = files.getFileName(the_file, folder)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+
+    images = files.filesOnDir()
+    for i in images:
+        cutted, cutFace = util.cutFaceFromImage(files.loadImage(files.getFileName(i, files.datasetPath)))
+        if cutted is True:
+            cv2.imwrite(files.getFileName('face_' + i, folder), cutFace)
 
 def train():
 
     trained = False
-    recognizer = util.getReco()
+    recognizer = files.getReco()
 
     if not os.path.exists(recognizerPath):
         os.makedirs(recognizerPath)
 
     def getImagesWithID(path):
-        imagePaths = [os.path.join(path,f) for f in os.listdir(path)]
+        imagePaths = [os.path.join(path,f) for f in files.filesOnDir(path)]
         faces = []
         ID_labels = {}
         id = 0
@@ -36,21 +50,23 @@ def train():
 
     if not os.path.exists(pathImages):
         os.makedirs(pathImages)
-    util.createCutFacesFromDatabase()
+    createCutFacesFromDatabase()
 
     ID_labels, faces, numImages = getImagesWithID(pathImages)
 
     if len(ID_labels) >= 2:
         recognizer.train(faces, np.fromiter(ID_labels.keys(), dtype=int))
-        recognizer.write(recognizerPath + delimiter + recognizerFile)
+        # Podríamos guardar el diccionario en una variable, pero de este forma nos aseguramos tener el
+        #   diccionario guardado en caso de no re-entrenar la red en cada ejecución.
+        recognizer.write(recognizerPath + files.delimiter + files.ymlFile)
 
-        with open(recognizerPath + delimiter + dictFile, 'w') as f:
+        with open(recognizerPath + files.delimiter + files.recognizerDict, 'w') as f:
             for k in ID_labels.keys():
                 s = str(k) + " " + ID_labels.get(k) + "\n"
                 f.write(s)
 
         trained = True
     else:
-        print("Two (2) or more samples are needed to train the network.")
+        txtIf.printError(txtIf.ERRORS.NOTENOUGHIMAGESONDATABASE)
 
     return trained, numImages

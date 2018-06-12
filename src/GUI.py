@@ -4,7 +4,8 @@
 from __future__ import division
 import tkinter as tk
 from tkinter import ttk
-import Util as util
+import Files as files
+import TextInterface as txtIf
 from PIL import Image, ImageTk
 import cv2, wx
 from tkinter import filedialog as fd
@@ -42,7 +43,12 @@ class GUIClass(object):
         self.window.minsize(width=self.width, height=self.height)
         self.window.maxsize(width=self.width, height=self.height)
 
-    def displayInterfaceWindow(self, originalPhoto=util.loadImage(), photoFromDatabase=util.loadImage(), percentage=0.0):
+    def displayInterfaceWindow(self, originalPhoto=None, photoFromDatabase=None, percentage=0.0):
+
+        if originalPhoto is None:
+            originalPhoto = files.loadImage()
+        if photoFromDatabase is None:
+            photoFromDatabase = files.loadImage()
 
         def resizeFaceImage(image, aspect_ratio=2):
             h, w = self.getDisplaySize()
@@ -52,7 +58,7 @@ class GUIClass(object):
             return newImage
 
         percentageString = str(percentage) + "%"
-        print("\nDisplaying result with a " + percentageString + " of coincidence.\n")
+        txtIf.printMessage(txtIf.MESSAGES.DISPLAYWITHCOINCIDENCE, percentageString)
 
         self.createTop_BottomPanel(resizeFaceImage(originalPhoto), resizeFaceImage(photoFromDatabase), percentage)
         self.displayWindow()
@@ -70,7 +76,7 @@ class GUIClass(object):
         self.namePhoto = namePhoto
         self.info = inf
         if namePhoto is not None:
-            self.title = str(p) + " % of coincidence with image: " + str(namePhoto) + util.extensionJPG
+            self.title = str(p) + " % of coincidence with image: " + str(namePhoto) + files.extensionJPG
         else:
             self.title = "No coincidences were found in the database."
         self.window.title(self.title)
@@ -100,7 +106,7 @@ class GUIClass(object):
         popup.rowconfigure(3, weight=1)
         popup.rowconfigure(4, weight=1)
 
-        popup.wm_title("More information about image " + str(self.namePhoto) + util.extensionJPG)
+        popup.wm_title("More information about image " + str(self.namePhoto) + files.extensionJPG)
         nameL = tk.Label(popup, text="Name: \t\t" + self.getInfo("name"), font=(self.textFont, self.textSize))
         ageL = tk.Label(popup, text="Age: \t\t" + self.getInfo("age"), font=(self.textFont, self.textSize))
         bpL = tk.Label(popup, text="Birthplace: \t" + self.getInfo("birth_place"), font=(self.textFont, self.textSize))
@@ -166,17 +172,17 @@ class GUIClass(object):
         self.window.mainloop()
 
     def selectFile(self):
-        print("Select an image...")
+        txtIf.printMessage(txtIf.MESSAGES.SELECTIMAGE)
         afw = tk.Toplevel(self.window)
         afw.filename = fd.askopenfilename(initialdir="/", title="Select file",
                                           filetypes=(
-                                          ("jpeg files", '*'+util.extensionJPG), ("png files", '*'+util.extensionPNG), ("all files", "*.*")))
+                                          ("jpeg files", '*'+file.extensionJPG), ("png files", '*'+file.extensionPNG), ("all files", "*.*")))
         z = afw.filename
         afw.destroy()
         return z
 
     def loadImageByGUI(self):
         imageToReturn = self.selectFile()
-        return util.loadImage(imageToReturn) if (
-                    imageToReturn.endswith(util.extensionJPG) or imageToReturn.endswith(util.extensionPNG)) \
-            else util.loadImage()
+        return files.loadImage(imageToReturn) if (
+                    imageToReturn.endswith(file.extensionJPG) or imageToReturn.endswith(file.extensionPNG)) \
+            else files.loadImage()

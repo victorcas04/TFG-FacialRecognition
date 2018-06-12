@@ -3,19 +3,21 @@
 
 import sys, time, math, cv2
 import Util as util
+import Files as files
+import TextInterface as txtIf
 
-delimiter = util.delimiter
+delimiter = files.delimiter
 maxInt = sys.maxsize
 
 def initializeCamera(indexCamera):
     maxInt = sys.maxsize
 
-    print("Initializing camera...")
+    txtIf.printMessage(txtIf.MESSAGES.INITIALIZINGCAMERA)
 
     cap = cv2.VideoCapture(indexCamera)
 
     if not cap.isOpened():
-        print("Camera couldn't be turned on.")
+        txtIf.printError(txtIf.ERRORS.CAMERANOTINITIALIZED)
         return None
 
     cap.set(cv2.CAP_PROP_FPS, maxInt)
@@ -26,34 +28,19 @@ def initializeCamera(indexCamera):
     time.sleep(2)
     return cap
 
-
-def saveImage(image, path):
-    print("\nSaving image in: " + str(path) + "...\n")
-    cv2.imwrite(path, image);
-
-def printMenuFaceInBox(fromCamera=True):
-
-    print("\nOPTIONS:\n")
-    print("Press [I] to display general information.")
-    print("Press [Q] to quit.")
-    if fromCamera:
-        print("Press [P] to pause the camera.")
-        print("Press [SPACE] to resume the camera (only if it was paused).")
-        print("Press [C] to capture the actual frame and close the camera.\n")
-
 def captureImage(indexCamera=0, captureToCompare=False):
 
-    # Muestra informacion sobre la version de cv
+    # Para mostrar informacion sobre la version de cv
     # print(cv2.getBuildInformation())
 
     imageToReturn = None
 
     cap = initializeCamera(indexCamera)
     if cap is None:
-        return util.loadImage()
+        return files.loadImage()
 
-    print("Displaying image in real-time...")
-    printMenuFaceInBox()
+    txtIf.printMessage(txtIf.MESSAGES.IMAGEINREALTIME)
+    txtIf.printMenuFaceInBox()
 
     while True:
         numFaces = 0
@@ -75,8 +62,9 @@ def captureImage(indexCamera=0, captureToCompare=False):
 
         ### Press [I] for info.
         if k == ord('i'):
-            print("\n[" + str(numFaces) + "] faces were found in the image.\nThere must be exactly one (1) person to be able to capture the image.")
-            printMenuFaceInBox()
+            if numFaces != 1:
+                txtIf.printError(txtIf.ERRORS.IMAGETOOMANYFACES, numFaces)
+            txtIf.printMenuFaceInBox()
 
         ### Press [Q] to exit.
         if k == ord('q'):
@@ -85,28 +73,29 @@ def captureImage(indexCamera=0, captureToCompare=False):
         ### Press [P] to pause camera reading.
         ### Press [SPACE] to resume camera reading.
         if k == ord('p'):
-            print("CAMERA PAUSED")
+            txtIf.printMessage(txtIf.MESSAGES.CAMERAPAUSED)
             while cv2.waitKey(0) != ord(' '):
-                print("CAMERA PAUSED: Press [SPACE] to resume camera reading.")
+                txtIf.printMessage(txtIf.MESSAGES.CAMERAPAUSED2)
 
-        ### Press [C] to take the actual frame and exit.
-        if numFaces == 1 and k == ord('c'):
-            imageToReturn = img
-            break
+        ### Press [C] to take the actual frame and exit if there is only 1 person.
+        if k == ord('c'):
+            if numFaces == 1:
+                imageToReturn = img
+                break
+            else:
+                txtIf.printError(txtIf.ERRORS.IMAGETOOMANYFACES, numFaces)
 
     cap.release()
     cv2.destroyAllWindows()
 
     if imageToReturn is not None and captureToCompare is False:
-    	iName, name, age, bPlace, job = util.askInfoNewImage()
-    	util.writeInfoNewImage( '\n'+iName+util.fileDelimiter+name+util.fileDelimiter+age+util.fileDelimiter+bPlace +util.fileDelimiter+job)
-    	util.saveImage(img, util.datasetPath + util.delimiter + iName + util.extensionJPG)
-    	return True, None
+        #iName, name, age, bPlace, job = askInfoNewImage()
+        files.doWhenNewImage(imageToReturn)
+        return True, None
 
     captured = True
-
     if imageToReturn is None:
-    	captured = False
-    	imageToReturn = util.loadImage()
+        captured = False
+        imageToReturn = files.loadImage()
 
     return captured, imageToReturn

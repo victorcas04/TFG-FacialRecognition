@@ -4,12 +4,14 @@
 from __future__ import division
 import Util as util
 import Camera as camera
+import Files as files
+import CompareImages as compareImages
+import TextInterface as txtIf
 from GUI import GUIClass as gui
-import os
 
-delimiter = util.delimiter
-pathDatasetFullImages = util.datasetPath
-pathDatasetFacesImages = util.facesDatasetPath
+delimiter = files.delimiter
+pathDatasetFullImages = files.datasetPath
+pathDatasetFacesImages = files.facesDatasetPath
 
 #  [0] para la webcam integrada en el portatil
 #  [1] para la cámara externa
@@ -18,24 +20,22 @@ cameraIdx = 0
 
 if __name__ == "__main__":
 
-    print("\n\nTFG - Facial Recognition - Victor de Castro Hurtado\n\n")
+    txtIf.printMessage(txtIf.MESSAGES.TITLE)
 
     trained = util.askNewImage()
 
-    if(trained is True) or (len(os.listdir(util.datasetPath)) >= 2):
-        print("\nDo you want to use an image from camera [C] or from file [F]?")
-        c = util.getScan()
+    if(trained is True) or (len(files.filesOnDir()) >= 2):
+        txtIf.printMessage(txtIf.MESSAGES.ASKCAMERAORFILE)
+        c = txtIf.getScan()
 
         guiMain = None
 
         if c.__eq__("C") or c.__eq__("c"):
             # Sacamos la imágen que queremos identificar desde la cámara
-            #photoOriginal = camera.faceInBoxVideo(cameraIdx)
             photoOriginal = camera.captureImage(cameraIdx, captureToCompare=True)[1]
 
         else:
             # Sacamos la imágen que queremos identificar desde un archivo (en modo gráfico)
-            # C:\Users\victo\Desktop\DEVELOPMENT\projects\PycharmProjects\TFG-FacialRecognition\TFG-FacialRecognition\sources\facesDataset
             guiMain = gui.getInstance()
             guiMain.fixedSize()
             photoOriginal = guiMain.loadImageByGUI()
@@ -47,7 +47,8 @@ if __name__ == "__main__":
 
         pOri = util.cutFaceFromImage(photoOriginal)[1]
         # Imágen resultado / Porcentaje comparación / Nombre imágen resultado / Información sobre la imagen
-        i, p, n, inf = util.compare(photoOriginal)
+        i, p, n = compareImages.compare(photoOriginal)
+        inf = files.loadInfo(n)
 
         guiMain.initialize(n, p, inf)
 
@@ -55,18 +56,19 @@ if __name__ == "__main__":
         # Hay imágenes que al compararlas quedna números negativos al no encontrar resultados o resultados muy malos, por eso ponemos el umbral.
         pMinComp = 0
         if p < pMinComp:
-            print("\nThe comparison obtained less than " + str(pMinComp) + "% of coincidence. Loading default image.")
-            i = util.loadImage()
+            txtIf.printError(txtIf.ERRORS.COMPARISONTHRESHOLD, pMinComp)
+            i = files.loadImage()
 
         if i is not None:
             guiMain.displayInterfaceWindow(originalPhoto=pOri, photoFromDatabase=i, percentage=p)
         else:
-            print("\nERROR: Network is not trained, so images from \'facesDataset\' are missing. Please check.\n")
+            txtIf.printError(txtIf.ERRORS.NETWORKNOTTRAINED)
             guiMain.displayInterfaceWindow(originalPhoto=pOri)
 
     else:
-        print("\nERROR: Network couldn't be trained or database doesn't have enough images. Please check.\n")
+        txtIf.printError(txtIf.ERRORS.CANNOTTRAINNETWORK)
+        txtIf.printError(txtIf.ERRORS.NOTENOUGHIMAGESONDATABASE)
         guiMain = gui.getInstance()
         guiMain.fixedSize()
-        guiMain.initialize(None, 0, util.loadInfo(-1))
+        guiMain.initialize(None, 0, files.loadInfo())
         guiMain.displayInterfaceWindow()
