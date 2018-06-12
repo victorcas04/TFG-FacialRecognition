@@ -13,4 +13,4 @@ robert_downey_jr, Robert Downey Jr., 53, New York, Actor
 shohreh_aghdashloo, Shohreh Aghdashloo, 65, Teheran, Actress
 stan_lee, Stanley Lieber (Stan lee), 95, Nueva York, Writer
 will_smith, Will Smith, 49, Filadelfia, Actor
-new_image_name, Default Name, Default Age, Default City, Default Job
+cas_abii, victorcas, Default Age, Burgos, Default Job
