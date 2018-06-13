@@ -23,7 +23,7 @@ def getFileName(defaultFile=defaultImage, folder=defaultImagePath):
     return folder + delimiter + defaultFile
 
 def loadImage(fullName=getFileName()):
-    txtIf.printMessage(txtIf.MESSAGES.LOADINGFILE, fullName)
+    txtIf.printMessage(txtIf.MESSAGES.LOADING_FILE, fullName)
     return cv2.imread(fullName)
 
 def getLoadedXml():
@@ -57,18 +57,27 @@ def filesOnDir(path=datasetPath):
     return os.listdir(path)
 
 def saveImage(image, path):
-    txtIf.printMessage(txtIf.MESSAGES.SAVINGIMAGE, path)
+    txtIf.printMessage(txtIf.MESSAGES.SAVING_IMAGE, path)
     cv2.imwrite(path, image);
 
 def writeInfoNewImage(stringInfo):
     with open(recognizerFolderPath + delimiter + recognizerInfo, "a") as f:
         f.write(stringInfo)
 
+def removeLine(nameImage):
+    with open(recognizerFolderPath + delimiter + recognizerInfo, "r") as f:
+        lines = f.readlines()
+    with open(recognizerFolderPath + delimiter + recognizerInfo, "w") as f:
+        for line in lines:
+            if line.split(fileDelimiter)[0] != nameImage:
+                f.write(line)
+            else:
+                txtIf.printError(txtIf.ERRORS.IMAGE_ALREADY_ON_DATABASE)
+
 def doWhenNewImage(img):
+    # info: iName, name, age, bPlace, job
     info = txtIf.askInfoNewImage()
-    ### info: iName, name, age, bPlace, job
-    #writeInfoNewImage(
-    #    '\n' + iName + fileDelimiter + name + fileDelimiter + age + fileDelimiter + bPlace + fileDelimiter + job)
-    #saveImage(img, datasetPath + delimiter + iName + extensionJPG)
+    # Sobreescribimos la línea que corresponda a la misma imagen
+    removeLine(info[0])
     writeInfoNewImage('\n' + info[0] + fileDelimiter + info[1] + fileDelimiter + info[2] + fileDelimiter + info[3] + fileDelimiter + info[4])
     saveImage(img, datasetPath + delimiter + info[0] + extensionJPG)

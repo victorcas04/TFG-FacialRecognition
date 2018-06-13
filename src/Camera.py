@@ -12,12 +12,12 @@ maxInt = sys.maxsize
 def initializeCamera(indexCamera):
     maxInt = sys.maxsize
 
-    txtIf.printMessage(txtIf.MESSAGES.INITIALIZINGCAMERA)
+    txtIf.printMessage(txtIf.MESSAGES.INITIALIZING_CAMERA)
 
     cap = cv2.VideoCapture(indexCamera)
 
     if not cap.isOpened():
-        txtIf.printError(txtIf.ERRORS.CAMERANOTINITIALIZED)
+        txtIf.printError(txtIf.ERRORS.CAMERA_NOT_INITIALIZED)
         return None
 
     cap.set(cv2.CAP_PROP_FPS, maxInt)
@@ -39,7 +39,7 @@ def captureImage(indexCamera=0, captureToCompare=False):
     if cap is None:
         return files.loadImage()
 
-    txtIf.printMessage(txtIf.MESSAGES.IMAGEINREALTIME)
+    txtIf.printMessage(txtIf.MESSAGES.IMAGE_IN_REALTIME)
     txtIf.printMenuFaceInBox()
 
     while True:
@@ -63,7 +63,7 @@ def captureImage(indexCamera=0, captureToCompare=False):
         ### Press [I] for info.
         if k == ord('i'):
             if numFaces != 1:
-                txtIf.printError(txtIf.ERRORS.IMAGETOOMANYFACES, numFaces)
+                txtIf.printError(txtIf.ERRORS.IMAGE_TOO_MANY_FACES, numFaces)
             txtIf.printMenuFaceInBox()
 
         ### Press [Q] to exit.
@@ -73,9 +73,9 @@ def captureImage(indexCamera=0, captureToCompare=False):
         ### Press [P] to pause camera reading.
         ### Press [SPACE] to resume camera reading.
         if k == ord('p'):
-            txtIf.printMessage(txtIf.MESSAGES.CAMERAPAUSED)
+            txtIf.printMessage(txtIf.MESSAGES.CAMERA_PAUSED)
             while cv2.waitKey(0) != ord(' '):
-                txtIf.printMessage(txtIf.MESSAGES.CAMERAPAUSED2)
+                txtIf.printMessage(txtIf.MESSAGES.CAMERA_PAUSED_2)
 
         ### Press [C] to take the actual frame and exit if there is only 1 person.
         if k == ord('c'):
@@ -83,7 +83,7 @@ def captureImage(indexCamera=0, captureToCompare=False):
                 imageToReturn = img
                 break
             else:
-                txtIf.printError(txtIf.ERRORS.IMAGETOOMANYFACES, numFaces)
+                txtIf.printError(txtIf.ERRORS.IMAGE_TOO_MANY_FACES, numFaces)
 
     cap.release()
     cv2.destroyAllWindows()

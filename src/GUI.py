@@ -9,8 +9,18 @@ import TextInterface as txtIf
 from PIL import Image, ImageTk
 import cv2, wx
 from tkinter import filedialog as fd
+from enum import Enum
 
 class GUIClass(object):
+    class COLORS(Enum):
+        BACKGROUNDIMAGES = "#00CED1"  # darkturquoise
+        BACKGROUNDGENERAL = "#AFEEEE"  # paleturquoise
+        BUTTON = "#00CED1"  # dark turquoise
+        PROGRESSBAD = "#8B0000"  # darkred
+        PROGRESSNORMAL = "#CCCC00"  # Dark yellow1
+        PROGRESSGOOD = "#006400"  # darkgreen
+        PROGRESSPERFECT = "#FF00FF"  # magenta
+        POPUPINFO = "#6FEFC4" # aqua marine
 
     __instance = None
     textFont = "Helvetica"
@@ -58,7 +68,7 @@ class GUIClass(object):
             return newImage
 
         percentageString = str(percentage) + "%"
-        txtIf.printMessage(txtIf.MESSAGES.DISPLAYWITHCOINCIDENCE, percentageString)
+        txtIf.printMessage(txtIf.MESSAGES.DISPLAY_WITH_COINCIDENCE, percentageString)
 
         self.createTop_BottomPanel(resizeFaceImage(originalPhoto), resizeFaceImage(photoFromDatabase), percentage)
         self.displayWindow()
@@ -71,7 +81,7 @@ class GUIClass(object):
     def getInfo(self, param):
         return self.info[param]
 
-    def initialize(self, namePhoto, p, inf):
+    def initialize(self, namePhoto=None, p=0, inf=files.loadInfo()):
         self.percentage = p
         self.namePhoto = namePhoto
         self.info = inf
@@ -80,6 +90,7 @@ class GUIClass(object):
         else:
             self.title = "No coincidences were found in the database."
         self.window.title(self.title)
+        self.window.config(bg=self.COLORS.BACKGROUNDGENERAL.value)
 
     def addPercentageLabel(self, percentage="0%"):
 
@@ -96,6 +107,7 @@ class GUIClass(object):
 
         popup = tk.Toplevel(self.window)
         popup.resizable(width=False, height=False)
+        popup.config(bg=self.COLORS.POPUPINFO.value, bd=6, relief="groove")
 
         # Nos permite evitar usar la ventana principal mientras esté esta abierta
         popup.grab_set()
@@ -107,13 +119,13 @@ class GUIClass(object):
         popup.rowconfigure(4, weight=1)
 
         popup.wm_title("More information about image " + str(self.namePhoto) + files.extensionJPG)
-        nameL = tk.Label(popup, text="Name: \t\t" + self.getInfo("name"), font=(self.textFont, self.textSize))
-        ageL = tk.Label(popup, text="Age: \t\t" + self.getInfo("age"), font=(self.textFont, self.textSize))
-        bpL = tk.Label(popup, text="Birthplace: \t" + self.getInfo("birth_place"), font=(self.textFont, self.textSize))
-        jobL = tk.Label(popup, text="Occupation: \t" + self.getInfo("job"), font=(self.textFont, self.textSize))
+        nameL = tk.Label(popup, text="Name: \t\t" + self.getInfo("name"), font=(self.textFont, self.textSize), bg=self.COLORS.POPUPINFO.value)
+        ageL = tk.Label(popup, text="Age: \t\t" + self.getInfo("age"), font=(self.textFont, self.textSize), bg=self.COLORS.POPUPINFO.value)
+        bpL = tk.Label(popup, text="Birthplace: \t" + self.getInfo("birth_place"), font=(self.textFont, self.textSize), bg=self.COLORS.POPUPINFO.value)
+        jobL = tk.Label(popup, text="Occupation: \t" + self.getInfo("job"), font=(self.textFont, self.textSize), bg=self.COLORS.POPUPINFO.value)
 
         backButton = tk.Button(popup, text="Back", command=popup.destroy)
-        backButton.config(font=(self.textFont, self.textSizeProgressBar))
+        backButton.config(font=(self.textFont, self.textSizeProgressBar), bg=self.COLORS.BUTTON.value, bd=6, relief="raised")
 
         nameL.grid(row=0, sticky="w")
         ageL.grid(row=1, sticky="w")
@@ -125,7 +137,8 @@ class GUIClass(object):
 
     def createTop_BottomPanel(self, photoFromCamera, photoFromDatabase, p):
 
-        myFrame = tk.Frame(self.window) 
+        myFrame = tk.Frame(self.window)
+        myFrame.config(bg=self.COLORS.BACKGROUNDGENERAL.value)
         myFrame.pack(fill=tk.Y, pady=self.height/30)
         myFrame.rowconfigure(0, weight=4)
         myFrame.rowconfigure(1, weight=2)
@@ -139,7 +152,7 @@ class GUIClass(object):
         myLabelC = tk.Label(myFrame, compound=tk.BOTTOM, image=imgC, text="Original image")
         myLabelC.grid(row=0, column = 0, sticky=tk.W)
         myLabelC.image = imgC
-        myLabelC.config(font=(self.textFont, self.textSize))
+        myLabelC.config(font=(self.textFont, self.textSize), bg=self.COLORS.BACKGROUNDIMAGES.value, bd=8, relief="ridge")
 
         imgDRecolor = cv2.cvtColor(photoFromDatabase, cv2.COLOR_BGR2RGB)
         imgDFromArray = Image.fromarray(imgDRecolor)
@@ -148,19 +161,28 @@ class GUIClass(object):
         myLabelD = tk.Label(myFrame, compound=tk.BOTTOM, image=imgD, text=self.getInfo("name"))
         myLabelD.grid(row=0, column=1, sticky=tk.E)
         myLabelD.image = imgD
-        myLabelD.config(font=(self.textFont, self.textSize))
-
-        s = ttk.Style()
-        s.theme_use("default")
-        s.configure("TProgressbar", thickness=self.height/10)
+        myLabelD.config(font=(self.textFont, self.textSize), bg=self.COLORS.BACKGROUNDIMAGES.value, bd=8, relief="ridge")
 
         buttonInfoLabel = tk.Button(myFrame, text="More information...", command=self.createPopUpInfo)
-        buttonInfoLabel.config(font=(self.textFont, self.textSizeProgressBar))
+        buttonInfoLabel.config(font=(self.textFont, self.textSizeProgressBar), bg=self.COLORS.BUTTON.value, bd=6, relief="raised")
         buttonInfoLabel.grid(row=1, columnspan=2, pady=(self.height/30, 0))
 
         pBarLabel = tk.Label(myFrame, text=self.title)
-        pBarLabel.config(font=(self.textFont, self.textSizeProgressBar))
+        pBarLabel.config(font=(self.textFont, self.textSizeProgressBar), bg=self.COLORS.BACKGROUNDGENERAL.value)
         pBarLabel.grid(row=2, columnspan=2, sticky=tk.S, pady=(self.height/30, 0))
+
+        s = ttk.Style()
+        #print(s.theme_names()) # default, clam, classic, alt, winnative, vista, xpnative
+        s.theme_use("classic")
+        if (p < 35):
+            colorprogressbar = self.COLORS.PROGRESSBAD.value
+        elif (p < 75) and (p >= 35):
+            colorprogressbar = self.COLORS.PROGRESSNORMAL.value
+        elif (p < 98) and (p >= 75):
+            colorprogressbar = self.COLORS.PROGRESSGOOD.value
+        else:
+            colorprogressbar = self.COLORS.PROGRESSPERFECT.value
+        s.configure("TProgressbar", thickness=self.height / 10, background=colorprogressbar, borderwidth=4, relief="ridge")
 
         progress = ttk.Progressbar(myFrame, orient="horizontal", length=self.width-int(self.width/10), mode="determinate", style="TProgressbar")
         progress.grid(row=3, columnspan=2, sticky=tk.S, pady=(self.height/30, 0))
@@ -172,11 +194,11 @@ class GUIClass(object):
         self.window.mainloop()
 
     def selectFile(self):
-        txtIf.printMessage(txtIf.MESSAGES.SELECTIMAGE)
+        txtIf.printMessage(txtIf.MESSAGES.SELECT_IMAGE)
         afw = tk.Toplevel(self.window)
         afw.filename = fd.askopenfilename(initialdir="/", title="Select file",
                                           filetypes=(
-                                          ("jpeg files", '*'+file.extensionJPG), ("png files", '*'+file.extensionPNG), ("all files", "*.*")))
+                                          ("jpeg files", '*'+files.extensionJPG), ("png files", '*'+files.extensionPNG), ("all files", "*.*")))
         z = afw.filename
         afw.destroy()
         return z
@@ -184,5 +206,5 @@ class GUIClass(object):
     def loadImageByGUI(self):
         imageToReturn = self.selectFile()
         return files.loadImage(imageToReturn) if (
-                    imageToReturn.endswith(file.extensionJPG) or imageToReturn.endswith(file.extensionPNG)) \
+                    imageToReturn.endswith(files.extensionJPG) or imageToReturn.endswith(files.extensionPNG)) \
             else files.loadImage()

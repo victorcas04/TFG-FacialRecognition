@@ -5,115 +5,127 @@ import six
 from enum import Enum
 
 class ERRORS(Enum):
-    NETWORKNOTTRAINED2 = 1
-    CANNOTTRAINNETWORK = 2
-    IMAGENOFACES = 3
-    IMAGETOOMANYFACES = 4
-    COMPARISONTHRESHOLD = 5
-    NOTENOUGHIMAGESONDATABASE = 6
-    CAMERANOTINITIALIZED = 7
-    NETWORKNOTTRAINED = 8
+    NETWORK_NOT_TRAINED_2 = 1
+    CANNOT_TRAIN_NETWORK = 2
+    IMAGE_NO_FACES = 3
+    IMAGE_TOO_MANY_FACES = 4
+    COMPARISON_THRESHOLD = 5
+    NOT_ENOUGH_IMAGES_ON_DATABASE = 6
+    CAMERA_NOT_INITIALIZED = 7
+    NETWORK_NOT_TRAINED = 8
+    IMAGE_ALREADY_ON_DATABASE = 9
+    FUTURE_FEATURE = 10
 
 class MESSAGES(Enum):
     TITLE = 1
-    ASKCAMERAORFILE = 2
-    SAVINGIMAGE = 4
-    DISPLAYWITHCOINCIDENCE = 6
-    SELECTIMAGE = 7
-    ASKADDIMAGES = 8
-    TRAINTIME = 9
-    ASKTRAINNETWORK = 10
-    LOADINGFILE = 11
-    YMLUSED = 12
-    TRAININGNETWORK = 13
-    COMPARINGIMAGES = 14
-    INITIALIZINGCAMERA = 15
-    IMAGEINREALTIME = 16
-    CAMERAPAUSED = 17
-    CAMERAPAUSED2 = 18
+    ASK_CAMERA_FILE_REALTIME = 2
+    SAVING_IMAGE = 3
+    DISPLAY_WITH_COINCIDENCE = 4
+    SELECT_IMAGE = 5
+    ASK_ADD_IMAGES = 6
+    TRAIN_TIME = 7
+    ASK_TRAIN_NETWORK = 8
+    LOADING_FILE = 9
+    YML_USED = 10
+    TRAINING_NETWORK = 11
+    COMPARING_IMAGES = 12
+    INITIALIZING_CAMERA = 13
+    IMAGE_IN_REALTIME = 14
+    CAMERA_PAUSED = 15
+    CAMERA_PAUSED_2 = 16
+    PRESS_ANY_KEY = 17
 
 def printMessage(code=None, info=None, info2=None):
     if code.name is "TITLE":
         print("\n\nTFG - Facial Recognition - Victor de Castro Hurtado\n\n")
 
-    elif code.name is "ASKCAMERAORFILE":
-        print("\nDo you want to use an image from camera [C] or from file [F]?")
+    elif code.name is "ASK_CAMERA_FILE_REALTIME":
+        print("\nDo you want to use an image from camera [C], from file [F] or in real-time [R]?")
 
-    elif code.name is "SAVINGIMAGE":
+    elif code.name is "SAVING_IMAGE":
         print("\nSaving image in: " + str(info) + "...")
 
-    elif code.name is "DISPLAYWITHCOINCIDENCE":
+    elif code.name is "DISPLAY_WITH_COINCIDENCE":
         print("\nDisplaying result with a " + str(info) + " of coincidence.")
 
-    elif code.name is "SELECTIMAGE":
+    elif code.name is "SELECT_IMAGE":
         print("\nSelect an image...")
 
-    elif code.name is "ASKADDIMAGES":
+    elif code.name is "ASK_ADD_IMAGES":
         print("\nIf you want to add a new image to the database press [Y]")
 
-    elif code.name is "TRAINTIME":
+    elif code.name is "TRAIN_TIME":
         print("\nTraining time with " + str(info) + " images: " + str(info2) + " seconds.")
 
-    elif code.name is "ASKTRAINNETWORK":
+    elif code.name is "ASK_TRAIN_NETWORK":
         print("\nIf you want to train the network again press [Y]")
 
-    elif code.name is "LOADINGFILE":
+    elif code.name is "LOADING_FILE":
         print("Loading file " + str(info) + "...")
 
-    elif code.name is "YMLUSED":
+    elif code.name is "YML_USED":
         print("\nThe file " + str(info) + (
             (" just created will be used.") if info2 else (" existing from before will be used.")))
 
-    elif code.name is "TRAININGNETWORK":
+    elif code.name is "TRAINING_NETWORK":
         print("\nCreating face-focused images from original-database images...")
         print("Training network...\n")
 
-    elif code.name is "COMPARINGIMAGES":
+    elif code.name is "COMPARING_IMAGES":
         print("\nComparing images...")
 
-    elif code.name is "INITIALIZINGCAMERA":
+    elif code.name is "INITIALIZING_CAMERA":
         print("\nInitializing camera...")
 
-    elif code.name is "IMAGEINREALTIME":
+    elif code.name is "IMAGE_IN_REALTIME":
         print("\nDisplaying image in real-time...")
 
-    elif code.name is "CAMERAPAUSED":
+    elif code.name is "CAMERA_PAUSED":
         print("\nCAMERA PAUSED")
 
-    elif code.name is "CAMERAPAUSED2":
+    elif code.name is "CAMERA_PAUSED_2":
         print("\nCAMERA PAUSED: Press [SPACE] to resume camera reading.")
+
+    elif code.name is "PRESS_ANY_KEY":
+        print("\nPress any key to continue...")
 
     else:
         print("\nMESSAGE: Unknown message.")
 
 def printError(code=None, info=None):
-    if code.name is "NETWORKNOTTRAINED":
+    if code.name is "NETWORK_NOT_TRAINED":
         print("\nERROR: Cannot compare: The network isn't trained.")
 
-    elif code.name is "NETWORKNOTTRAINED2":
+    elif code.name is "NETWORK_NOT_TRAINED_2":
         print("\nERROR: Network is not trained, so images from \'facesDataset\' are missing. Please check.\n")
 
-    elif code.name is "CANNOTTRAINNETWORK":
+    elif code.name is "CANNOT_TRAIN_NETWORK":
         print("\nWARNING: Network couldn't be trained.")
 
-    elif code.name is "COMPARISONTHRESHOLD":
+    elif code.name is "COMPARISON_THRESHOLD":
         print("\nWARNING: The comparison obtained less than " + str(info) + "% of coincidence. Loading default image.")
 
-    elif code.name is "NOTENOUGHIMAGESONDATABASE":
+    elif code.name is "NOT_ENOUGH_IMAGES_ON_DATABASE":
         print("\nERROR: Two (2) or more samples are needed to train the network.")
 
-    elif code.name is "IMAGENOFACES":
+    elif code.name is "IMAGE_NO_FACES":
         print("\nWARNING: Image with no faces.")
 
-    elif code.name is "IMAGETOOMANYFACES" and info is None:
+    elif code.name is "IMAGE_TOO_MANY_FACES" and info is None:
         print("\nWARNING: Image with too many faces.")
 
-    elif code.name is "IMAGETOOMANYFACES" and info is not None:
+    elif code.name is "IMAGE_TOO_MANY_FACES" and info is not None:
         print("\nWARNING: [" + str(
             info) + "] faces were found in the image.\nThere must be exactly one (1) person to be able to capture the image.")
 
-    elif code.name is "CAMERANOTINITIALIZED":
+    elif code.name is "CAMERA_NOT_INITIALIZED":
         print("\nERROR: Camera couldn't be turned on.")
+
+    elif code.name is "IMAGE_ALREADY_ON_DATABASE":
+        print("\nWARNING: An image with the same name already exists. It will be overwritten.")
+
+    elif code.name is "FUTURE_FEATURE":
+        print("\nWARNING: Feature not implemented yet. Wait for developers to do their job.")
 
     else:
         print("\nERROR: Unknown error.")

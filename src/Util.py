@@ -20,7 +20,7 @@ def getFacesMultiScale(gray):
     return files.getLoadedXml().detectMultiScale(gray, scaleFactor, minNeighbors, minSize=(gray.shape[0] // 10, gray.shape[1] // 10))
 
 def askNewImage():
-    txtIf.printMessage(txtIf.MESSAGES.ASKADDIMAGES)
+    txtIf.printMessage(txtIf.MESSAGES.ASK_ADD_IMAGES)
     c = txtIf.getScan()
     captured = False
 
@@ -41,25 +41,25 @@ def train():
     toc = time.time()
 
     if numImages >= 2:
-        txtIf.printMessage(txtIf.MESSAGES.TRAINTIME, numImages, round(toc - tic, 2))
+        txtIf.printMessage(txtIf.MESSAGES.TRAIN_TIME, numImages, round(toc - tic, 2))
 
     if not trained:
-        txtIf.printError(txtIf.ERRORS.CANNOTTRAINNETWORK)
+        txtIf.printError(txtIf.ERRORS.CANNOT_TRAIN_NETWORK)
     return trained
 
 def askTrain():
     trained = False
 
-    txtIf.printMessage(txtIf.MESSAGES.ASKTRAINNETWORK)
+    txtIf.printMessage(txtIf.MESSAGES.ASK_TRAIN_NETWORK)
     c = txtIf.getScan()
 
     if c.__eq__("Y") or c.__eq__("y"):
-        txtIf.printMessage(txtIf.MESSAGES.TRAININGNETWROK)
+        txtIf.printMessage(txtIf.MESSAGES.TRAINING_NETWORK)
 
         trained = train()
 
-    txtIf.printMessage(txtIf.MESSAGES.YMLUSED, files.ymlFile, trained)
-    txtIf.printMessage(txtIf.MESSAGES.LOADINGFILE, files.xmlFolderPath + files.delimiter + files.xmlFile)
+    txtIf.printMessage(txtIf.MESSAGES.YML_USED, files.ymlFile, trained)
+    txtIf.printMessage(txtIf.MESSAGES.LOADING_FILE, files.xmlFolderPath + files.delimiter + files.xmlFile)
     files.getLoadedXml()
     return trained
 
@@ -76,7 +76,7 @@ def cutFaceFromImage(image):
         crop_img = image[y:y + h, x:x + w]
         cutted = True
     elif len(faces) > 1:
-        txtIf.printError(txtIf.ERRORS.IMAGETOOMANYFACES)
+        txtIf.printError(txtIf.ERRORS.IMAGE_TOO_MANY_FACES)
     else:
-        txtIf.printError(txtIf.ERRORS.IMAGENOFACES)
+        txtIf.printError(txtIf.ERRORS.IMAGE_NO_FACES)
     return cutted, crop_img

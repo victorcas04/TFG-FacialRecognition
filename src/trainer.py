@@ -67,6 +67,6 @@ def train():
 
         trained = True
     else:
-        txtIf.printError(txtIf.ERRORS.NOTENOUGHIMAGESONDATABASE)
+        txtIf.printError(txtIf.ERRORS.NOT_ENOUGH_IMAGES_ON_DATABASE)
 
     return trained, numImages
