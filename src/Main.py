@@ -3,11 +3,8 @@
 
 from __future__ import division
 import Util as util
-import Camera as camera
 import Files as files
-import CompareImages as compareImages
 import TextInterface as txtIf
-import RecognizerRealTime as rrt
 from GUI import GUIClass as gui
 
 
@@ -22,9 +19,7 @@ if __name__ == "__main__":
     # [-1] para menú
     cameraIdx = 0
 
-
     txtIf.printMessage(txtIf.MESSAGES.TITLE)
-
     trained = util.askNewImage()
 
     if(trained is True) or (len(files.filesOnDir()) >= 2):
@@ -35,15 +30,13 @@ if __name__ == "__main__":
         realTime = False
 
         if c.__eq__("C") or c.__eq__("c"):
+            import Camera as camera
             # Sacamos la imágen que queremos identificar desde la cámara
             photoOriginal = camera.captureImage(cameraIdx, captureToCompare=True)[1]
 
         elif c.__eq__("R") or c.__eq__("r"):
-            # TODO
-            txtIf.printError(txtIf.ERRORS.FUTURE_FEATURE)
-            #rrt.compareInRealTime(cameraIdx)
-            #import test
-            #test.doThings(0)
+            import RecognizerRealTime as rrt
+            rrt.compareInRealTime(cameraIdx)
             realTime = True
 
         else:
@@ -60,6 +53,7 @@ if __name__ == "__main__":
 
             cutted, pOri = util.cutFaceFromImage(photoOriginal)
             if cutted:
+                import CompareImages as compareImages
                 # Imágen resultado / Porcentaje comparación / Nombre imágen resultado / Información sobre la imagen
                 i, p, n = compareImages.compare(photoOriginal)
                 inf = files.loadInfo(n)

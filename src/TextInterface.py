@@ -1,7 +1,6 @@
 
 # encoding: utf-8
 
-import six
 from enum import Enum
 
 class ERRORS(Enum):
@@ -131,6 +130,7 @@ def printError(code=None, info=None):
         print("\nERROR: Unknown error.")
 
 def getScan():
+    import six
     return six.moves.input()
 
 def askInfoNewImage():

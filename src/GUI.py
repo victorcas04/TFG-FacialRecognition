@@ -7,7 +7,7 @@ from tkinter import ttk
 import Files as files
 import TextInterface as txtIf
 from PIL import Image, ImageTk
-import cv2, wx
+import cv2
 from tkinter import filedialog as fd
 from enum import Enum
 
@@ -40,7 +40,11 @@ class GUIClass(object):
             GUIClass()
         return GUIClass.__instance
 
-    def getDisplaySize(self):
+    def getDisplaySize(self, realTime=False):
+        if realTime:
+            # TODO
+            return [900, 1600]
+        import wx
         app = wx.App(False)
         w, h = wx.GetDisplaySize()
         return h, w
@@ -135,7 +139,7 @@ class GUIClass(object):
 
         popup.mainloop()
 
-    def createTop_BottomPanel(self, photoFromCamera, photoFromDatabase, p):
+    def createTop_BottomPanel(self, originalPhoto, photoFromDatabase, p):
 
         myFrame = tk.Frame(self.window)
         myFrame.config(bg=self.COLORS.BACKGROUNDGENERAL.value)
@@ -145,7 +149,7 @@ class GUIClass(object):
         myFrame.rowconfigure(2, weight=1)
         myFrame.rowconfigure(3, weight=2)
 
-        imgCRecolor = cv2.cvtColor(photoFromCamera, cv2.COLOR_BGR2RGB)
+        imgCRecolor = cv2.cvtColor(originalPhoto, cv2.COLOR_BGR2RGB)
         imgCFromArray = Image.fromarray(imgCRecolor)
         imgC = ImageTk.PhotoImage(imgCFromArray)
 

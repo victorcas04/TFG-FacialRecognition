@@ -3,7 +3,6 @@
 
 import os, cv2
 import numpy as np
-from PIL import Image
 import Util as util
 import Files as files
 import TextInterface as txtIf
@@ -35,6 +34,7 @@ def train():
         os.makedirs(recognizerPath)
 
     def getImagesWithID(path):
+        from PIL import Image
         imagePaths = [os.path.join(path,f) for f in files.filesOnDir(path)]
         faces = []
         ID_labels = {}

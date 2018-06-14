@@ -1,15 +1,15 @@
 
 # encoding: utf-8
 
-import sys, time, math, cv2
+import cv2
 import Util as util
 import Files as files
 import TextInterface as txtIf
 
 delimiter = files.delimiter
-maxInt = sys.maxsize
 
 def initializeCamera(indexCamera):
+    import sys
     maxInt = sys.maxsize
 
     txtIf.printMessage(txtIf.MESSAGES.INITIALIZING_CAMERA)
@@ -25,15 +25,17 @@ def initializeCamera(indexCamera):
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, maxInt)
 
     # Esperamos dos segundos para que la cámara termine de inicializarse y no tomar datos basura
+    import time
     time.sleep(2)
     return cap
 
 def captureImage(indexCamera=0, captureToCompare=False):
-
+    import math
     # Para mostrar informacion sobre la version de cv
     # print(cv2.getBuildInformation())
 
     imageToReturn = None
+    captured = False
 
     cap = initializeCamera(indexCamera)
     if cap is None:
@@ -88,14 +90,13 @@ def captureImage(indexCamera=0, captureToCompare=False):
     cap.release()
     cv2.destroyAllWindows()
 
-    if imageToReturn is not None and captureToCompare is False:
-        #iName, name, age, bPlace, job = askInfoNewImage()
-        files.doWhenNewImage(imageToReturn)
-        return True, None
+    if imageToReturn is not None:
+        if captureToCompare is False:
+            #iName, name, age, bPlace, job = askInfoNewImage()
+            files.doWhenNewImage(imageToReturn)
+        captured = True
 
-    captured = True
-    if imageToReturn is None:
-        captured = False
+    if imageToReturn is None and captureToCompare is True:
         imageToReturn = files.loadImage()
 
     return captured, imageToReturn

@@ -1,7 +1,7 @@
 
 # encoding: utf-8
 
-import cv2, os
+import cv2
 import TextInterface as txtIf
 
 delimiter = '\\'
@@ -54,6 +54,7 @@ def loadInfo(nameImage=None):
     return info
 
 def filesOnDir(path=datasetPath):
+    import os
     return os.listdir(path)
 
 def saveImage(image, path):
