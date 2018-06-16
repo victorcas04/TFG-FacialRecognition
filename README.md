@@ -8,9 +8,9 @@
 ### Tutor: César Represa Pérez
 
 # Índice:
-  - Descripción
-  - Introducción
-  - Requisitos
+  - Descripción inicial
+  - Poniéndonos técnicos... (desarrollo)
+  - ¿Qué necesitamos? (requisitos)
   - Instrucciones
 
 ## Descripción inicial
