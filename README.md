@@ -1,13 +1,11 @@
-# Título:
-### TFG-FacialRecognition
+
+# TFG - FacialRecognition
 
 ## Universidad de Burgos
 
-# Autor: 
-#### Víctor de Castro Hurtado
+## Autor: Víctor de Castro Hurtado
 
-# Tutor: 
-#### César Represa Pérez
+### Tutor: César Represa Pérez
 
 # Índice:
   - Descripción
@@ -15,68 +13,127 @@
   - Requisitos
   - Instrucciones
 
-## Descripción:
+## Descripción inicial
 
-Se pretende diseñar un sistema de identificación de personas a través de un programa de reconocimiento facial con rostros previamente incluidos en una base de datos. El sistema de desarrollará en *Python* y utilizando técnicas de *Machine Learning*.
+Las tecnologías avanzan continuamente, al igual que hacen las amenazas que acompañan a dichas tecnologías. Por ello, y para mantener una sociedad estable, la seguridad debe ir ligada a estos avances.
 
-## Introducción:
+Con este proyecto se pretende abordar la temática de la seguridad en lugares públicos (como pueden ser aeropuertos o centros comerciales) desde el punto de vista del reconocimiento facial.
+
+Para ello, se ha diseñado un prototipo de un sistema de identificación de personas a través de un programa de reconocimiento facial, desarrollado en *Python* y utilizando técnicas de *Machine-Learning*.
+En dicho sistema se parte de una base de datos que contiene imágenes de personas en una lista de busca y captura. De este modo, a partir de una imagen capturada en el lugar de interés, el sistema reconocerá el rostro y lo identificará si se encuentra en la base de datos.
+
+## Poniéndonos técnicos...
 
 El repositorio de Github donde se encuentran los ficheros del TFG de reconocimiento facial basado en machine-learning se puede encontrar en el siguiente [enlace](https://github.com/victorcas04/TFG-FacialRecognition).
 
-El TFG consiste en una aplicación que, dadas dos imágenes, una obtenida en el momento de ejecución, ya sea mediante fichero (accediendo a la foto que tengamos almacenada en nuestro equipo), o mediante una captura que realicemos con nuestra cámara,  y la otra alojada localmente en una base de datos: sea capaz de distinguir si en ambas imágenes se encuentra la misma persona utilizando técnicas de machine-learning.
-A la hora de comparar ambas imágenes, si la persona que se pone delante de la cámara no estaba registrada en la base de datos, aparecerá la persona que esté registrada que más se parezca. En caso de que no se supere un **umbral de coincidencia** con ninguna de las personas registradas, mostrará una imágen por defecto avisando de que no se ha podido obtener ningún resultado satisfactorio.
-En cualquier caso, junto con la imágen que se obtenga como resultado, se mostrará una *barra de progreso*, que indica el porcentage de acierto que ha obtenido al encontrar dicho resultado. Además, se muestra un botón que nos permite crear otra ventana extra con información de la persona obtenida como resultado (nombre, edad, lugar de nacimiento y profesión).
+El TFG consiste en una aplicación que, dadas dos imágenes, una obtenida en el momento de ejecución, ya sea mediante fichero (accediendo a la foto que tengamos almacenada en nuestro equipo),  o mediante una captura que realicemos con nuestra cámara,  y la otra alojada localmente en una base de datos: sea capaz de distinguir si en ambas imágenes se encuentra la misma persona utilizando técnicas de machine-learning.
 
-## Requisitos:
+A la hora de comparar ambas imágenes se utiliza la extracción de características mediante el algoritmo *LBPH* y la herramiento *OpenCV*. Si la persona que se intenta identificar no estaba registrada en la base de datos, aparecerá la persona que esté registrada que más se parezca.
+En caso de que no se supere un **umbral de coincidencia** con ninguna de las personas registradas, mostrará una imágen por defecto avisando de que no se ha podido obtener ningún resultado satisfactorio.
+Además, esta misma imágen por defecto se mostrará si no se reconoce exáctamente [1] sólo rostro (se toma esta decisión para ahorrarnos problemas a la hora de extraer características).
 
-Es necesario tener instalado *python 2.7* y diferentes librerías: *cv2* (machine-learning orientado a imágenes), *tKinter* (interfaz), *numpy* (utilidad), *Pillow* (operaciones con imágenes).
-Proyecto desarrollado y probado en *Windows 10*.
+En cualquier caso, junto con la imágen que se obtenga como resultado, se mostrará una barra de progreso, que indica el porcentage de acierto que ha obtenido al encontrar dicho resultado. Además, se muestra un botón que nos permite crear un pequeño *pop-up* con información de la persona obtenida como resultado (nombre, edad, lugar de nacimiento y profesión).
+
+Como desarrollo adicional, se ha implementado un sistema de reconocimiento totalmente en tiempo-real, en el cual se muestra un vídeo de la cámara que esté grabando, el cual se analiza cada determinados frames para obtener las comparaciones automáticamente (en lugar de una comparación por ejecución como en le modo anterior).
+La interfaz utilizada en este último caso es similar a la anterior, pero eliminando el botón que proporcionaba esa ventana con más información. Esto se ha hecho ya que, al poder cambiar el resultado en poco tiempo, era un elemento contra producente.
+
+## ¿Qué necesitamos?
+
+Es necesario tener instalado *python* (preferiblemente en su versión 2.7, o un entorno virtual con dicha versión ya que es el entorno en el que se ha desarrollado) y diferentes librerías imprescindibles como son *cv2* (librería de OpenCV orientada a computer vision), *tKinter* (necesaria para mostrar la interfaz gráfica), *numpy* (diversas operaciones de utilidad), *Pillow* (para realizar cambios sobre imágenes).
+El proyecto ha sido desarrollado y probado en *Windows 10*.
 
 - *NOTA*: En el resto de versiones de windows no se asegura su correcto funcionamiento.
 - *NOTA*: En otros sistemas operativos como *Linux* no funciona debido a las librerías exclusivas de windows y a las rutas utilizadas en los ficheros.
 
 ## Instrucciones:
 
-Para ejecutar el programa, simplemente hay que **descargarse el proyecto** (podemos hacer un clone a una carpeta local desde github o simplemente descargarlo como *.zip*) y dar doble click sobre el fichero llamado *run.bat* que encontramos en la carpeta principal.
-Esto nos abrirá una consola de comandos donde nos irán saliendo mensajes informativos sobre el progreso del programa, aunque la parte principal creará ventanas para mostrar la interfaz y que la información aparezca de forma más visual y entendible para el usuario medio.
+Para ejecutar el programa, simplemente hay que descargarse el proyecto (podemos hacer un *clone* a una carpeta local desde *github* o simplemente descargarlo como *.zip*) y dar doble click sobre el fichero llamado *run.bat* que encontramos en la carpeta principal.
+Esto nos abrirá una consola de comandos donde nos irán saliendo mensajes informativos sobre el progreso del programa (orientados más al uso por parte del desarrollador, aunque también pueden resultar útiles a todo tipo de usuarios), aunque la parte principal creará ventanas para mostrar la interfaz y que la información aparezca de forma más visual y entendible para el usuario medio.
 
 Las principales fases por las que pasa nuestro programa son:
 
-##### 1.- Añadir nuevas imágenes.
+##### 1.- Añadir nuevas imágenes a la base de datos
 - Nos preguntará si queremos añadir una imágen nueva a la base de datos.
-- En caso de responder [Y], se inicializará la cámara por defecto del equipo.
+
+- En caso de responder sí [Y], se inicializará la cámara por defecto del equipo (si tenemos una externa conectada, utilizará esa, en caso contrario usará la webcam integrada).
         
-- *NOTA*: La cámara por defecto es la webcam en caso de tener integrada, externa en caso contrario. En caso de tener ambas cámaras instaladas, se utilizará la integrada.
+- Se pueden seguir las instrucciones del apartado *Instrucciones adicionales: Menú de utilización general de la cámara*.
+
+- En caso de obtener una imagen (podemos elegir no hacerlo), nos pedirá introducir una serie de datos sobre la persona que deberíamos encontrar en esa imagen: nombre, edad, ciudad de nacimiento y profesión.
+En caso de no querer rellenar alguno de esos campos se tomarán valores por defecto. Además, se pedirá introducir el nombre de la imagen que acabamos de obtener para almacenarla en nuestra base de datos.
+Estos datos se almacenarán en un fichero local llamado *info.txt*.
+
+- **IMPORTANTE**: Los datos de este fichero se pueden modificar manualmente, aunque conviene no hacerlo ya que, de cambiar el nombre de la imagen por error, podemos encontrarnos con datos inconsistentes y tener errores en la ejecución. En caso de hacer cambios sobre este fichero o sobre las imágenes de la base de datos de forma manual (antes de su ejecución), asegurarse de que quedan datos consistentes.
         
-- Podremos tomar una imágen pulsando [C] o salir sin tomar ninguna pulsando [Q].
-        
-##### 2.- Entrenar red.
-- A continuación, si hemos guardado una imágen nueva en la base de datos en el apartado 1, pasaremos directamente al punto en que se entrena la red, en caso conrtario nos preguntará si queremos entrenarla o no.
-- En caso de decir que NO, se utilizarán los recursos almacenados del último entrenamiento.
+##### 2.- Entrenamiento de la red
+- A continuación, si hemos guardado una imágen nueva en la base de datos en el apartado *1.- Añadir nuevas imágenes a la base de datos*, pasaremos directamente al punto en que se entrena la red, en caso conrtario nos preguntará si queremos entrenarla o no.
+
+- En caso de decir que NO, se utilizarán los recursos almacenados del último entrenamiento (la primera vez que se ejecute el programa, a pesar de tener un fichero por defecto, es probable que tengamos que entrenar la red debido a registros internos de la librería que utilizamos).
+
 - En caso de decir que SI, se crearán las imágenes en el formato adecuado y se entrenará la red, utilizando los recursos recién creados.
 
-- **IMPORTANTE**: si se añaden imágenes previas a la ejecución del programa a la base de datos (antes del punto 1), entrenar la red para evitar problemas sobre identificaciones erróneas.
+- **IMPORTANTE**: si se añaden o eliminan imágenes manualmente, de forma previa a la ejecución del programa a la base de datos (antes del apartado *1.- Añadir nuevas imágenes a la base de datos*), entrenar la red para evitar problemas sobre identificaciones erróneas.
 
-##### 3.- Carga de recursos e inicialización.
-- Se cargan los recursos necesarios: trainerData.yml y haarcascade_frontalface_default.xml
-- A continuación, se le pregunta al usuario cómo desea obtener la imágen que va a contrastar con la base de datos: desde fichero (punto 4.1) o desde la cámara (punto 4.2).
+##### 3.- Carga de recursos e inicialización
+- Se cargan los recursos necesarios: *trainerData.yml* (los datos de nuestra red entrenada en el apartado *2.- Entrenamiento de la red*) y *haarcascade_frontalface_default.xml* (fichero que nos permite identificar un rostro dentro de una imágen a partir de sus características).
 
-##### 4.1.- Obtener imágen desde fichero.
+- A continuación, se le pregunta al usuario cómo desea obtener la imágen que va a contrastar con la base de datos: desde fichero (apartado *4.1.- Obtener la imagen desde fichero*), desde la cámara (apartado *4.2.- Obtener la imagen mediante una captura*) o en tiempo real (apartado *4.3.-Realizar la identificación en tiempo-real*).
+
+##### 4.1.- Obtener la imagen desde fichero
 - Si se selecciona esta opción, se abrirá una pequeña interfaz en la que el usuario puede buscar la imágen que quiera en el sistema. 
+
 - Una vez que se encuentra la imágen, basta con dar doble click sobre ella o seleccionarla y pulsar aceptar.
-        
-- *NOTA*: Se puede filtrar el tipo de ficheros que se pueden ver para facilitar la búsqueda (restringido a ".png" y ".jpg").
 
-##### 4.2.- Obtener captura.
-- Al seleccionar esta opción, si hay más de una cámara instalada nos dejará elegir qué cámara utilizar. En caso contrario utilizará la cámara por defecto.
-        
-- *NOTA*: La cámara por defecto es la webcam en caso de tener integrada, externa en caso contrario.
-        
-- Con la cámara seleccionada se inicializan los parámetros para la captura de imágenes por defecto (fps, tamaño de la imágen, etc).
+- A continuación, y si la imagen es correcta (sólo tiene un rostro en ella y ocupa al menos el 10% de la imagen), se mostrará en la interfaz explicada en el apartado
+*6.- Resultados finales: Interfaz visual*.
 
-- *NOTA*: en caso de no poder inicializar la cámara con estos parámetros, mostrará un mensaje avisándonos y pasará a la fase 5 con una imágen por defecto.
+- *NOTA*: Se puede filtrar el tipo de ficheros que se pueden ver para facilitar la búsqueda (restringido a *.png* y *.jpg*).
 
-- Con la cámara inicializada correctamente, aparecerá una ventana con la imágen en tiempo-real capturada con la cámara.
+##### 4.2.- Obtener la imagen mediante una captura
+- Al seleccionar esta opción, se inicializará la cámara por defecto (en función del modelo de la cámara, tendremos que especificar la máxima resolución posible, en caso de no conocer este dato, se puede dejar el valor por defecto *[640 X 480]*).
+        
+- *NOTA*: La cámara por defecto es la primera cámara externa que tengamos conectada. En caso de no tener ninguna externa, se utilizará la webcam integrada.
+
+- *NOTA*: en caso de no poder inicializar la cámara con estos parámetros, mostrará un mensaje avisándonos y pasará al apartado *6.- Resultados finales* con una imagen por defecto.
+
+- Con la cámara inicializada correctamente, aparecerá una ventana con la imagen en tiempo-real capturada con la cámara.
+
+- Se pueden seguir las instrucciones del apartado *Instrucciones adicionales: Menú de utilización general de la cámara* para capturar la imagen que queremos analizar. No nos dejará tomar una imagen hasta que haya exáctamente [1] sola persona en dicha imagen.
+
+- *NOTA*: en caso de no querer tomar una captura (opción [Q] del menú), se pasará al apartado *6.- Resultados finales* con una imagen por defecto.
+
+##### 4.3.- Realizar la identificación en tiempo-real
+- En este apartado se inicializa la cámara por defecto como en los apartados anteriores, y se muestra directamente en la interfaz (imagen de la izquierda con el título *Original image*).
+
+- Si queremos que nos reconozca (suponiendo que estemos en la base de datos), simplemente debemos ponernos delante de la cámara y esperar a que se actualice la interfaz (este tiempo se ha establecido de 0.5 segundos para darle tiempo al programa a que extraiga las características del rostro y las compare con las de la red, en caso de disponer de un equipo más potente se puede reducir este tiempo).
+
+- A continuación, se puede observar como los resultados van cambiando en la interfaz explicada en el apartado *6.- Resultados finales: Interfaz visual* en función de la persona que se coloque delante de la cámara, o incluso si cambiamos de posición o modificamos la iluminación.
+
+- El proceso que sigue este apartado en cuanto a la obtención de resultados es similar al que se sigue en los otros dos casos (comprobar apartado *5.- Comparar imágenes y obtener resultados*), salvo que se repite y actualiza cada 0.5 segundos.
+
+- Para terminar de ejecutar el programa en este punto cerrar la ventana de la interfaz.
+
+##### 5.- Comparar imágenes y obtener resultados
+- Este proceso es interno y no tiene efecto en la interfaz de usuario, de manera que no afecta a estos.
+
+- Con la imágen obtenida de los apartados 4.1, o 4.2, se analiza dicha imágen y se comparan los resultados con los obtenidos de entrenar las imágenes almacenadas en la base de datos (fichero *trainerData.yml* mencionado en el apartado *3.- Carga de recursos e inicialización*). Esta comparación se realiza mediante algunas funciones proporcionadas por la librería de *OpenCV*.
+
+- Se obtiene una ID perteneciente a la imágen con mejor resultado de la comparación en nuestro fichero de entrenamiento y un porcentage, que indica el éxito de dicha comparación.
+Con esa ID, se carga la imagen correspondiente, el nombre que tenga dicha imagen y el porcentage en la interfaz gráfica.
+
+##### 6.- Resultados finales: Interfaz visual
+- La interfaz consiste en una ventana con ambas imágenes: la que se quería reconocer y la de máxima coincidencia de la base de datos obtenida en el apartado *5.- Comparar imágenes y obtener resultados*.
+
+- *NOTA*: las imágenes se recortan para mostrar sólo el rostro y se ajustan todas al mismo tamaño, de esta manera se evitan los tamaños de imágenes excesivamente grandes/pequeños.
+
+- Se muestra además el porcentage de coincidencia que hayan tenido la comparación, y una barra de progreso que indica dicho porcentage junto con el nombre de la imágen de la base de datos.
+Esta barra de progreso cambia de color en función del tanto por ciento que hayamos obtenido (negro < 10%, rojo < 35%, naranja < 50%, amarillo < 80%, verde < 95%, morado >= 95%).
+
+- *NOTA*: el nombre que se muestra sobre la imágen de la derecha es el de la persona a la que corresponda dicha fotografía (extraído del fichero *info.txt*), mientras que el nombre que se muestra sobre la barra de progreso es el correspondiente al nombre del fichero de dicha foto. Se muestran ambos nombres en caso de que el usuario necesite acceder a esa foto en la base de datos manualmente.
+
+- Además, se crea un botón *More Information...* (en los casos 4.1 y 4.2), que al pulsarle crea un pequeño *pop-up* con información sobre la imágen resultado. Esta información se puede encontrar en el fichero *info.txt* mencionado en el apartado *1.- Añadir nuevas imágenes a la base de datos*.
+
+##### Instrucciones adicionales: Menú de utilización general de la cámara
 - Cuando el usuario tiene el control sobre la cámara, puede:
    - Pulsar [Q] para salir sin tomar ninguna imágen.
    - Pulsar [I] para mostrar información sobre esa imágen y el menú de la cámara.
@@ -84,24 +141,6 @@ Las principales fases por las que pasa nuestro programa son:
    - Pulsar [ESPACIO] mientras está en modo pausa para reanudar la ejecución.
    - Pulsar [C] para tomar una captura y seguir ejecutando el programa.
 
-- *NOTA*: no se puede tomar una captura a no ser que haya exáctamente una persona delante de la cámara. Se toma esta decisión para evitar problemas a la hora tanto de entrenar la red como de mostrar coincidencias con la base de datos.
-- *NOTA*: si se pulsa [Q] se pasará a la fase 5 con una imágen por defecto.
+A continuación se deja una imagen de ejemplo de un resultado de ejecución obteniendo la imagen mediante fichero.
 
-##### 5.- Comparar imágenes.
-- Con la imágen obtenida de la fase 4, se analiza dicha imágen y se comparan los resultados con los obtenidos de entrenar las imágenes almacenadas en la base de datos (fichero 'trainerData.yml' de la fase 3).
-- Se obtiene una **ID**, una **ETIQUETA** (nombre de la imágen) y un **PORCENTAGE** de coincidencia entre ambas imágenes (la mayor coincidencia de la base de datos).
-- Se carga la imágen de la base de datos con la **etiqueta** del apartado anterior y la información relacionada con la **id** obtenida del fichero 'info.txt'.
-
-##### 6.- Mostrar resultado.
-- Se muestra una ventana con ambas imágenes, la obtenida de la captura/fichero y la de máxima coincidencia de la base de datos.
-
-- *NOTA*: las imágenes se recortan para mostrar sólo el rostro, de esta manera se evitan los tamaños de imágenes excesivamente grandes/pequeños.
-
-- Se muestra además el porcentage de coincidencia que hayan tenido, y una barra de progreso que indica dicho porcentage junto con el nombre de la imágen de la base de datos.
-
-- *NOTA*: el nombre que se muestra sobre la imágen de la derecha es el de la persona a la que corresponda dicha fotografía (extraído del fichero 'info.txt'), mientras que el nombre que se muestra sobre la barra de progreso es el correspondiente al nombre del fichero de dicha foto. Se muestran ambos nombres en caso de que el usuario necesite acceder a esa foto manualmente.
-
-- Además, se crea un botón 'Info.', que al pulsarle crea una pequeña ventana extra con información sobre la imágen resultado. Esta información se puede editar en el fichero 'info.txt' mencionado en la fase 5.
-
-- **IMPORTANTE**: si se añade una imágen a la base de datos, es necesario añadir una línea en el fichero 'info.txt' con al información de la persona que acabamos de introducir en la base de datos. Esta línea deberá ir en la posición exacta en la que se encuentre la imágen en relación al resto. Por ejemplo, si añadimos una imágen a la que nombramos 'aaa.jpg' será la primera en la base de datos, por lo que deberemos añadir una línea al principio del fichero 'info.txt'. Si añadimos una imágen que se llame 'zzz.jpg' a la base de datos será la última, por lo que necesitaremos añadir una línea al final del fichero 'info.txt'. En caso de no realizar este paso, cuando se muestren los resultados, se hará con la información de otra persona.
-- *NOTA*: esta parte de introducir información sobre cada persona en un fichero en la posición exacta es muy tedioso y peligroso, por ello se está estudiando la posibilidad de crear una base de datos real para almacenar esta información, de manera que cada imágen tenga vinculada su información de manera automática.
+![Interfaz final recolor - Comparación mediante fichero](/Other/Images/develop/interface_final_color.png)
