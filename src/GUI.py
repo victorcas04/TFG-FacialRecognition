@@ -5,6 +5,7 @@ from __future__ import division
 import tkinter as tk
 from tkinter import ttk
 import Files as files
+import Util as util
 import TextInterface as txtIf
 from PIL import Image, ImageTk
 import cv2
@@ -16,8 +17,10 @@ class GUIClass(object):
         BACKGROUNDIMAGES = "#00CED1"  # darkturquoise
         BACKGROUNDGENERAL = "#AFEEEE"  # paleturquoise
         BUTTON = "#00CED1"  # dark turquoise
+        PROGRESSDEAD = "#000000" # black
         PROGRESSBAD = "#8B0000"  # darkred
-        PROGRESSNORMAL = "#CCCC00"  # Dark yellow1
+        PROGRESSBADNORMAL = "#FF4500" # orange red
+        PROGRESSNORMAL = "#CCCC00"  # dark yellow 1
         PROGRESSGOOD = "#006400"  # darkgreen
         PROGRESSPERFECT = "#FF00FF"  # magenta
         POPUPINFO = "#6FEFC4" # aqua marine
@@ -27,12 +30,52 @@ class GUIClass(object):
     textSize = 22
     textSizeProgressBar = 18
 
+    def displayWindow(self):
+        # Using mainloop() to show image
+        self.window.mainloop()
+
+    def selectFile(self):
+        txtIf.printMessage(txtIf.MESSAGES.SELECT_IMAGE)
+        askFileWindow = tk.Tk()
+        askFileWindow.title("Select an image...")
+        askFileWindow.filename = fd.askopenfilename(initialdir="/", title="Select file",
+                                          filetypes=(
+                                          ("jpeg files", '*'+files.extensionJPG), ("png files", '*'+files.extensionPNG), ("all files", "*.*")))
+        nFile = askFileWindow.filename
+        askFileWindow.destroy()
+        return nFile
+
+    def loadImageByGUI(self):
+        imageToReturn = self.selectFile()
+        if (imageToReturn.endswith(files.extensionJPG) or imageToReturn.endswith(files.extensionPNG)):
+            imageToReturn = files.loadImage(imageToReturn)
+        else:
+            imageToReturn = files.loadImage()
+        return imageToReturn
+
+    def getInfo(self, param):
+        return self.info[param]
+
+    def checkColor(self, p):
+        if (p < 10):
+            colorprogressbar = self.COLORS.PROGRESSDEAD.value
+        elif (p < 35) and (p >= 10):
+            colorprogressbar = self.COLORS.PROGRESSBAD.value
+        elif (p < 50) and (p >= 35):
+            colorprogressbar = self.COLORS.PROGRESSBADNORMAL.value
+        elif (p < 80) and (p >= 50):
+            colorprogressbar = self.COLORS.PROGRESSNORMAL.value
+        elif (p < 95) and (p >= 80):
+            colorprogressbar = self.COLORS.PROGRESSGOOD.value
+        else:
+            colorprogressbar = self.COLORS.PROGRESSPERFECT.value
+        return colorprogressbar
+
     def __init__(self):
         if GUIClass.__instance != None:
             raise Exception("This is a Singleton class. Access it through getInstance()")
         else:
             GUIClass.__instance = self
-            self.window = self.createWindow()
 
     @staticmethod
     def getInstance():
@@ -40,72 +83,30 @@ class GUIClass(object):
             GUIClass()
         return GUIClass.__instance
 
-    def getDisplaySize(self, realTime=False):
-        if realTime:
-            # TODO
-            return [900, 1600]
-        import wx
-        app = wx.App(False)
-        w, h = wx.GetDisplaySize()
-        return h, w
+    def createMainWindow(self, title=None, realTime=False):
+        windowObject = tk.Tk()
+        self.title = title if title is not None else "GUI - Default title"
+        windowObject.title(self.title)
+        self.window = windowObject
+        self.window.config(bg=self.COLORS.BACKGROUNDGENERAL.value)
+        self.realTime = realTime
+        return windowObject
 
     def fixedSize(self):
-        hDisplay, wDisplay = self.getDisplaySize()
+        hDisplay, wDisplay = util.getDisplaySize(realTime=self.realTime)
         self.width = wDisplay-wDisplay//10
         self.height = hDisplay-hDisplay//10
         self.window.resizable(width=False, height=False)
         self.window.minsize(width=self.width, height=self.height)
         self.window.maxsize(width=self.width, height=self.height)
 
-    def displayInterfaceWindow(self, originalPhoto=None, photoFromDatabase=None, percentage=0.0):
-
-        if originalPhoto is None:
-            originalPhoto = files.loadImage()
-        if photoFromDatabase is None:
-            photoFromDatabase = files.loadImage()
-
-        def resizeFaceImage(image, aspect_ratio=2):
-            h, w = self.getDisplaySize()
-            prop = h / image.shape[1]
-            newSize = (int((prop * image.shape[1]) / aspect_ratio), int((prop * image.shape[0]) / aspect_ratio))
-            newImage = cv2.resize(image, (newSize[0], newSize[1]))
-            return newImage
-
-        percentageString = str(percentage) + "%"
-        txtIf.printMessage(txtIf.MESSAGES.DISPLAY_WITH_COINCIDENCE, percentageString)
-
-        self.createTop_BottomPanel(resizeFaceImage(originalPhoto), resizeFaceImage(photoFromDatabase), percentage)
-        self.displayWindow()
-
-    def createWindow(self):
-        windowObject = tk.Tk()
-        windowObject.title("GUI - Default title")
-        return windowObject
-
-    def getInfo(self, param):
-        return self.info[param]
-
     def initialize(self, namePhoto=None, p=0, inf=files.loadInfo()):
         self.percentage = p
         self.namePhoto = namePhoto
         self.info = inf
-        if namePhoto is not None:
-            self.title = str(p) + " % of coincidence with image: " + str(namePhoto) + files.extensionJPG
-        else:
-            self.title = "No coincidences were found in the database."
+        self.setTitle(p, namePhoto)
         self.window.title(self.title)
         self.window.config(bg=self.COLORS.BACKGROUNDGENERAL.value)
-
-    def addPercentageLabel(self, percentage="0%"):
-
-        percentageText = "Images with a " + percentage + " of coincidence"
-
-        panel = self.panelB
-        if panel is None:
-            panel = tk.Label(self.window, text=percentageText)
-            panel.pack(side=tk.BOTTOM)
-        else:
-            panel.configure(text=percentageText)
 
     def createPopUpInfo(self):
 
@@ -139,76 +140,79 @@ class GUIClass(object):
 
         popup.mainloop()
 
-    def createTop_BottomPanel(self, originalPhoto, photoFromDatabase, p):
+    def createTop_BottomPanel_Final(self):
 
         myFrame = tk.Frame(self.window)
         myFrame.config(bg=self.COLORS.BACKGROUNDGENERAL.value)
         myFrame.pack(fill=tk.Y, pady=self.height/30)
         myFrame.rowconfigure(0, weight=4)
-        myFrame.rowconfigure(1, weight=2)
-        myFrame.rowconfigure(2, weight=1)
-        myFrame.rowconfigure(3, weight=2)
 
-        imgCRecolor = cv2.cvtColor(originalPhoto, cv2.COLOR_BGR2RGB)
-        imgCFromArray = Image.fromarray(imgCRecolor)
-        imgC = ImageTk.PhotoImage(imgCFromArray)
+        self.myLabelC = tk.Label(myFrame, compound=tk.BOTTOM, text="Original image")
+        self.myLabelC.grid(row=0, column=0, sticky=tk.W)
+        self.myLabelC.config(font=(self.textFont, self.textSize), bg=self.COLORS.BACKGROUNDIMAGES.value, bd=8,
+                        relief="ridge")
 
-        myLabelC = tk.Label(myFrame, compound=tk.BOTTOM, image=imgC, text="Original image")
-        myLabelC.grid(row=0, column = 0, sticky=tk.W)
-        myLabelC.image = imgC
-        myLabelC.config(font=(self.textFont, self.textSize), bg=self.COLORS.BACKGROUNDIMAGES.value, bd=8, relief="ridge")
+        self.myLabelD = tk.Label(myFrame, compound=tk.BOTTOM, text=files.loadInfo()["name"])
+        self.myLabelD.grid(row=0, column=1, sticky=tk.E)
+        self.myLabelD.config(font=(self.textFont, self.textSize), bg=self.COLORS.BACKGROUNDIMAGES.value, bd=8,
+                        relief="ridge")
 
-        imgDRecolor = cv2.cvtColor(photoFromDatabase, cv2.COLOR_BGR2RGB)
-        imgDFromArray = Image.fromarray(imgDRecolor)
-        imgD = ImageTk.PhotoImage(imgDFromArray)
-
-        myLabelD = tk.Label(myFrame, compound=tk.BOTTOM, image=imgD, text=self.getInfo("name"))
-        myLabelD.grid(row=0, column=1, sticky=tk.E)
-        myLabelD.image = imgD
-        myLabelD.config(font=(self.textFont, self.textSize), bg=self.COLORS.BACKGROUNDIMAGES.value, bd=8, relief="ridge")
-
-        buttonInfoLabel = tk.Button(myFrame, text="More information...", command=self.createPopUpInfo)
-        buttonInfoLabel.config(font=(self.textFont, self.textSizeProgressBar), bg=self.COLORS.BUTTON.value, bd=6, relief="raised")
-        buttonInfoLabel.grid(row=1, columnspan=2, pady=(self.height/30, 0))
-
-        pBarLabel = tk.Label(myFrame, text=self.title)
-        pBarLabel.config(font=(self.textFont, self.textSizeProgressBar), bg=self.COLORS.BACKGROUNDGENERAL.value)
-        pBarLabel.grid(row=2, columnspan=2, sticky=tk.S, pady=(self.height/30, 0))
-
-        s = ttk.Style()
-        #print(s.theme_names()) # default, clam, classic, alt, winnative, vista, xpnative
-        s.theme_use("classic")
-        if (p < 35):
-            colorprogressbar = self.COLORS.PROGRESSBAD.value
-        elif (p < 75) and (p >= 35):
-            colorprogressbar = self.COLORS.PROGRESSNORMAL.value
-        elif (p < 98) and (p >= 75):
-            colorprogressbar = self.COLORS.PROGRESSGOOD.value
+        if self.realTime:
+            idxTextBar = 1
+            idxProgressBar = 2
         else:
-            colorprogressbar = self.COLORS.PROGRESSPERFECT.value
-        s.configure("TProgressbar", thickness=self.height / 10, background=colorprogressbar, borderwidth=4, relief="ridge")
+            myFrame.rowconfigure(1, weight=2)
+            buttonInfoLabel = tk.Button(myFrame, text="More information...", command=self.createPopUpInfo)
+            buttonInfoLabel.config(font=(self.textFont, self.textSizeProgressBar), bg=self.COLORS.BUTTON.value, bd=6,
+                                   relief="raised")
+            buttonInfoLabel.grid(row=1, columnspan=2, pady=(self.height / 30, 0))
 
-        progress = ttk.Progressbar(myFrame, orient="horizontal", length=self.width-int(self.width/10), mode="determinate", style="TProgressbar")
-        progress.grid(row=3, columnspan=2, sticky=tk.S, pady=(self.height/30, 0))
-        progress["value"] = p
-        progress["maximum"] = 100
+            idxTextBar = 2
+            idxProgressBar = 3
 
-    def displayWindow(self):
-        # Using mainloop() to show image
-        self.window.mainloop()
+        myFrame.rowconfigure(idxTextBar, weight=1)
+        myFrame.rowconfigure(idxProgressBar, weight=2)
 
-    def selectFile(self):
-        txtIf.printMessage(txtIf.MESSAGES.SELECT_IMAGE)
-        afw = tk.Toplevel(self.window)
-        afw.filename = fd.askopenfilename(initialdir="/", title="Select file",
-                                          filetypes=(
-                                          ("jpeg files", '*'+files.extensionJPG), ("png files", '*'+files.extensionPNG), ("all files", "*.*")))
-        z = afw.filename
-        afw.destroy()
-        return z
+        self.pBarLabel = tk.Label(myFrame, text=self.title)
+        self.pBarLabel.config(font=(self.textFont, self.textSizeProgressBar), bg=self.COLORS.BACKGROUNDGENERAL.value)
+        self.pBarLabel.grid(row=idxTextBar, columnspan=2, sticky=tk.S, pady=(self.height / 30, 0))
+        self.pBarLabel.config(text=self.title)
 
-    def loadImageByGUI(self):
-        imageToReturn = self.selectFile()
-        return files.loadImage(imageToReturn) if (
-                    imageToReturn.endswith(files.extensionJPG) or imageToReturn.endswith(files.extensionPNG)) \
-            else files.loadImage()
+        self.s = ttk.Style()
+        # print(s.theme_names()) # default, clam, classic, alt, winnative, vista, xpnative
+        self.s.theme_use("classic")
+        self.s.configure("TProgressbar", thickness=self.height / 10, background=self.checkColor(0), borderwidth=4,
+                    relief="ridge")
+
+        self.progress = ttk.Progressbar(myFrame, orient="horizontal", length=self.width - int(self.width / 10),
+                                   mode="determinate", style="TProgressbar")
+        self.progress.grid(row=idxProgressBar, columnspan=2, sticky=tk.S, pady=(self.height / 30, 0))
+        self.progress["value"] = 0
+        self.progress["maximum"] = 100
+
+    def setTitleAndProgress(self, p=0, n=None):
+        self.namePhoto = n
+        if p > 0:
+            self.title = str(p) + " % of coincidence with image: " + str(n) + files.extensionJPG
+        else:
+            self.title = "No coincidences were found in the database."
+        self.window.title(self.title)
+        self.pBarLabel.config(text=self.title)
+        self.info = files.loadInfo(n)
+
+        self.progress["value"] = p
+        self.s.configure("TProgressbar", background=self.checkColor(p))
+
+        txtIf.printMessage(txtIf.MESSAGES.DISPLAY_WITH_COINCIDENCE, str(p) + "%")
+
+    def setImage(self, image=None, left=True):
+        image = image if (image is not None) else files.loadImage()
+        image = util.resizeFaceImage(image, realTime=self.realTime)
+        imgRecolor = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        imgFromArray = Image.fromarray(imgRecolor)
+        img = ImageTk.PhotoImage(imgFromArray)
+        panel = self.myLabelC if left else self.myLabelD
+        panel.image = img
+        panel.configure(image=img)
+        if not left:
+            panel.configure(text=files.loadInfo(self.namePhoto)["name"])

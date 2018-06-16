@@ -6,30 +6,38 @@ import Util as util
 import Files as files
 import TextInterface as txtIf
 
-delimiter = files.delimiter
+# max resolution with integrated webcam (sony vaio VPCF13A4E): 640 X 480
+# max resolution with external camera (logitech WEBCAM C170): 1024 X 768
+resH = 768
+resW = 1024
 
-def initializeCamera(indexCamera):
-    import sys
-    maxInt = sys.maxsize
+#  [0] para la webcam integrada en el portatil o una externa en caso de haber
+#  [1] para la webcam integrada en el portatil en caso de que haya una externa conectada
+# [-1] para menú (no recomendado)
+cameraIdx = 0
+
+def initializeCamera():
 
     txtIf.printMessage(txtIf.MESSAGES.INITIALIZING_CAMERA)
 
-    cap = cv2.VideoCapture(indexCamera)
+    cap = cv2.VideoCapture(cameraIdx)
 
     if not cap.isOpened():
         txtIf.printError(txtIf.ERRORS.CAMERA_NOT_INITIALIZED)
         return None
 
-    cap.set(cv2.CAP_PROP_FPS, maxInt)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, maxInt)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, maxInt)
+    cap.set(cv2.CAP_PROP_FPS, int(60))
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, resH)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, resW)
 
+    txtIf.printMessage(txtIf.MESSAGES.RESOLUTION_CAMERA, [int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))])
+     
     # Esperamos dos segundos para que la cámara termine de inicializarse y no tomar datos basura
     import time
     time.sleep(2)
     return cap
 
-def captureImage(indexCamera=0, captureToCompare=False):
+def captureImage(captureToCompare=False):
     import math
     # Para mostrar informacion sobre la version de cv
     # print(cv2.getBuildInformation())
@@ -37,7 +45,7 @@ def captureImage(indexCamera=0, captureToCompare=False):
     imageToReturn = None
     captured = False
 
-    cap = initializeCamera(indexCamera)
+    cap = initializeCamera()
     if cap is None:
         return files.loadImage()
 

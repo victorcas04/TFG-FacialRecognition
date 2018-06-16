@@ -14,3 +14,4 @@ shohreh_aghdashloo, Shohreh Aghdashloo, 65, Teheran, Actress
 stan_lee, Stanley Lieber (Stan lee), 95, Nueva York, Writer
 will_smith, Will Smith, 49, Filadelfia, Actor
 cas_abii, victorcas, Default Age, Burgos, Default Job
+cesar_sala_juntas, cesar, Default Age, burgos, Default Job

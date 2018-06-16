@@ -33,6 +33,8 @@ class MESSAGES(Enum):
     CAMERA_PAUSED = 15
     CAMERA_PAUSED_2 = 16
     PRESS_ANY_KEY = 17
+    RESOLUTION_CAMERA = 18
+    INITIALIZING_INTERFACE = 19
 
 def printMessage(code=None, info=None, info2=None):
     if code.name is "TITLE":
@@ -87,6 +89,12 @@ def printMessage(code=None, info=None, info2=None):
 
     elif code.name is "PRESS_ANY_KEY":
         print("\nPress any key to continue...")
+
+    elif code.name is "RESOLUTION_CAMERA":
+        print("Max. resolution of  camera used: [" + str(info[0]) + "x" + str(info[1]) + "]")
+
+    elif code.name is "INITIALIZING_INTERFACE":
+        print("\nInitializing interface...")
 
     else:
         print("\nMESSAGE: Unknown message.")

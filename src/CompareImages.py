@@ -10,48 +10,38 @@ def getLoadedYml():
     reco.read(files.getFileName(files.ymlFile, files.recognizerFolderPath))
     return reco
 
-def compareSingle(gray, rT=False):
+def compareSingle(gray):
+
+    x = 0; y = 0; w = gray.shape[1]; h = gray.shape[0]
+
     try:
         recognizer = getLoadedYml()
+        id, conf = recognizer.predict(gray[y:y + h, x:x + w])
     except:
         txtIf.printError(txtIf.ERRORS.NETWORK_NOT_TRAINED)
-        return -1, 0
-
-    faces = util.getFacesMultiScale(gray)
-
-    if not rT:
-        if len(faces) < 1:
-            txtIf.printError(txtIf.ERRORS.IMAGE_NO_FACES)
-            return -1, 0
-
-        # Asumiendo sólo 1 cara por imágen
-        x, y, w, h = faces[0]
-    else:
-        x = 0; y = 0; w = gray.shape[1]; h = gray.shape[0]
-
-    id, conf = recognizer.predict(gray[y:y + h, x:x + w])
+        id = -1; conf = 100;
 
     conf = 100 - float(conf)
     percentage = float("{0:.2f}".format(conf))
     return id, percentage
 
-def compare(img, path=files.facesDatasetPath, rT=False):
+def compare(img, path=files.facesDatasetPath):
 
     label = None   # NSF: No Such File
+    imgRet = None
     txtIf.printMessage(txtIf.MESSAGES.COMPARING_IMAGES)
     gray = util.imageToGrayscale(img)
 
-    id, p = compareSingle(gray, rT)
+    id, p = compareSingle(gray)
 
     if id > -1:
+        if p <= 0:
+            p = 0
+        else:
+            p = float("{0:.2f}".format(p)) if p <= 100 else 100
         imgsOr = files.filesOnDir()
         label = imgsOr[id].split(".")[0]
-
-    print("Information about comparison: id= " + str(id) + "   ---   label= " + str(label) + "   ---   coincidence= " + str(p))
-
-    if label is not None:   # NSF
+        print("Information about comparison: id= " + str(id) + "   ---   label= " + str(label) + "   ---   coincidence= " + str(p))
         imgRet = files.loadImage(files.getFileName("face_" + label + files.extensionJPG, folder=path))
-    else:
-        imgRet = files.loadImage(files.getFileName())
 
     return imgRet, p, label
