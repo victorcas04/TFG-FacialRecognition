@@ -65,7 +65,8 @@ def writeInfoNewImage(stringInfo):
     with open(recognizerFolderPath + delimiter + recognizerInfo, "a") as f:
         f.write(stringInfo)
 
-def removeLine(nameImage):
+def overwriteFile(nameImage):
+    makeChanges = True
     with open(recognizerFolderPath + delimiter + recognizerInfo, "r") as f:
         lines = f.readlines()
     with open(recognizerFolderPath + delimiter + recognizerInfo, "w") as f:
@@ -73,12 +74,27 @@ def removeLine(nameImage):
             if line.split(fileDelimiter)[0] != nameImage:
                 f.write(line)
             else:
-                txtIf.printError(txtIf.ERRORS.IMAGE_ALREADY_ON_DATABASE)
+                txtIf.printError(txtIf.ERRORS.IMAGE_ALREADY_ON_DATABASE, True)
+                ow = txtIf.getScan()
+                if (not ow.__eq__("Y") and not ow.__eq__("y")):
+                    makeChanges = False
+                    f.write(line)
+    return makeChanges
+
 
 def doWhenNewImage(img):
-    # info: iName, name, age, bPlace, job
-    info = txtIf.askInfoNewImage()
-    # Sobreescribimos la línea que corresponda a la misma imagen
-    removeLine(info[0])
-    writeInfoNewImage('\n' + info[0] + fileDelimiter + info[1] + fileDelimiter + info[2] + fileDelimiter + info[3] + fileDelimiter + info[4])
-    saveImage(img, datasetPath + delimiter + info[0] + extensionJPG)
+    print(
+        "\nIntroduce the name of the new file (to save on database):\nIf no name is provided, \'new_image_name\' will be used.")
+    nFile = txtIf.getScan()
+    if not nFile:
+        nFile = "new_image_name"
+
+    makechanges = overwriteFile(nFile)
+    if makechanges:
+        # info: iName, name, age, bPlace, job
+        info = txtIf.askInfoNewImage()
+        # Sobreescribimos la línea que corresponda a la misma imagen
+        writeInfoNewImage('\n' + nFile + fileDelimiter + info[0] + fileDelimiter + info[1] + fileDelimiter + info[2] + fileDelimiter + info[3])
+        saveImage(img, datasetPath + delimiter + nFile+ extensionJPG)
+
+    return makechanges

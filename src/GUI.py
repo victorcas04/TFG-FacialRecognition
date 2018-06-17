@@ -77,6 +77,16 @@ class GUIClass(object):
         else:
             GUIClass.__instance = self
 
+    def getDisplaySize(self):
+        return (self.window.winfo_screenheight(), self.window.winfo_screenwidth())
+
+    def resizeFaceImage(self, image, aspect_ratio=2):
+        h, w = self.getDisplaySize()
+        prop = h / image.shape[1]
+        newSize = (int((prop * image.shape[1]) / aspect_ratio), int((prop * image.shape[0]) / aspect_ratio))
+        newImage = cv2.resize(image, (newSize[0], newSize[1]))
+        return newImage
+
     @staticmethod
     def getInstance():
         if GUIClass.__instance == None:
@@ -93,7 +103,7 @@ class GUIClass(object):
         return windowObject
 
     def fixedSize(self):
-        hDisplay, wDisplay = util.getDisplaySize(realTime=self.realTime)
+        hDisplay, wDisplay = self.getDisplaySize()
         self.width = wDisplay-wDisplay//10
         self.height = hDisplay-hDisplay//10
         self.window.resizable(width=False, height=False)
@@ -148,7 +158,6 @@ class GUIClass(object):
         myFrame.rowconfigure(0, weight=4)
 
         self.myLabelC = tk.Label(myFrame, compound=tk.BOTTOM, text="Original image")
-        self.myLabelC.grid(row=0, column=0, sticky=tk.W)
         self.myLabelC.config(font=(self.textFont, self.textSize), bg=self.COLORS.BACKGROUNDIMAGES.value, bd=8,
                         relief="ridge")
 
@@ -158,9 +167,11 @@ class GUIClass(object):
                         relief="ridge")
 
         if self.realTime:
+            self.myLabelC.grid(row=0, column=0)
             idxTextBar = 1
             idxProgressBar = 2
         else:
+            self.myLabelC.grid(row=0, column=0, sticky=tk.W)
             myFrame.rowconfigure(1, weight=2)
             buttonInfoLabel = tk.Button(myFrame, text="More information...", command=self.createPopUpInfo)
             buttonInfoLabel.config(font=(self.textFont, self.textSizeProgressBar), bg=self.COLORS.BUTTON.value, bd=6,
@@ -205,9 +216,10 @@ class GUIClass(object):
 
         txtIf.printMessage(txtIf.MESSAGES.DISPLAY_WITH_COINCIDENCE, str(p) + "%")
 
-    def setImage(self, image=None, left=True):
+    def setImage(self, image=None, left=True, staticImage=True):
         image = image if (image is not None) else files.loadImage()
-        image = util.resizeFaceImage(image, realTime=self.realTime)
+        if staticImage:
+            image = self.resizeFaceImage(image)
         imgRecolor = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         imgFromArray = Image.fromarray(imgRecolor)
         img = ImageTk.PhotoImage(imgFromArray)

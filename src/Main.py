@@ -55,9 +55,6 @@ if __name__ == "__main__":
                 # Imágen resultado / Porcentaje comparación / Nombre imágen resultado / Información sobre la imagen
                 i, p, n = compareImages.compare(pOri)
 
-                if i is None:
-                    txtIf.printError(txtIf.ERRORS.NETWORK_NOT_TRAINED)
-
                 guiMain.setTitleAndProgress(p, n)
                 guiMain.setImage(image=pOri)
                 guiMain.setImage(image=i, left=False)

@@ -27,10 +27,9 @@ def compareInRealTime():
     import math
 
     def show_frame():
-        _, frame = cap.read()
+        ret, frame = cap.read()
         frame = cv2.flip(frame, 1)
-        frameToShow = util.resizeFaceImage(frame, realTime=True)
-
+        frameToShow = guiMain.resizeFaceImage(frame, aspect_ratio=1.5)
         gray = util.imageToGrayscale(frameToShow)
         faces = util.getFacesMultiScale(gray)
 
@@ -40,7 +39,7 @@ def compareInRealTime():
         for (x, y, w, h) in faces:
             cv2.rectangle(frameToShow, (x, y), (x + w, y + h), rectangleColor, rectangleThickness)
 
-        guiMain.setImage(image=frameToShow)
+        guiMain.setImage(image=frameToShow, staticImage=False)
 
         cutted, pOri = util.cutFaceFromImage(frame)
         if cutted:

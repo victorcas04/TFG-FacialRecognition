@@ -3,6 +3,9 @@
 
 from enum import Enum
 
+title = "TFG - Facial Recognition"
+author = "Victor de Castro Hurtado"
+
 class ERRORS(Enum):
     NETWORK_NOT_TRAINED_2 = 1
     CANNOT_TRAIN_NETWORK = 2
@@ -38,7 +41,7 @@ class MESSAGES(Enum):
 
 def printMessage(code=None, info=None, info2=None):
     if code.name is "TITLE":
-        print("\n\nTFG - Facial Recognition - Victor de Castro Hurtado\n\n")
+        print("\n\n" + str(title) + " - " + str(author) + "\n\n")
 
     elif code.name is "ASK_CAMERA_FILE_REALTIME":
         print("\nDo you want to use an image from camera [C], from file [F] or in real-time [R]?")
@@ -129,7 +132,9 @@ def printError(code=None, info=None):
         print("\nERROR: Camera couldn't be turned on.")
 
     elif code.name is "IMAGE_ALREADY_ON_DATABASE":
-        print("\nWARNING: An image with the same name already exists. It will be overwritten.")
+        print("\nWARNING: An image with the same name already exists.")
+        if info:
+            print("Do you want to overwrite it? [Y/N]")
 
     elif code.name is "FUTURE_FEATURE":
         print("\nWARNING: Feature not implemented yet. Wait for developers to do their job.")
@@ -142,10 +147,7 @@ def getScan():
     return six.moves.input()
 
 def askInfoNewImage():
-    print("\nIntroduce the name of the new file (to save on database):\nIf no name is provided, \'new_image_name\' will be used.")
-    nFile = getScan()
-    if not nFile:
-        nFile="new_image_name"
+
     print("\nIntroduce the name of the person who appears on that image:\nIf no name is provided, \'Default Name\' will be used.")
     name = getScan()
     if not name:
@@ -163,7 +165,7 @@ def askInfoNewImage():
     if not job:
         job="Default Job"
 
-    return nFile, name, age, birthplace, job
+    return name, age, birthplace, job
 
 def printMenuFaceInBox(fromCamera=True):
 

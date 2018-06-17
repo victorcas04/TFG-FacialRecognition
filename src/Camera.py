@@ -39,6 +39,7 @@ def initializeCamera():
 
 def captureImage(captureToCompare=False):
     import math
+    import numpy as np
     # Para mostrar informacion sobre la version de cv
     # print(cv2.getBuildInformation())
 
@@ -54,20 +55,21 @@ def captureImage(captureToCompare=False):
 
     while True:
         numFaces = 0
-        ret, img = cap.read()
+        ret, frame = cap.read()
+        frame = cv2.flip(frame, 1)
+        frameToShow = np.copy(frame)
 
-        img = cv2.flip(img, 1)
-        gray = util.imageToGrayscale(img)
+        gray = util.imageToGrayscale(frameToShow)
         faces = util.getFacesMultiScale(gray)
 
-        rectangleThickness = int((img.shape[0] + img.shape[1]) / (100 * 2 * math.pi))  # 20-30
+        rectangleThickness = int((frameToShow.shape[0] + frameToShow.shape[1]) / (100 * 2 * math.pi))  # 20-30
         rectangleColor = (255, 0, 0)
 
         for (x, y, w, h) in faces:
             numFaces = numFaces + 1
-            cv2.rectangle(img, (x, y), (x + w, y + h), rectangleColor, rectangleThickness)
+            cv2.rectangle(frameToShow, (x, y), (x + w, y + h), rectangleColor, rectangleThickness)
 
-        cv2.imshow('Real-time image', img)
+        cv2.imshow('Real-time image', frameToShow)
         k = cv2.waitKey(1)
 
         ### Press [I] for info.
@@ -90,7 +92,7 @@ def captureImage(captureToCompare=False):
         ### Press [C] to take the actual frame and exit if there is only 1 person.
         if k == ord('c'):
             if numFaces == 1:
-                imageToReturn = img
+                imageToReturn = frame
                 break
             else:
                 txtIf.printError(txtIf.ERRORS.IMAGE_TOO_MANY_FACES, numFaces)
@@ -99,10 +101,9 @@ def captureImage(captureToCompare=False):
     cv2.destroyAllWindows()
 
     if imageToReturn is not None:
-        if captureToCompare is False:
-            #iName, name, age, bPlace, job = askInfoNewImage()
-            files.doWhenNewImage(imageToReturn)
         captured = True
+        if captureToCompare is False:
+            captured = files.doWhenNewImage(imageToReturn)
 
     if imageToReturn is None and captureToCompare is True:
         imageToReturn = files.loadImage()

@@ -14,21 +14,6 @@ def imageToThreshold(image):
     th = cv2.adaptiveThreshold(imgB, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     return th
 
-def getDisplaySize(realTime):
-    if realTime:
-        return 900, 1600
-    import wx
-    app = wx.App(False)
-    w, h = wx.GetDisplaySize()
-    return h, w
-
-def resizeFaceImage(image, aspect_ratio=2, realTime=False):
-    h, w = getDisplaySize(realTime=realTime)
-    prop = h / image.shape[1]
-    newSize = (int((prop * image.shape[1]) / aspect_ratio), int((prop * image.shape[0]) / aspect_ratio))
-    newImage = cv2.resize(image, (newSize[0], newSize[1]))
-    return newImage
-
 def getFacesMultiScale(gray):
     scaleFactor = 1.2
     minNeighbors = 5
