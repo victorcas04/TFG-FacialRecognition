@@ -10,7 +10,8 @@ def getLoadedYml():
     reco.read(files.getFileName(files.ymlFile, files.recognizerFolderPath))
     return reco
 
-def compareSingle(gray):
+def compareSingle(img):
+    gray = util.imageToGrayscale(img)
 
     x = 0; y = 0; w = gray.shape[1]; h = gray.shape[0]
 
@@ -30,9 +31,8 @@ def compare(img, path=files.facesDatasetPath):
     label = None   # NSF: No Such File
     imgRet = None
     txtIf.printMessage(txtIf.MESSAGES.COMPARING_IMAGES)
-    gray = util.imageToGrayscale(img)
 
-    id, p = compareSingle(gray)
+    id, p = compareSingle(img)
 
     if id > -1:
         if p <= 0:

@@ -71,12 +71,6 @@ class GUIClass(object):
             colorprogressbar = self.COLORS.PROGRESSPERFECT.value
         return colorprogressbar
 
-    def __init__(self):
-        if GUIClass.__instance != None:
-            raise Exception("This is a Singleton class. Access it through getInstance()")
-        else:
-            GUIClass.__instance = self
-
     def getDisplaySize(self):
         return (self.window.winfo_screenheight(), self.window.winfo_screenwidth())
 
@@ -86,6 +80,13 @@ class GUIClass(object):
         newSize = (int((prop * image.shape[1]) / aspect_ratio), int((prop * image.shape[0]) / aspect_ratio))
         newImage = cv2.resize(image, (newSize[0], newSize[1]))
         return newImage
+
+    def __init__(self):
+        if GUIClass.__instance != None:
+            raise Exception("This is a Singleton class. "
+                            "Access it through getInstance()")
+        else:
+            GUIClass.__instance = self
 
     @staticmethod
     def getInstance():
