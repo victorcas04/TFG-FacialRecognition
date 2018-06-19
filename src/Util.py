@@ -33,24 +33,28 @@ def train():
     if not trained:
         txtIf.printError(txtIf.ERRORS.CANNOT_TRAIN_NETWORK)
 
-    txtIf.printMessage(txtIf.MESSAGES.YML_USED, files.ymlFile, trained)
-    txtIf.printMessage(txtIf.MESSAGES.LOADING_FILE, files.xmlFolderPath + files.delimiter + files.xmlFile)
-    files.getLoadedXml()
-    return trained
-
-def askTrain():
-    trained = False
-    txtIf.printMessage(txtIf.MESSAGES.ASK_TRAIN_NETWORK)
-    c = txtIf.getScan()
-
-    if c.__eq__("Y") or c.__eq__("y"):
-        trained = train()
-    else:
+    if trained:
         txtIf.printMessage(txtIf.MESSAGES.YML_USED, files.ymlFile, trained)
         txtIf.printMessage(txtIf.MESSAGES.LOADING_FILE, files.xmlFolderPath + files.delimiter + files.xmlFile)
         files.getLoadedXml()
-
     return trained
+
+def askTrain():
+    txtIf.printMessage(txtIf.MESSAGES.ASK_TRAIN_NETWORK)
+    c = txtIf.getScan()
+    toContinue = False
+
+    if c.__eq__("Y") or c.__eq__("y"):
+        toContinue = train()
+    elif len(files.filesOnDir(files.facesDatasetPath)) >= 2:
+        txtIf.printMessage(txtIf.MESSAGES.YML_USED, files.ymlFile, False)
+        txtIf.printMessage(txtIf.MESSAGES.LOADING_FILE, files.xmlFolderPath + files.delimiter + files.xmlFile)
+        files.getLoadedXml()
+        toContinue = True
+    else:
+        txtIf.printError(txtIf.ERRORS.NOT_ENOUGH_IMAGES_ON_DATABASE, True)
+
+    return toContinue
 
 def cutFaceFromImage(image):
 

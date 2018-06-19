@@ -45,7 +45,8 @@ def printMessage(code=None, info=None, info2=None):
         print("\n\n" + str(title) + " - " + str(author) + "\n\n")
 
     elif code.name is "ASK_CAMERA_FILE_REALTIME":
-        print("\nDo you want to use an image from camera [C], from file [F] or in real-time [R]?")
+        print("\nDo you want to use an image from camera [C], from file [F] or in real-time [R]?\n"
+              "Press [X] to cancel")
 
     elif code.name is "SAVING_IMAGE":
         print("\nSaving image in: " + str(info) + "...")
@@ -120,7 +121,7 @@ def printError(code=None, info=None):
         print("\nWARNING: The comparison obtained less than " + str(info) + "% of coincidence. Loading default image.")
 
     elif code.name is "NOT_ENOUGH_IMAGES_ON_DATABASE":
-        print("\nERROR: Two (2) or more samples are needed to train the network.")
+        print("\nERROR: Two (2) or more samples are needed to " + ("continue." if info is not None else "train the network."))
 
     elif code.name is "IMAGE_NO_FACES":
         print("\nWARNING: Image with no faces.")
