@@ -38,6 +38,7 @@ class MESSAGES(Enum):
     PRESS_ANY_KEY = 17
     RESOLUTION_CAMERA = 18
     INITIALIZING_INTERFACE = 19
+    ASK_EXIT_MAIN = 20
 
 def printMessage(code=None, info=None, info2=None):
     if code.name is "TITLE":
@@ -56,13 +57,13 @@ def printMessage(code=None, info=None, info2=None):
         print("\nSelect an image...")
 
     elif code.name is "ASK_ADD_IMAGES":
-        print("\nIf you want to add a new image to the database press [Y]")
+        print("\nDo you want to add a new image to the database? [Y/N]")
 
     elif code.name is "TRAIN_TIME":
         print("\nTraining time with " + str(info) + " images: " + str(info2) + " seconds.")
 
     elif code.name is "ASK_TRAIN_NETWORK":
-        print("\nIf you want to train the network again press [Y]")
+        print("\nDo you want to train the network? [Y/N]")
 
     elif code.name is "LOADING_FILE":
         print("Loading file " + str(info) + "...")
@@ -98,6 +99,9 @@ def printMessage(code=None, info=None, info2=None):
 
     elif code.name is "INITIALIZING_INTERFACE":
         print("\nInitializing interface...")
+
+    elif code.name is "ASK_EXIT_MAIN":
+        print("\nDo you want to exit? [Y/N]")
 
     else:
         print("\nMESSAGE: Unknown message.")
@@ -145,6 +149,16 @@ def printError(code=None, info=None):
 def getScan():
     import six
     return six.moves.input()
+
+def askNewImage():
+    printMessage(MESSAGES.ASK_ADD_IMAGES)
+    c = getScan()
+    return True if c.__eq__("Y") or c.__eq__("y") else False
+
+def askExitMain():
+    printMessage(MESSAGES.ASK_EXIT_MAIN)
+    c = getScan()
+    return True if c.__eq__("Y") or c.__eq__("y") else False
 
 def askInfoNewImage():
 
