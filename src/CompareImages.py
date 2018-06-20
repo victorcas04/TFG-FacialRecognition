@@ -39,6 +39,9 @@ def compare(img, path=files.facesDatasetPath):
             p = 0
         else:
             p = float("{0:.2f}".format(p)) if p <= 100 else 100
+
+        files.checkFolderExists(files.datasetPath)
+
         imgsOr = files.filesOnDir()
         label = imgsOr[id].split(".")[0]
         print("Information about comparison: id= " + str(id) + "   ---   label= " + str(label) + "   ---   coincidence= " + str(p))

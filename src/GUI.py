@@ -50,6 +50,7 @@ class GUIClass(object):
         if (imageToReturn.endswith(files.extensionJPG) or imageToReturn.endswith(files.extensionPNG)):
             imageToReturn = files.loadImage(imageToReturn)
         else:
+            txtIf.printError(txtIf.ERRORS.FILE_WRONG_FORMAT)
             imageToReturn = files.loadImage()
         return imageToReturn
 

@@ -1,7 +1,7 @@
 
 # encoding: utf-8
 
-import cv2
+import cv2, os
 import TextInterface as txtIf
 
 delimiter = '\\'
@@ -54,7 +54,6 @@ def loadInfo(nameImage=None):
     return info
 
 def filesOnDir(path=datasetPath):
-    import os
     return os.listdir(path)
 
 def saveImage(image, path):
@@ -95,6 +94,13 @@ def doWhenNewImage(img):
         info = txtIf.askInfoNewImage()
         # Sobreescribimos la línea que corresponda a la misma imagen
         writeInfoNewImage('\n' + nFile + fileDelimiter + info[0] + fileDelimiter + info[1] + fileDelimiter + info[2] + fileDelimiter + info[3])
+
+        checkFolderExists()
         saveImage(img, datasetPath + delimiter + nFile+ extensionJPG)
 
     return makechanges
+
+def checkFolderExists(nameF=datasetPath):
+    if not os.path.exists(nameF):
+        txtIf.printError(txtIf.ERRORS.FOLDER_NOT_FOUND, nameF)
+        os.makedirs(nameF)

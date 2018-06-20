@@ -8,7 +8,8 @@ import Files as files
 import TextInterface as txtIf
 
 recognizerPath = files.recognizerFolderPath
-pathImages = files.facesDatasetPath
+pathOriginalImages = files.datasetPath
+pathFacesImages = files.facesDatasetPath
 
 def createCutFacesFromDatabase():
     folder = files.facesDatasetPath
@@ -21,7 +22,7 @@ def createCutFacesFromDatabase():
 
     images = files.filesOnDir()
     for i in images:
-        cutted, cutFace = util.cutFaceFromImage(files.loadImage(files.getFileName(i, files.datasetPath)))
+        cutted, cutFace = util.cutFaceFromImage(files.loadImage(files.getFileName(i, pathOriginalImages)))
         if cutted is True:
             cv2.imwrite(files.getFileName('face_' + i, folder), cutFace)
 
@@ -30,8 +31,7 @@ def train():
     trained = False
     recognizer = files.getReco()
 
-    if not os.path.exists(recognizerPath):
-        os.makedirs(recognizerPath)
+    files.checkFolderExists(recognizerPath)
 
     def getImagesWithID(path):
         from PIL import Image
@@ -48,11 +48,12 @@ def train():
             id+=1
         return ID_labels, faces, id
 
-    if not os.path.exists(pathImages):
-        os.makedirs(pathImages)
+    files.checkFolderExists(pathFacesImages)
+    files.checkFolderExists(pathOriginalImages)
+
     createCutFacesFromDatabase()
 
-    ID_labels, faces, numImages = getImagesWithID(pathImages)
+    ID_labels, faces, numImages = getImagesWithID(pathFacesImages)
 
     if len(ID_labels) >= 2:
         recognizer.train(faces, np.fromiter(ID_labels.keys(), dtype=int))

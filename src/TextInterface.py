@@ -17,6 +17,8 @@ class ERRORS(Enum):
     NETWORK_NOT_TRAINED = 8
     IMAGE_ALREADY_ON_DATABASE = 9
     FUTURE_FEATURE = 10
+    FOLDER_NOT_FOUND = 11
+    FILE_WRONG_FORMAT = 12
 
 class MESSAGES(Enum):
     TITLE = 1
@@ -143,6 +145,12 @@ def printError(code=None, info=None):
 
     elif code.name is "FUTURE_FEATURE":
         print("\nWARNING: Feature not implemented yet. Wait for developers to do their job.")
+
+    elif code.name is "FOLDER_NOT_FOUND":
+        print("\nWARNING: Folder " + str(info) + " doesn't exists. Creating...")
+
+    elif code.name is "FILE_WRONG_FORMAT":
+        print("\nWARNING: File with wrong format...")
 
     else:
         print("\nERROR: Unknown error.")

@@ -60,3 +60,4 @@ def compareInRealTime():
     show_frame()
     guiMain.displayWindow()
 
+    cap.release()
