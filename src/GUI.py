@@ -5,7 +5,6 @@ from __future__ import division
 import tkinter as tk
 from tkinter import ttk
 import Files as files
-import Util as util
 import TextInterface as txtIf
 from PIL import Image, ImageTk
 import cv2
@@ -82,6 +81,11 @@ class GUIClass(object):
         newImage = cv2.resize(image, (newSize[0], newSize[1]))
         return newImage
 
+    def transformImageToGUI(self, img):
+        imgRecolor = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        imgFromArray = Image.fromarray(imgRecolor)
+        return ImageTk.PhotoImage(imgFromArray)
+
     def __init__(self):
         if GUIClass.__instance != None:
             raise Exception("This is a Singleton class. "
@@ -111,14 +115,6 @@ class GUIClass(object):
         self.window.resizable(width=False, height=False)
         self.window.minsize(width=self.width, height=self.height)
         self.window.maxsize(width=self.width, height=self.height)
-
-    def initialize(self, namePhoto=None, p=0, inf=files.loadInfo()):
-        self.percentage = p
-        self.namePhoto = namePhoto
-        self.info = inf
-        self.setTitle(p, namePhoto)
-        self.window.title(self.title)
-        self.window.config(bg=self.COLORS.BACKGROUNDGENERAL.value)
 
     def createPopUpInfo(self):
 
@@ -152,7 +148,7 @@ class GUIClass(object):
 
         popup.mainloop()
 
-    def createTop_BottomPanel_Final(self):
+    def createTop_BottomPanel(self):
 
         myFrame = tk.Frame(self.window)
         myFrame.config(bg=self.COLORS.BACKGROUNDGENERAL.value)
@@ -222,9 +218,7 @@ class GUIClass(object):
         image = image if (image is not None) else files.loadImage()
         if staticImage:
             image = self.resizeFaceImage(image)
-        imgRecolor = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        imgFromArray = Image.fromarray(imgRecolor)
-        img = ImageTk.PhotoImage(imgFromArray)
+        img = self.transformImageToGUI(image)
         panel = self.myLabelC if left else self.myLabelD
         panel.image = img
         panel.configure(image=img)

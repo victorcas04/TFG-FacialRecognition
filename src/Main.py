@@ -55,7 +55,7 @@ if __name__ == "__main__":
                     guiMain = gui.getInstance()
                 guiMain.createMainWindow()
                 guiMain.fixedSize()
-                guiMain.createTop_BottomPanel_Final()
+                guiMain.createTop_BottomPanel()
 
                 cutted, pOri = util.cutFaceFromImage(photoOriginal)
                 if cutted:

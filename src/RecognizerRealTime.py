@@ -2,14 +2,14 @@
 # encoding: utf-8
 
 from __future__ import division
-import sys, cv2
+import cv2
 import Files as files
 import TextInterface as txtIf
 import CompareImages as compareImages
 from GUI import GUIClass as gui
 import Camera as camera
 
-segBetweenFrames = .5
+segBetweenFrames = 0.1
 
 def compareInRealTime():
 
@@ -18,7 +18,7 @@ def compareInRealTime():
     guiMain = gui.getInstance()
     guiMain.createMainWindow("REAL-TIME RECOGNITION", realTime=True)
     guiMain.fixedSize()
-    guiMain.createTop_BottomPanel_Final()
+    guiMain.createTop_BottomPanel()
 
     cap = camera.initializeCamera()
     if cap is None:
