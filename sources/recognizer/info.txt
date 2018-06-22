@@ -1,5 +1,5 @@
 alexandra_daddario, Alexandra Daddario, 32, New York, Actress
-cas, Victor de Castro, 23, Burgos, Student
+victorcas, Victor de Castro, 23, Burgos, Student
 chris_pratt, Chris Pratt, 38, Minnesota, Actor
 dwayne_the_rock_johnson, Dwayne (The Rock) Johnson, 46, California, Actor
 elizabeth_olsen, Elizabeth Olsen, 29, Los Angeles, Actress
@@ -15,4 +15,4 @@ stan_lee, Stanley Lieber (Stan lee), 95, Nueva York, Writer
 will_smith, Will Smith, 49, Filadelfia, Actor
 cas_abii, victorcas, Default Age, Burgos, Default Job
 cesar_sala_juntas, cesar, Default Age, burgos, Default Job
-image_de_prueba, victorcas, Default Age, Burgos, Estudiante
+heber, Heber Saiz, Default Age, Burgos, Estudiante
