@@ -24,9 +24,9 @@ En dicho sistema se parte de una base de datos que contiene imágenes de persona
 
 ## Poniéndonos técnicos...
 
-El repositorio de Github donde se encuentran los ficheros del TFG de reconocimiento facial basado en machine-learning se puede encontrar en el siguiente [enlace](https://github.com/victorcas04/TFG-FacialRecognition).
+El repositorio de *Github* donde se encuentran los ficheros del TFG de reconocimiento facial basado en machine-learning se puede encontrar en el siguiente [enlace](https://github.com/victorcas04/TFG-FacialRecognition).
 
-El TFG consiste en una aplicación que, dadas dos imágenes, una obtenida en el momento de ejecución, ya sea mediante fichero (accediendo a la foto que tengamos almacenada en nuestro equipo),  o mediante una captura que realicemos con nuestra cámara,  y la otra alojada localmente en una base de datos: sea capaz de distinguir si en ambas imágenes se encuentra la misma persona utilizando técnicas de machine-learning.
+El TFG consiste en una aplicación que, dadas dos imágenes, una obtenida en el momento de ejecución, ya sea mediante fichero (accediendo a la foto que tengamos almacenada en nuestro equipo),  o mediante una captura que realicemos con nuestra cámara,  y la otra alojada localmente en una base de datos: sea capaz de distinguir si en ambas imágenes se encuentra la misma persona utilizando técnicas de *machine-learning*.
 
 A la hora de comparar ambas imágenes se utiliza la extracción de características mediante el algoritmo *LBPH* y la herramiento *OpenCV*. Si la persona que se intenta identificar no estaba registrada en la base de datos, aparecerá la persona que esté registrada que más se parezca.
 En caso de que no se supere un **umbral de coincidencia** con ninguna de las personas registradas, mostrará una imagen por defecto avisando de que no se ha podido obtener ningún resultado satisfactorio.
@@ -34,20 +34,20 @@ Además, esta misma imagen por defecto se mostrará si no se reconoce exactament
 
 En cualquier caso, junto con la imagen que se obtenga como resultado, se mostrará una barra de progreso, que indica el porcentaje de acierto que ha obtenido al encontrar dicho resultado. Además, se muestra un botón que nos permite crear un pequeño *pop-up* con información de la persona obtenida como resultado (nombre, edad, lugar de nacimiento y profesión).
 
-Como desarrollo adicional, se ha implementado un sistema de reconocimiento totalmente en tiempo-real, en el cual se muestra un vídeo de la cámara que esté grabando, el cual se analiza cada determinados *frames* para obtener las comparaciones automáticamente (en lugar de una comparación por ejecución como en le modo anterior).
-La interfaz utilizada en este último caso es similar a la anterior, pero eliminando el botón que proporcionaba esa ventana con más información. Esto se ha hecho ya que, al poder cambiar el resultado en poco tiempo, era un elemento contra-producente.
+Como desarrollo adicional, se ha implementado un sistema de reconocimiento totalmente en tiempo-real, en el cual se muestra un vídeo de la cámara que esté grabando, el cual se analiza cada determinados frames para obtener las comparaciones automáticamente (en lugar de una comparación por ejecución como en el modo anterior).
+La interfaz utilizada en este último caso es similar a la anterior, pero eliminando el botón que proporcionaba esa ventana con más información. Esto se ha hecho ya que, al poder cambiar el resultado en poco tiempo, era un elemento contraproducente.
 
 ## ¿Qué necesitamos?
 
-Es necesario tener instalado *python* (preferiblemente en su versión 2.7, o un entorno virtual con dicha versión ya que es el entorno en el que se ha desarrollado) y diferentes librerías imprescindibles como son *cv2* (librería de OpenCV orientada a computer vision), *tKinter* (necesaria para mostrar la interfaz gráfica), *numpy* (diversas operaciones de utilidad), *Pillow* (para realizar cambios sobre imágenes).
+Es necesario tener instalado *Python* (preferiblemente en su versión 2.7, o un entorno virtual, en nuestro caso de *Anaconda* con dicha versión ya que es el entorno en el que se ha desarrollado) y diferentes librerías imprescindibles como son *cv2* (librería de *OpenCV* orientada a *computer vision*), *tKinter* (necesaria para mostrar la interfaz gráfica), *numpy* (diversas operaciones de utilidad), *Pillow* (para realizar cambios sobre imágenes).
 El proyecto ha sido desarrollado y probado en *Windows 10*.
 
-- *NOTA*: En el resto de versiones de windows no se asegura su correcto funcionamiento.
-- *NOTA*: En otros sistemas operativos como *Linux* no funciona debido a las librerías exclusivas de windows y a las rutas utilizadas en los ficheros.
+- *NOTA*: En el resto de versiones de *Windows* no se asegura su correcto funcionamiento.
+- *NOTA*: En otros sistemas operativos como *Linux* no funciona debido a las librerías exclusivas de *Windows* y a las rutas utilizadas en los ficheros.
 
 ## Instrucciones:
 
-Para ejecutar el programa, simplemente hay que descargarse el proyecto (podemos hacer un *clone* a una carpeta local desde *github* o simplemente descargarlo como *.zip*) y dar *doble click* sobre el fichero llamado *run.bat* que encontramos en la carpeta principal.
+Para ejecutar el programa, simplemente hay que descargarse el proyecto (podemos hacer un *clone* a una carpeta local desde *Github* o simplemente descargarlo como *.zip*) y dar doble click sobre el fichero llamado *run.bat* que encontramos en la carpeta principal.
 Esto nos abrirá una consola de comandos donde nos irán saliendo mensajes informativos sobre el progreso del programa (orientados más al uso por parte del desarrollador, aunque también pueden resultar útiles a todo tipo de usuarios), aunque la parte principal creará ventanas para mostrar la interfaz y que la información aparezca de forma más visual y entendible para el usuario medio.
 
 Las principales fases por las que pasa nuestro programa son:
@@ -82,19 +82,19 @@ Estos datos se almacenarán en un fichero local llamado *info.txt*.
 ##### 4.1.- Obtener la imagen desde fichero
 - Si se selecciona esta opción, se abrirá una pequeña interfaz en la que el usuario puede buscar la imagen que quiera en el sistema. 
 
-- Una vez que se encuentra la imagen, basta con dar *doble click* sobre ella o seleccionarla y pulsar aceptar.
+- Una vez que se encuentra la imagen, basta con dar doble click sobre ella o seleccionarla y pulsar aceptar.
 
 - A continuación, y si la imagen es correcta (sólo tiene un rostro en ella y ocupa al menos el 10% de la imagen), se mostrará en la interfaz explicada en el apartado
 *6.- Resultados finales: Interfaz visual*.
 
 - *NOTA*: Se puede filtrar el tipo de ficheros que se pueden ver para facilitar la búsqueda (restringido a *.png* y *.jpg*).
+- *NOTA*: Si el fichero no tiene las extensiones válidas (*.png* o *.jpg*), se tomará como una imagen incorrecta.
 
 ##### 4.2.- Obtener la imagen mediante una captura
 - Al seleccionar esta opción, se inicializará la cámara por defecto (en función del modelo de la cámara, tendremos que especificar la máxima resolución posible, en caso de no conocer este dato, se puede dejar el valor por defecto *[640 X 480]*).
         
 - *NOTA*: La cámara por defecto es la primera cámara externa que tengamos conectada. En caso de no tener ninguna externa, se utilizará la webcam integrada.
-
-- *NOTA*: en caso de no poder inicializar la cámara con estos parámetros, mostrará un mensaje avisándonos y pasará al apartado *6.- Resultados finales* con una imagen por defecto.
+- *NOTA*: En caso de no poder inicializar la cámara con estos parámetros, mostrará un mensaje avisándonos y pasará al apartado *6.- Resultados finales* con una imagen por defecto.
 
 - Con la cámara inicializada correctamente, aparecerá una ventana con la imagen en tiempo-real capturada con la cámara.
 
@@ -105,18 +105,18 @@ Estos datos se almacenarán en un fichero local llamado *info.txt*.
 ##### 4.3.- Realizar la identificación en tiempo-real
 - En este apartado se inicializa la cámara por defecto como en los apartados anteriores, y se muestra directamente en la interfaz (imagen de la izquierda con el título *Original image*).
 
-- Si queremos que nos reconozca (suponiendo que estemos en la base de datos), simplemente debemos ponernos delante de la cámara y esperar a que se actualice la interfaz (este tiempo se ha establecido de **0.5 segundos** para darle tiempo al programa a que extraiga las características del rostro y las compare con las de la red, en caso de disponer de un equipo más potente se puede reducir este tiempo).
+- Si queremos que nos reconozca (suponiendo que estemos en la base de datos), simplemente debemos ponernos delante de la cámara y esperar a que se actualice la interfaz (este tiempo se ha establecido de 0.5 segundos para darle tiempo al programa a que extraiga las características del rostro y las compare con las de la red, en caso de disponer de un equipo más potente se puede reducir este tiempo, aunque no es recomendable reducirlo en exceso ya que los datos de la interfaz se pueden llegar a hacer ilegibles).
 
 - A continuación, se puede observar como los resultados van cambiando en la interfaz explicada en el apartado *6.- Resultados finales: Interfaz visual* en función de la persona que se coloque delante de la cámara, o incluso si cambiamos de posición o modificamos la iluminación.
 
-- El proceso que sigue este apartado en cuanto a la obtención de resultados es similar al que se sigue en los otros dos casos (comprobar apartado *5.- Comparar imágenes y obtener resultados*), salvo que se repite y actualiza cada **0.5 segundos**.
+- El proceso que sigue este apartado en cuanto a la obtención de resultados es similar al que se sigue en los otros dos casos (comprobar apartado *5.- Comparar imágenes y obtener resultados*), salvo que se repite y actualiza automáticamente cada 0.5 segundos.
 
-- Para terminar de ejecutar el programa en este punto cerrar la ventana de la interfaz.
+- Para terminar el proceso de reconocimiento cerrar la ventana de la interfaz.
 
 ##### 5.- Comparar imágenes y obtener resultados
 - Este proceso es interno y no tiene efecto en la interfaz de usuario, de manera que no afecta a estos.
 
-- Con la imagen obtenida de los apartados 4.1, o 4.2, se analiza dicha imagen y se comparan los resultados con los obtenidos de entrenar las imágenes almacenadas en la base de datos (fichero *trainerData.yml* mencionado en el apartado *3.- Carga de recursos e inicialización*). Esta comparación se realiza mediante algunas funciones proporcionadas por la librería de *OpenCV*.
+- Con la imagen obtenida de los apartados 4.1, o 4.2, se analiza dicha imagen y se comparan los resultados con los obtenidos de entrenar las imágenes almacenadas en la base de datos (fichero *trainerData.yml* mencionado en el apartado *3.- Carga de recursos e inicialización*). Esta comparación se realiza mediante algunas funciones proporcionadas por la librería de *OpenCV* (*predict()*).
 
 - Se obtiene una ID perteneciente a la imagen con mejor resultado de la comparación en nuestro fichero de entrenamiento y un porcentaje, que indica el éxito de dicha comparación.
 Con esa ID, se carga la imagen correspondiente, el nombre que tenga dicha imagen y el porcentaje en la interfaz gráfica.
@@ -124,9 +124,9 @@ Con esa ID, se carga la imagen correspondiente, el nombre que tenga dicha imagen
 ##### 6.- Resultados finales: Interfaz visual
 - La interfaz consiste en una ventana con ambas imágenes: la que se quería reconocer y la de máxima coincidencia de la base de datos obtenida en el apartado *5.- Comparar imágenes y obtener resultados*.
 
-- *NOTA*: las imágenes se recortan para mostrar sólo el rostro y se ajustan todas al mismo tamaño, de esta manera se evitan los tamaños de imágenes excesivamente grandes/pequeños.
+- *NOTA*: las imágenes se recortan para mostrar sólo el rostro (excepto en el reconocimiento en tiempo real, que la imagen original no se recorta) y se ajustan todas al mismo tamaño, de esta manera se evitan los tamaños de imágenes excesivamente grandes/pequeños.
 
-- Se muestra además el porcentaje de coincidencia que hayan tenido la comparación, y una barra de progreso que indica dicho porcentaje junto con el nombre de la imagen de la base de datos.
+- Se muestra además el porcentaje de coincidencia que haya tenido la comparación, y una barra de progreso que indica dicho porcentaje junto con el nombre de la imagen de la base de datos.
 Esta barra de progreso cambia de color en función del tanto por ciento que hayamos obtenido (negro < 10%, rojo < 35%, naranja < 50%, amarillo < 80%, verde < 95%, morado >= 95%).
 
 - *NOTA*: el nombre que se muestra sobre la imagen de la derecha es el de la persona a la que corresponda dicha fotografía (extraído del fichero *info.txt*), mientras que el nombre que se muestra sobre la barra de progreso es el correspondiente al nombre del fichero de dicha foto. Se muestran ambos nombres en caso de que el usuario necesite acceder a esa foto en la base de datos manualmente.
@@ -143,4 +143,4 @@ Esta barra de progreso cambia de color en función del tanto por ciento que haya
 
 A continuación se deja una imagen de ejemplo de un resultado de ejecución obteniendo la imagen mediante fichero.
 
-![Interfaz final recolor - Comparación mediante fichero](/Other/Images/develop/interface_final_color.png)
+![Interfaz final recolor - Comparación en tiempo real](/Other/Images/Results/comparison_real_time_no_glasses.png)
