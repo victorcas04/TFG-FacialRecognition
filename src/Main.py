@@ -86,7 +86,7 @@ if __name__ == "__main__":
             if not realTime:
                 '''
                 We have to initialize the main window of the interface here and not before because of some 
-                    compatibility problems between tKinter and OpenCV
+                    compatibility problems between tKinter and OpenCV.
                 '''
                 if guiMain is None:
                     txtIf.printMessage(txtIf.MESSAGES.INITIALIZING_INTERFACE)
@@ -107,7 +107,7 @@ if __name__ == "__main__":
                     import CompareImages as compareImages
 
                     '''
-                    The return of this method gives us the image (i), a percentage (p) and the name of the image (n)
+                    The return of this method gives us the image (i), a percentage (p) and the name of the image (n).
                     '''
                     i, p, n = compareImages.compare(pOri)
 

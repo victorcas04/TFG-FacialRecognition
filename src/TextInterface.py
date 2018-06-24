@@ -1,12 +1,30 @@
 
 # encoding: utf-8
 
+'''
+@author: victorcas
+'''
+
 from enum import Enum
 
+'''
+Title and author of the program. Just to be displayed at the beginning of the program.
+'''
 title = "TFG - Facial Recognition"
 author = "Victor de Castro Hurtado"
 
+'''
+Made two differente enumerations, one for errors and other for general messages to make it easier for 
+    the programmer to change some of them.
+'''
+
 class ERRORS(Enum):
+
+    '''
+    ERRORS Class necessary to make and use properly the enumeration type while printing error messages
+    The values given doesn't matter.
+    '''
+
     NETWORK_NOT_TRAINED_2 = 1
     CANNOT_TRAIN_NETWORK = 2
     IMAGE_NO_FACES = 3
@@ -20,7 +38,14 @@ class ERRORS(Enum):
     FOLDER_NOT_FOUND = 11
     FILE_WRONG_FORMAT = 12
 
+
 class MESSAGES(Enum):
+
+    '''
+    MESSAGES Class necessary to make and use properly the enumeration type while printing a variety of messages
+    The values given doesn't matter.
+    '''
+
     TITLE = 1
     ASK_CAMERA_FILE_REALTIME = 2
     SAVING_IMAGE = 3
@@ -42,7 +67,20 @@ class MESSAGES(Enum):
     INITIALIZING_INTERFACE = 19
     ASK_EXIT_MAIN = 20
 
+
 def printMessage(code=None, info=None, info2=None):
+
+    '''
+    Prints a message depending on the MESSSAGES enumeration type from above.
+    :param code: String
+        Keyword to identify every type of message that can be displayed.
+        If want to add a new message, be sure to add the proper code to class MESSAGES above.
+    :param info: -
+        This information can be anything, depending on the message we want to print.
+    :param info2: -
+        This information can be anything, depending on the message we want to print.
+    '''
+
     if code.name is "TITLE":
         print("\n\n" + str(title) + " - " + str(author) + "\n\n")
 
@@ -109,7 +147,18 @@ def printMessage(code=None, info=None, info2=None):
     else:
         print("\nMESSAGE: Unknown message.")
 
+
 def printError(code=None, info=None):
+
+    '''
+    Prints a message depending on the ERRORS enumeration type from above. Can be errors or warnings.
+    :param code: String
+        Keyword to identify every type of message that can be displayed.
+        If want to control a new error, be sure to add the proper code to class ERRORS above.
+    :param info: -
+        This information can be anything, depending on the message we want to print.
+    '''
+
     if code.name is "NETWORK_NOT_TRAINED":
         print("\nERROR: Cannot compare: The network isn't trained.")
 
@@ -155,21 +204,60 @@ def printError(code=None, info=None):
     else:
         print("\nERROR: Unknown error.")
 
+
 def getScan():
+
+    '''
+    Get the input from text command.
+    'six' library is used to make the method compatible with both versions of Python 2.7 and 3.6.
+    :return: input: String
+        Input from user.
+    '''
+
     import six
     return six.moves.input()
 
+
 def askNewImage():
+
+    '''
+    Ask the user if wants to add a new image to the database.
+    :return: newImage: boolean
+        True if the user wants to add an image to the database, False otherwise.
+    '''
+
     printMessage(MESSAGES.ASK_ADD_IMAGES)
     c = getScan()
     return True if c.__eq__("Y") or c.__eq__("y") else False
 
+
 def askExitMain():
+
+    '''
+    Ask the user if wants to exit the main program or not.
+    :return: exit: boolean
+        True if the user wants exit, False otherwise.
+    '''
+
     printMessage(MESSAGES.ASK_EXIT_MAIN)
     c = getScan()
     return True if c.__eq__("Y") or c.__eq__("y") else False
 
+
 def askInfoNewImage():
+
+    '''
+    Ask the user some information about the person in the new image.
+    If no information is provided, a default one will be used.
+    :return: name: String
+        Name of the person in the image.
+    :return: age: String
+        Age of the person in the image.
+    :return: birthplace: String
+        City of birth of the person in the image.
+    :return: job: String
+        Actual job of the person in the image.
+    '''
 
     print("\nIntroduce the name of the person who appears on that image:\nIf no name is provided, \'Default Name\' will be used.")
     name = getScan()
@@ -190,12 +278,16 @@ def askInfoNewImage():
 
     return name, age, birthplace, job
 
-def printMenuFaceInBox(fromCamera=True):
+
+def printMenuFaceInBox():
+
+    '''
+    Print a menu to help the user to orientate while using a camera capture functionality.
+    '''
 
     print("\nOPTIONS:\n")
     print("Press [I] to display general information.")
     print("Press [Q] to quit.")
-    if fromCamera:
-        print("Press [P] to pause the camera.")
-        print("Press [SPACE] to resume the camera (only if it was paused).")
-        print("Press [C] to capture the actual frame and close the camera.\n")
+    print("Press [P] to pause the camera.")
+    print("Press [SPACE] to resume the camera (only if it was paused).")
+    print("Press [C] to capture the actual frame and close the camera.\n")
