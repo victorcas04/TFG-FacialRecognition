@@ -37,6 +37,7 @@ class ERRORS(Enum):
     FUTURE_FEATURE = 10
     FOLDER_NOT_FOUND = 11
     FILE_WRONG_FORMAT = 12
+    CAMERA_DISCONNECTED = 13
 
 
 class MESSAGES(Enum):
@@ -200,6 +201,9 @@ def printError(code=None, info=None):
 
     elif code.name is "FILE_WRONG_FORMAT":
         print("\nWARNING: File with wrong format...")
+
+    elif code.name is "CAMERA_DISCONNECTED":
+        print("\nERROR: Camera Disconnected. Exiting to Main Menu...")
 
     else:
         print("\nERROR: Unknown error.")

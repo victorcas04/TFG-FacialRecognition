@@ -53,68 +53,72 @@ def compareInRealTime():
         ret, frame = cap.read()
         frame = cv2.flip(frame, 1)
 
-        '''
-        Resize the image to show because it needs to be bigger than in other cases to avoid empty spaces on interface.
-        '''
-        frameToShow = guiMain.resizeFaceImage(frame, aspect_ratio=1.5)
-
-        '''
-        The same process as in 'Camera.captureImage()': obtain all faces on image and put a rectangle over them.
-        '''
-        gray = util.imageToGrayscale(frameToShow)
-        faces = util.getFacesMultiScale(gray)
-        rectangleThickness = int((frameToShow.shape[0] + frameToShow.shape[1]) / (100 * 2 * math.pi))  # 20-30
-        rectangleColor = (255, 0, 0)
-        for (x, y, w, h) in faces:
-            cv2.rectangle(frameToShow, (x, y), (x + w, y + h), rectangleColor, rectangleThickness)
-
-        '''
-        Set the image in real time to the left side of the interface.
-        '''
-        guiMain.setImage(image=frameToShow, staticImage=False)
-
-        '''
-        Try to cut the face from the image.
-        '''
-        cutted, pOri = util.cutFaceFromImage(frame)
-
-        if cutted:
+        if frame is not None:
             '''
-            If we could cut the face, compare it.
-            pOri = result image from the comparison
-            p = percentage of the comparison
-            n = name of the image on the database
+            Resize the image to show because it needs to be bigger than in other cases to avoid empty spaces on interface.
             '''
-            pOri, p, n = compareImages.compare(pOri)
+            frameToShow = guiMain.resizeFaceImage(frame, aspect_ratio=1.5)
 
-            if p <= 0:
+            '''
+            The same process as in 'Camera.captureImage()': obtain all faces on image and put a rectangle over them.
+            '''
+            gray = util.imageToGrayscale(frameToShow)
+            faces = util.getFacesMultiScale(gray)
+            rectangleThickness = int((frameToShow.shape[0] + frameToShow.shape[1]) / (100 * 2 * math.pi))  # 20-30
+            rectangleColor = (255, 0, 0)
+            for (x, y, w, h) in faces:
+                cv2.rectangle(frameToShow, (x, y), (x + w, y + h), rectangleColor, rectangleThickness)
+
+            '''
+            Set the image in real time to the left side of the interface.
+            '''
+            guiMain.setImage(image=frameToShow, staticImage=False)
+
+            '''
+            Try to cut the face from the image.
+            '''
+            cutted, pOri = util.cutFaceFromImage(frame)
+
+            if cutted:
                 '''
-                If the percentage obtained is less or equals to 0, it means there were no results on the database, 
-                    so load a default image.
+                If we could cut the face, compare it.
+                pOri = result image from the comparison
+                p = percentage of the comparison
+                n = name of the image on the database
                 '''
-                pOri = files.loadImage()
+                pOri, p, n = compareImages.compare(pOri)
+
+                if p <= 0:
+                    '''
+                    If the percentage obtained is less or equals to 0, it means there were no results on the database, 
+                        so load a default image.
+                    '''
+                    pOri = files.loadImage()
+                    n = None
+            else:
+                '''
+                If we couldn't cut the face (too many or not at all), set default values.
+                '''
+                p = 0;
                 n = None
+
+            '''
+            Set information on the interface.
+            '''
+            guiMain.setTitleAndProgress(p, n)
+
+            '''
+            Set the image obtained as the result to the right side of the interface.
+            '''
+            guiMain.setImage(image=pOri, left=False)
+
+            '''
+            Execute this method again every 0.5 seconds (value passed to 'after()' is in milliseconds).
+            '''
+            guiMain.myLabelC.after(int(segBetweenFrames * 1000), show_frame)
         else:
-            '''
-            If we couldn't cut the face (too many or not at all), set default values.
-            '''
-            p = 0;
-            n = None
-
-        '''
-        Set information on the interface.
-        '''
-        guiMain.setTitleAndProgress(p, n)
-
-        '''
-        Set the image obtained as the result to the right side of the interface.
-        '''
-        guiMain.setImage(image=pOri, left=False)
-
-        '''
-        Execute this method again every 0.5 seconds (value passed to 'after()' is in milliseconds).
-        '''
-        guiMain.myLabelC.after(int(segBetweenFrames * 1000), show_frame)
+            txtIf.printError(txtIf.ERRORS.CAMERA_DISCONNECTED)
+            guiMain.window.destroy()
 
     show_frame()
 
